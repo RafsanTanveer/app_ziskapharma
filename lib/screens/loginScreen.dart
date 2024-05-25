@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class Loginscreen extends StatelessWidget {
   const Loginscreen({super.key});
@@ -12,6 +13,11 @@ class Loginscreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text('This is login screen'),
+            OutlinedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, "/areasetting");
+                },
+                child: Text('Login screen'))
           ],
         ),
       )),

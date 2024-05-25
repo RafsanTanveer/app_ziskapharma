@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './screens/loginScreen.dart';
+import './screens/areaSetting.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -18,6 +19,11 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
+     initialRoute: '/',
+      routes: {
+        "/loging":(context)=>Loginscreen(),
+        "/areasetting": (context) => Areasetting(),
+      },
       home: Loginscreen(),
     );
   }
