@@ -12,7 +12,12 @@ class Loginscreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('This is login screen'),
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('This is login screen',style: TextStyle(backgroundColor: Colors.green),),
+              ),
+            ),
             OutlinedButton(
                 onPressed: () {
                   Navigator.pushNamed(context, "/areasetting");
