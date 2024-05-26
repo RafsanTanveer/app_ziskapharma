@@ -2,12 +2,31 @@
 
 import 'package:flutter/material.dart';
 
-class Loginscreen extends StatelessWidget {
+class Loginscreen extends StatefulWidget {
+  @override
+  State<Loginscreen> createState() => _LoginscreenState();
+}
 
-
+class _LoginscreenState extends State<Loginscreen> {
   void _loginPressed(BuildContext context) {
     print("Login pressed");
-    Navigator.pushReplacementNamed(context, '/mainmgt');
+    if (userTxtCntrl.text == 'admin' && passTxtCntrl.text == '123') {
+      Navigator.pushReplacementNamed(context, '/mainmgt');
+    } else {
+       Navigator.pushReplacementNamed(context, '/mainmgt');
+      // ScaffoldMessenger.of(context)
+      //     .showSnackBar(const SnackBar(content: Text('Wrong Username or Password')));
+    }
+  }
+
+  final userTxtCntrl = TextEditingController();
+  final passTxtCntrl = TextEditingController();
+
+  @override
+  void dispose() {
+    userTxtCntrl.dispose();
+    passTxtCntrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -48,23 +67,18 @@ class Loginscreen extends StatelessWidget {
 
   _header(context) {
     return Container(
-       height: 120.0,
+      height: 110.0,
       width: 100.0,
       margin: const EdgeInsets.all(10.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.purple,
         border: Border.all(),
-
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(15.0),
-          bottomRight: Radius.circular(15.0),
-          topRight: Radius.circular(15.0),
-          bottomLeft: Radius.circular(15.0),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(11.0)),
       ), //             <--- BoxDecoration here
       child: Text(
         "Galaxy Pharma ERP",
+        textAlign: TextAlign.center,
         style: TextStyle(
             fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.w900),
       ),
@@ -76,6 +90,7 @@ class Loginscreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TextField(
+          controller: userTxtCntrl,
           decoration: InputDecoration(
               hintText: "User Id",
               border: OutlineInputBorder(
@@ -87,6 +102,7 @@ class Loginscreen extends StatelessWidget {
         ),
         SizedBox(height: 10),
         TextField(
+          controller: passTxtCntrl,
           decoration: InputDecoration(
             hintText: "Password",
             border: OutlineInputBorder(
@@ -100,7 +116,7 @@ class Loginscreen extends StatelessWidget {
         ),
         SizedBox(height: 10),
         ElevatedButton(
-          onPressed: ()=> _loginPressed(context),
+          onPressed: () => _loginPressed(context),
           child: Text(
             "SIGN IN",
             style: TextStyle(fontSize: 20),

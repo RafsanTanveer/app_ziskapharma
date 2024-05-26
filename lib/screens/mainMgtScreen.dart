@@ -9,6 +9,7 @@ class Mainmgtscreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(),
       appBar: AppBar(
         title: Text(
           'Galaxy Pharma App',
@@ -18,13 +19,11 @@ class Mainmgtscreen extends StatelessWidget {
           ),
         ),
         backgroundColor: Colors.greenAccent[400],
-
       ),
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.all(14),
           child: Column(
-
             children: [
               _header(context),
               // _inputField(context),
@@ -43,109 +42,103 @@ class Mainmgtscreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
-
-            mainAxisAlignment: MainAxisAlignment.center, children: [
-            ElevatedButton(
-                onPressed: () => {},
-                child: Text(
-                  "SALES",
-                  style: TextStyle(fontSize: 20),
-                ),
-                style: ElevatedButton.styleFrom(
-                  shape: StadiumBorder(),
-                  padding: EdgeInsets.symmetric(vertical: 56, horizontal: 36),
-                ),
-              ),
-               ElevatedButton(
-                onPressed: () => {},
-                child: Text(
-                  "SALES",
-                  style: TextStyle(fontSize: 20),
-                ),
-                style: ElevatedButton.styleFrom(
-                  shape: StadiumBorder(),
-                  padding: EdgeInsets.symmetric(vertical: 56, horizontal: 36),
-                ),
-              )
-          ],),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: () => {},
-                child: Text(
-                  "SALES",
-                  style: TextStyle(fontSize: 20),
-                ),
-                style: ElevatedButton.styleFrom(
-                  shape: StadiumBorder(),
-                  padding: EdgeInsets.symmetric(vertical: 56, horizontal: 36),
+              Container(
+                margin: const EdgeInsets.all(10),
+
+                child: ElevatedButton(
+                  onPressed: () => {Navigator.pushNamed(context, '/salesmgt')},
+                  child: Text(
+                    "SALES",
+                    style: TextStyle(fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                     elevation: 3,
+                    maximumSize: Size(150, 150),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 30, horizontal: 40),
+                  ),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () => {},
-                child: Text(
-                  "QR Code Scan",
-                  style: TextStyle(fontSize: 15),
-                ),
-                style: ElevatedButton.styleFrom(
-                  shape: StadiumBorder(),
-                  padding: EdgeInsets.symmetric(vertical: 56, horizontal: 36),
+              Container(
+                margin: const EdgeInsets.all(10),
+
+                child: ElevatedButton(
+
+                  onPressed: () => {},
+                  child: Text(
+                    "PRODUCTION",
+                    style: TextStyle(fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                     elevation: 3,
+                    maximumSize: Size(150, 150),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 30, horizontal: 16),
+                  ),
                 ),
               )
             ],
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
 
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                margin: const EdgeInsets.all(10),
+                child: ElevatedButton(
+                  onPressed: () => {},
+                  child: Text(
+                    "ABOUT MOBILE",
+                    style: TextStyle(fontSize: 20),textAlign: TextAlign.center,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                     elevation: 3,
+                    maximumSize: Size(150, 150),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.all(10),
+
+                child: ElevatedButton(
+                  onPressed: () => {},
+                  child: Text("QR Code Scan",
+                      style: TextStyle(fontSize: 20),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.visible),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 3,
+                    maximumSize: Size(150, 150),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
       ],
     );
   }
 
-  _inputField(context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        TextField(
-          decoration: InputDecoration(
-              hintText: "User Id",
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide.none),
-              fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-              filled: true,
-              prefixIcon: Icon(Icons.person)),
-        ),
-        SizedBox(height: 10),
-        TextField(
-          decoration: InputDecoration(
-            hintText: "Password",
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none),
-            fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-            filled: true,
-            prefixIcon: Icon(Icons.person),
-          ),
-          obscureText: true,
-        ),
-        SizedBox(height: 10),
-        ElevatedButton(
-          onPressed: () => _loginPressed(context),
-          child: Text(
-            "SIGN IN",
-            style: TextStyle(fontSize: 20),
-          ),
-          style: ElevatedButton.styleFrom(
-            shape: StadiumBorder(),
-            padding: EdgeInsets.symmetric(vertical: 16),
-          ),
-        )
-      ],
-    );
-  }
 
   _forgotPassword(context) {
     return Column(
@@ -168,13 +161,12 @@ class Mainmgtscreen extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset('assets/images/alifsoft.PNG'),
         Text(
-          "Developed By : Alif Soft ",
+          "Md. Ali Hossain",
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
         ),
         Text(
-          "Mobile No : +88-01817042056 ",
+          "Territory : OBDHK13-DHAKA MEDICAL",
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
         ),
       ],

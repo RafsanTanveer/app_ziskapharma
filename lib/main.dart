@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import './screens/loginScreen.dart';
 import './screens/areaSetting.dart';
 import './screens/mainMgtScreen.dart';
+import './screens/salesMgtScreen.dart';
+import './screens/userInfoScreen.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -20,11 +23,13 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-     initialRoute: '/',
+      initialRoute: '/',
       routes: {
-        "/loging":(context)=>Loginscreen(),
+        "/loging": (context) => Loginscreen(),
         "/areasetting": (context) => Areasetting(),
         "/mainmgt": (context) => Mainmgtscreen(),
+        "/salesmgt": (context) => Salesmgtscreen(),
+        "/userinfo": (context) => Userinfoscreen(),
       },
       home: Loginscreen(),
     );
@@ -73,7 +78,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   leading: Icon(Icons.add_shopping_cart),
                   onTap: () {},
                 ),
-
               ],
             )),
             Container(
@@ -131,7 +135,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-
     );
   }
 }
