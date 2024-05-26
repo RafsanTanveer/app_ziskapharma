@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import './screens/loginScreen.dart';
 import './screens/areaSetting.dart';
+import './screens/mainMgtScreen.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
       routes: {
         "/loging":(context)=>Loginscreen(),
         "/areasetting": (context) => Areasetting(),
+        "/mainmgt": (context) => Mainmgtscreen(),
       },
       home: Loginscreen(),
     );

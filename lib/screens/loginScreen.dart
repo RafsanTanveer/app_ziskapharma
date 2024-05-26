@@ -3,6 +3,13 @@
 import 'package:flutter/material.dart';
 
 class Loginscreen extends StatelessWidget {
+
+
+  void _loginPressed(BuildContext context) {
+    print("Login pressed");
+    Navigator.pushReplacementNamed(context, '/mainmgt');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,14 +48,19 @@ class Loginscreen extends StatelessWidget {
 
   _header(context) {
     return Container(
+       height: 120.0,
+      width: 100.0,
       margin: const EdgeInsets.all(10.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.purple,
         border: Border.all(),
+
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(15.0),
           bottomRight: Radius.circular(15.0),
+          topRight: Radius.circular(15.0),
+          bottomLeft: Radius.circular(15.0),
         ),
       ), //             <--- BoxDecoration here
       child: Text(
@@ -88,7 +100,7 @@ class Loginscreen extends StatelessWidget {
         ),
         SizedBox(height: 10),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: ()=> _loginPressed(context),
           child: Text(
             "SIGN IN",
             style: TextStyle(fontSize: 20),
