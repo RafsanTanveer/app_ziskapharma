@@ -61,6 +61,7 @@ flutter:
     - assets/images/ziskaPharmaIcon.png
     - assets/images/alifsoft.PNG
     - assets/images/alifsoftlogo.jpg
+    - assets/images/person.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -13,7 +13,7 @@ class _LoginscreenState extends State<Loginscreen> {
     if (userTxtCntrl.text == 'admin' && passTxtCntrl.text == '123') {
       Navigator.pushReplacementNamed(context, '/mainmgt');
     } else {
-       Navigator.pushReplacementNamed(context, '/mainmgt');
+      Navigator.pushReplacementNamed(context, '/mainmgt');
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(const SnackBar(content: Text('Wrong Username or Password')));
     }
@@ -38,6 +38,7 @@ class _LoginscreenState extends State<Loginscreen> {
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,
+            fontSize: MediaQuery.of(context).size.height*.024
           ),
         ),
         backgroundColor: Colors.greenAccent[400],
@@ -66,9 +67,12 @@ class _LoginscreenState extends State<Loginscreen> {
   }
 
   _header(context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+
     return Container(
-      height: 110.0,
-      width: 100.0,
+      height: height*.13,
+      width: width*.3,
       margin: const EdgeInsets.all(10.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
@@ -80,7 +84,7 @@ class _LoginscreenState extends State<Loginscreen> {
         "Galaxy Pharma ERP",
         textAlign: TextAlign.center,
         style: TextStyle(
-            fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.w900),
+            fontSize: height * .022, color: Colors.white, fontWeight: FontWeight.w900),
       ),
     );
   }
@@ -131,33 +135,40 @@ class _LoginscreenState extends State<Loginscreen> {
   }
 
   _forgotPassword(context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return Column(
       children: [
         Image.asset(
           'assets/images/ziskaPharmaIcon.png',
-          height: 100,
-          width: 100,
+          height: width *.3,
+          width: width * .3,
         ),
         Text(
           'Ziska Pharmaceuticals Ltd.',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize:  height * .023, fontWeight: FontWeight.w500),
         ),
       ],
     );
   }
 
   _signup(context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset('assets/images/alifsoft.PNG'),
+        Image.asset('assets/images/alifsoft.PNG',
+        //  height: width * .2,
+        //   width: width * .2,
+        ),
         Text(
           "Developed By : Alif Soft ",
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: height*.023, fontWeight: FontWeight.w500),
         ),
         Text(
           "Mobile No : +88-01817042056 ",
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize:  height * .017, fontWeight: FontWeight.w500),
         ),
       ],
     );

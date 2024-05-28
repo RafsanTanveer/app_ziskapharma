@@ -6,6 +6,7 @@ class Salesmgtscreen extends StatelessWidget {
     Navigator.pushReplacementNamed(context, '/areasetting');
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,6 +20,7 @@ class Salesmgtscreen extends StatelessWidget {
           ),
         ),
         backgroundColor: Colors.greenAccent[400],
+
       ),
       body: SafeArea(
         child: Container(
@@ -45,12 +47,14 @@ class Salesmgtscreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                margin: const EdgeInsets.all(10),
+                height: MediaQuery.of(context).size.height*.12,
+                width: MediaQuery.of(context).size.width*.4,
+                margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
                   onPressed: () => {Navigator.pushNamed(context, '/userinfo')},
                   child: Text(
                     "USER INFO CHANGE",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
                     textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -59,17 +63,19 @@ class Salesmgtscreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   ),
                 ),
               ),
               Container(
-                margin: const EdgeInsets.all(10),
+                 height: MediaQuery.of(context).size.height * .12,
+                width: MediaQuery.of(context).size.width * .4,
+                margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
                   onPressed: () => {},
                   child: Text(
                     "DEFAULT TERRITORY",
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
                     textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -78,7 +84,7 @@ class Salesmgtscreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 30, horizontal: 16),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   ),
                 ),
               ),
@@ -91,12 +97,14 @@ class Salesmgtscreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                margin: const EdgeInsets.all(10),
+                 height: MediaQuery.of(context).size.height * .12,
+                width: MediaQuery.of(context).size.width * .4,
+                margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
                   onPressed: () => {},
                   child: Text(
                     "CUSTOMER LIST",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
                     textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -105,16 +113,18 @@ class Salesmgtscreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   ),
                 ),
               ),
               Container(
+                 height: MediaQuery.of(context).size.height * .12,
+                width: MediaQuery.of(context).size.width * .4,
                 margin: const EdgeInsets.all(10),
                 child: ElevatedButton(
                   onPressed: () => {},
                   child: Text("SALES ORDER ONCO",
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.visible),
                   style: ElevatedButton.styleFrom(
@@ -123,7 +133,7 @@ class Salesmgtscreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   ),
                 ),
               )
@@ -136,12 +146,14 @@ class Salesmgtscreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                margin: const EdgeInsets.all(10),
+                 height: MediaQuery.of(context).size.height * .12,
+                width: MediaQuery.of(context).size.width * .4,
+                margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
-                  onPressed: () => {},
+                 onPressed: () => {Navigator.pushNamed(context, '/cstrstts')},
                   child: Text(
                     "CUSTOMER SETTINGS",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
                     textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -150,16 +162,19 @@ class Salesmgtscreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   ),
                 ),
               ),
               Container(
-                margin: const EdgeInsets.all(10),
+                 height: MediaQuery.of(context).size.height * .12,
+                width: MediaQuery.of(context).size.width * .4,
+                margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
+
                   onPressed: () => {},
                   child: Text("SALES ORDER ONCO LIST",
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.visible),
                   style: ElevatedButton.styleFrom(
@@ -168,7 +183,7 @@ class Salesmgtscreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   ),
                 ),
               )
@@ -181,12 +196,14 @@ class Salesmgtscreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                margin: const EdgeInsets.all(10),
+                 height: MediaQuery.of(context).size.height * .12,
+                width: MediaQuery.of(context).size.width * .4,
+                margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
                   onPressed: () => {},
                   child: Text(
                     "INVOICE APPROVAL",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
                     textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -195,7 +212,7 @@ class Salesmgtscreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   ),
                 ),
               ),

@@ -8,17 +8,31 @@ class Mainmgtscreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height ;
     return Scaffold(
       drawer: Drawer(),
       appBar: AppBar(
         title: Text(
           'Galaxy Pharma App',
           style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-          ),
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: height * .024),
         ),
         backgroundColor: Colors.greenAccent[400],
+        actions: [
+          IconButton(
+            icon: Text(
+              'Sign Out',
+              style: TextStyle(
+                  color: Colors.red,
+                  fontSize: MediaQuery.of(context).size.height * .02,
+                  fontWeight: FontWeight.w900),
+            ),
+            onPressed: () =>
+                {Navigator.pushReplacementNamed(context, '/loging')},
+          ),
+        ],
       ),
       body: SafeArea(
         child: Container(
@@ -37,6 +51,8 @@ class Mainmgtscreen extends StatelessWidget {
   }
 
   _header(context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return Column(
       children: [
         Padding(
@@ -45,43 +61,44 @@ class Mainmgtscreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
+                height: height * .15,
+                width: width * .35,
                 margin: const EdgeInsets.all(10),
-
                 child: ElevatedButton(
                   onPressed: () => {Navigator.pushNamed(context, '/salesmgt')},
                   child: Text(
                     "SALES",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: height * .024),
                     textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
-                     elevation: 3,
+                    elevation: 3,
                     maximumSize: Size(150, 150),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 30, horizontal: 40),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   ),
                 ),
               ),
               Container(
+                height: height * .15,
+                width: width * .35,
                 margin: const EdgeInsets.all(10),
-
                 child: ElevatedButton(
-
                   onPressed: () => {},
                   child: Text(
                     "PRODUCTION",
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: height * .022),
                     textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
-                     elevation: 3,
+                    elevation: 3,
                     maximumSize: Size(150, 150),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 30, horizontal: 16),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   ),
                 ),
               )
@@ -90,35 +107,38 @@ class Mainmgtscreen extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
+                height: height * .15,
+                width: width * .35,
                 margin: const EdgeInsets.all(10),
                 child: ElevatedButton(
                   onPressed: () => {},
                   child: Text(
                     "ABOUT MOBILE",
-                    style: TextStyle(fontSize: 20),textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: height * .024),
+                    textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
-                     elevation: 3,
+                    elevation: 3,
                     maximumSize: Size(150, 150),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   ),
                 ),
               ),
               Container(
+                height: height * .15,
+                width: width * .35,
                 margin: const EdgeInsets.all(10),
-
                 child: ElevatedButton(
                   onPressed: () => {},
                   child: Text("QR Code Scan",
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: height * .024),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.visible),
                   style: ElevatedButton.styleFrom(
@@ -127,8 +147,7 @@ class Mainmgtscreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   ),
                 ),
               )
@@ -138,7 +157,6 @@ class Mainmgtscreen extends StatelessWidget {
       ],
     );
   }
-
 
   _forgotPassword(context) {
     return Column(
