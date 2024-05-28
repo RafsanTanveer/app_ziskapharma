@@ -32,7 +32,7 @@ class Userinfoscreen extends StatelessWidget {
                       Image.asset(
                         'assets/images/person.png',
                       ),
-                      
+
                     ],
                   ),
                   textFeild("User Id", "User Id"),
@@ -45,6 +45,10 @@ class Userinfoscreen extends StatelessWidget {
                   textFeild("Department Name", "Department Name"),
                   textFeild("Branch Code", "Branch Code"),
                   textFeild("Branch Name", "Branch Name"),
+                   Image.asset(
+                    'assets/images/sign.png',
+                  ),
+
                   Row(
                     children: [
                       Container(
