@@ -72,7 +72,7 @@ class Salesmgtscreen extends StatelessWidget {
                 width: MediaQuery.of(context).size.width * .4,
                 margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
-                  onPressed: () => {},
+                  onPressed: () => {Navigator.pushNamed(context, '/areasetting')},
                   child: Text(
                     "DEFAULT TERRITORY",
                     style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),

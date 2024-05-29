@@ -5,6 +5,7 @@ import './screens/mainMgtScreen.dart';
 import './screens/salesMgtScreen.dart';
 import './screens/userInfoScreen.dart';
 import './screens/customerSettingScreen.dart';
+import './screens/areaSetting.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         "/salesmgt": (context) => Salesmgtscreen(),
         "/userinfo": (context) => Userinfoscreen(),
         "/cstrstts": (context) => CustomerSettingScreen(),
+
       },
       home: Loginscreen(),
     );
