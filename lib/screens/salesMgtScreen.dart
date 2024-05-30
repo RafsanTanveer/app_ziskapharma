@@ -101,7 +101,9 @@ class Salesmgtscreen extends StatelessWidget {
                 width: MediaQuery.of(context).size.width * .4,
                 margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
-                  onPressed: () => {},
+                                    onPressed: () =>
+                      {Navigator.pushNamed(context, '/cusgrpstts')},
+
                   child: Text(
                     "CUSTOMER LIST",
                     style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
