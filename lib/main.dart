@@ -7,6 +7,8 @@ import './screens/userInfoScreen.dart';
 import './screens/customerSettingScreen.dart';
 import './screens/areaSetting.dart';
 import './screens/customerGroupSettingScreen.dart';
+import './screens/salesInvoiceScreen.dart';
+import './screens/salesInvoiceViewScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,7 +37,8 @@ class MyApp extends StatelessWidget {
         "/userinfo": (context) => Userinfoscreen(),
         "/cstrstts": (context) => CustomerSettingScreen(),
         "/cusgrpstts": (context) => Customergroupsettingscreen(),
-
+        "/slsinvapprvl": (context) => Salesinvoicescreen(),
+        "/slsinvview": (context) => Salesinvoiceviewscreen(),
       },
       home: Loginscreen(),
     );
