@@ -1,6 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+
+import 'package:http/http.dart' as http;
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Loginscreen extends StatefulWidget {
   @override
@@ -8,14 +14,48 @@ class Loginscreen extends StatefulWidget {
 }
 
 class _LoginscreenState extends State<Loginscreen> {
-  void _loginPressed(BuildContext context) {
-    print("Login pressed");
-    if (userTxtCntrl.text == 'admin' && passTxtCntrl.text == '123') {
-      Navigator.pushReplacementNamed(context, '/mainmgt');
-    } else {
-      Navigator.pushReplacementNamed(context, '/mainmgt');
-      // ScaffoldMessenger.of(context)
-      //     .showSnackBar(const SnackBar(content: Text('Wrong Username or Password')));
+  void _loginPressed(BuildContext context) async {
+    Navigator.pushReplacementNamed(context, '/mainmgt');
+    print("Login pressed*****************************************************");
+
+    final String userUID = userTxtCntrl.text;
+    final String userPws = passTxtCntrl.text;
+
+    final body = json.encode({
+      "Table1": [
+        {"user_UID": userUID, "user_Pws": userPws}
+      ]
+    });
+
+    // print(response.body);
+
+    try {
+      final url = Uri.parse(
+          // 'http://10.0.2.2:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
+          'http://192.168.0.106:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
+      // 'http://localhost:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: body,
+      );
+
+      print('response  ----------------------------------------------------- ');
+      print(response.body);
+
+      final responseData = await json.decode(json.encode(response.body));
+      print(responseData);
+      await json.decode(response.body);
+
+      if (responseData.statusCode == 200) {
+        Navigator.pushReplacementNamed(context, '/mainmgt');
+      } else {}
+    } catch (e) {
+      print('error  ((((((((((((((((((((()))))))))))))))))))))');
+      print(e);
     }
   }
 
@@ -36,10 +76,9 @@ class _LoginscreenState extends State<Loginscreen> {
         title: Text(
           'Galaxy Pharma App',
           style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: MediaQuery.of(context).size.height*.024
-          ),
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: MediaQuery.of(context).size.height * .024),
         ),
         backgroundColor: Colors.greenAccent[400],
         actions: [
@@ -71,8 +110,8 @@ class _LoginscreenState extends State<Loginscreen> {
     var width = MediaQuery.of(context).size.width;
 
     return Container(
-      height: height*.13,
-      width: width*.3,
+      height: height * .13,
+      width: width * .3,
       margin: const EdgeInsets.all(10.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
@@ -84,7 +123,9 @@ class _LoginscreenState extends State<Loginscreen> {
         "Galaxy Pharma ERP",
         textAlign: TextAlign.center,
         style: TextStyle(
-            fontSize: height * .022, color: Colors.white, fontWeight: FontWeight.w900),
+            fontSize: height * .022,
+            color: Colors.white,
+            fontWeight: FontWeight.w900),
       ),
     );
   }
@@ -141,12 +182,13 @@ class _LoginscreenState extends State<Loginscreen> {
       children: [
         Image.asset(
           'assets/images/ziskaPharmaIcon.png',
-          height: width *.3,
+          height: width * .3,
           width: width * .3,
         ),
         Text(
           'Ziska Pharmaceuticals Ltd.',
-          style: TextStyle(fontSize:  height * .023, fontWeight: FontWeight.w500),
+          style:
+              TextStyle(fontSize: height * .023, fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -158,17 +200,20 @@ class _LoginscreenState extends State<Loginscreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset('assets/images/alifsoft.PNG',
-        //  height: width * .2,
-        //   width: width * .2,
+        Image.asset(
+          'assets/images/alifsoft.PNG',
+          //  height: width * .2,
+          //   width: width * .2,
         ),
         Text(
           "Developed By : Alif Soft ",
-          style: TextStyle(fontSize: height*.023, fontWeight: FontWeight.w500),
+          style:
+              TextStyle(fontSize: height * .023, fontWeight: FontWeight.w500),
         ),
         Text(
           "Mobile No : +88-01817042056 ",
-          style: TextStyle(fontSize:  height * .017, fontWeight: FontWeight.w500),
+          style:
+              TextStyle(fontSize: height * .017, fontWeight: FontWeight.w500),
         ),
       ],
     );
