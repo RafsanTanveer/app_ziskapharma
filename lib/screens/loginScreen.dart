@@ -15,7 +15,7 @@ class Loginscreen extends StatefulWidget {
 
 class _LoginscreenState extends State<Loginscreen> {
   void _loginPressed(BuildContext context) async {
-    Navigator.pushReplacementNamed(context, '/mainmgt');
+    // Navigator.pushReplacementNamed(context, '/mainmgt');
     print("Login pressed*****************************************************");
 
     final String userUID = userTxtCntrl.text;
@@ -27,18 +27,23 @@ class _LoginscreenState extends State<Loginscreen> {
       ]
     });
 
-    // print(response.body);
-
     try {
       final url = Uri.parse(
           // 'http://10.0.2.2:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
-          'http://192.168.0.106:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
-      // 'http://localhost:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
+          // 'http://192.168.0.106:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
+      'http://localhost:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
+
+      print(url);
 
       final response = await http.post(
         url,
         headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": 'true',
+          "Access-Control-Allow-Headers":
+              "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
           "Content-Type": "application/json",
+          "Access-Control-Allow-Methods": "POST, OPTIONS"
         },
         body: body,
       );
@@ -48,9 +53,9 @@ class _LoginscreenState extends State<Loginscreen> {
 
       final responseData = await json.decode(json.encode(response.body));
       print(responseData);
-      await json.decode(response.body);
 
-      if (responseData.statusCode == 200) {
+
+      if (responseData=='true') {
         Navigator.pushReplacementNamed(context, '/mainmgt');
       } else {}
     } catch (e) {
