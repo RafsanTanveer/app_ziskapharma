@@ -1,3 +1,4 @@
+import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import './screens/loginScreen.dart';
 import './screens/areaSetting.dart';
@@ -10,8 +11,14 @@ import './screens/customerGroupSettingScreen.dart';
 import './screens/salesInvoiceScreen.dart';
 import './screens/salesInvoiceViewScreen.dart';
 
+import 'package:provider/provider.dart';
+
+
+
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_)=>AuthProvider())
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

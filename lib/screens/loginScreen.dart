@@ -2,11 +2,12 @@
 
 import 'dart:convert';
 
+import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class Loginscreen extends StatefulWidget {
   @override
@@ -15,6 +16,8 @@ class Loginscreen extends StatefulWidget {
 
 class _LoginscreenState extends State<Loginscreen> {
   void _loginPressed(BuildContext context) async {
+    final provider = Provider.of<AuthProvider>(context, listen: false);
+
     // Navigator.pushReplacementNamed(context, '/mainmgt');
     print("Login pressed*****************************************************");
 
@@ -26,12 +29,13 @@ class _LoginscreenState extends State<Loginscreen> {
         {"user_UID": userUID, "user_Pws": userPws}
       ]
     });
-
+//http://192.168.0.106:45455/Default.aspx
     try {
       final url = Uri.parse(
           // 'http://10.0.2.2:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
           // 'http://192.168.0.106:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
-      'http://localhost:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
+          'http://192.168.0.106:45455/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
+      // 'http://localhost:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
 
       print(url);
 
@@ -54,8 +58,10 @@ class _LoginscreenState extends State<Loginscreen> {
       final responseData = await json.decode(json.encode(response.body));
       print(responseData);
 
-
-      if (responseData=='true') {
+      if (responseData == 'true') {
+        // provider.setUserId(userUID.toString());
+        context.read<AuthProvider>().setUserId(userUID);
+        context.read<AuthProvider>().setUserPass(userPws);
         Navigator.pushReplacementNamed(context, '/mainmgt');
       } else {}
     } catch (e) {
@@ -76,6 +82,7 @@ class _LoginscreenState extends State<Loginscreen> {
 
   @override
   Widget build(BuildContext context) {
+    // final provider = Provider.of<AuthProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -200,6 +207,8 @@ class _LoginscreenState extends State<Loginscreen> {
   }
 
   _signup(context) {
+    final provider = Provider.of<AuthProvider>(context);
+
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Column(

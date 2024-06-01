@@ -1,10 +1,34 @@
+import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'dart:convert';
 
 class Userinfoscreen extends StatelessWidget {
   const Userinfoscreen({super.key});
 
+  _submitHandler(BuildContext context) async {
+    print('submittttttttttttttt');
+
+    try {
+      final url = Uri.parse(
+          'http://192.168.0.106:45455/api/LogIn/ProcessTableCompanyInfo/?user_UID=admin');
+
+      final response =await http.get(url);
+
+      print(response.body);
+
+      final responseData = await json.decode(json.encode(response.body));
+      print(responseData);
+
+    } catch (e) {}
+  }
+
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AuthProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -32,11 +56,10 @@ class Userinfoscreen extends StatelessWidget {
                       Image.asset(
                         'assets/images/person.png',
                       ),
-
                     ],
                   ),
-                  textFeild("User Id", "User Id"),
-                  textFeild("Password", "Password"),
+                  textFeild(provider.user_id, "User Id"),
+                  textFeild(provider.user_pass, "Password"),
                   textFeild("Full Name", "Full Name"),
                   textFeild("Designation", "Designation"),
                   textFeild("Mobile no.", "Mobile no."),
@@ -45,10 +68,9 @@ class Userinfoscreen extends StatelessWidget {
                   textFeild("Department Name", "Department Name"),
                   textFeild("Branch Code", "Branch Code"),
                   textFeild("Branch Name", "Branch Name"),
-                   Image.asset(
+                  Image.asset(
                     'assets/images/sign.png',
                   ),
-
                   Row(
                     children: [
                       Container(
@@ -65,16 +87,15 @@ class Userinfoscreen extends StatelessWidget {
                                 padding: EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 10),
                               ),
-                              onPressed: () => {},
+                              onPressed: () => {_submitHandler(context)},
                               child: Text(
                                 'Submit',
-                                                             style: TextStyle(
+                                style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w900,
                                     fontSize:
                                         MediaQuery.of(context).size.height *
                                             .020),
-
                               ))),
                       Container(
                         margin: EdgeInsets.all(10),
@@ -94,7 +115,11 @@ class Userinfoscreen extends StatelessWidget {
                                 {Navigator.pop(context, '/salesmgt')},
                             child: Text(
                               'Cancel',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: MediaQuery.of(context).size.height*.020),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: MediaQuery.of(context).size.height *
+                                      .020),
                             )),
                       ),
                     ],

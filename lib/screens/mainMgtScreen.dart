@@ -1,4 +1,6 @@
+import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Mainmgtscreen extends StatelessWidget {
   void _loginPressed(BuildContext context) {
@@ -9,6 +11,7 @@ class Mainmgtscreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height ;
+
     return Scaffold(
       drawer: Drawer(),
       appBar: AppBar(
@@ -176,11 +179,13 @@ class Mainmgtscreen extends StatelessWidget {
   }
 
   _signup(context) {
+     final provider = Provider.of<AuthProvider>(context, listen: false);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Md. Ali Hossain",
+          provider.user_id,
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
         ),
         Text(
