@@ -10,8 +10,9 @@ class User {
 
   // final double userComID;
   // final String userComCode;
-  // final double userBrnID;
-  // final String userBrnCode;
+  final double userBrnID;
+
+  final String userBrnCode;
   final String userBrnName;
   final String userDepartmentCode;
 
@@ -102,7 +103,6 @@ class User {
   // final bool superAdministrator;
   // final bool statusActive;
   // final bool statusInactive;
-  
 
   final String userImagePicture;
   final String userImageSignature;
@@ -115,11 +115,10 @@ class User {
     required this.userFullName,
     // required this.userComID,
     // required this.userComCode,
-    // required this.userBrnID,
-    // required this.userBrnCode,
+    required this.userBrnID,
+    required this.userBrnCode,
     required this.userBrnName,
     required this.userDepartmentCode,
-
     required this.userDepartment,
 
     // required this.userStatus,
@@ -222,11 +221,10 @@ class User {
 
         // userComID: json['user_ComID'].toDouble(),
         // userComCode: json['user_ComCode'],
-        // userBrnID: json['user_BrnID'].toDouble(),
-        // userBrnCode: json['user_BrnCode'].toDouble(),
+        userBrnID: json['user_BrnID'] ?? '',
+        userBrnCode: json['user_BrnCode'] ?? '',
         userBrnName: json['user_BrnName'],
         userDepartmentCode: json['user_DepartmentCode'],
-
         userDepartment: json['user_Department'],
 
         // userStatus: json['user_Status'],
