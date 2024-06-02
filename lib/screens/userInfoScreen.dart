@@ -5,29 +5,42 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'dart:convert';
 
-class Userinfoscreen extends StatelessWidget {
+class Userinfoscreen extends HookWidget {
   const Userinfoscreen({super.key});
 
   _submitHandler(BuildContext context) async {
     print('submittttttttttttttt');
-
-    try {
-      final url = Uri.parse(
-          'http://192.168.0.106:45455/api/LogIn/ProcessTableCompanyInfo/?user_UID=admin');
-
-      final response =await http.get(url);
-
-      print(response.body);
-
-      final responseData = await json.decode(json.encode(response.body));
-      print(responseData);
-
-    } catch (e) {}
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AuthProvider>(context, listen: false);
+    final userData = useState([]);
+
+    _printValue() {
+      print(userData.value);
+    }
+
+    _fetchData() async {
+      try {
+        final url = Uri.parse(
+            'http://192.168.0.106:45455/api/LogIn/ProcessTableCompanyInfo/?user_UID=admin');
+
+        final response = await http.get(url);
+
+        // print(response.body);
+
+        final responseData = await json.decode(json.encode(response.body));
+        print(responseData);
+        userData.value = responseData;
+      } catch (e) {}
+    }
+
+    useEffect(() {
+      print('fffffffffffffffffffffffffffffffffffffffffffffff');
+
+      _fetchData();
+    }, []);
 
     return Scaffold(
       appBar: AppBar(
@@ -87,7 +100,7 @@ class Userinfoscreen extends StatelessWidget {
                                 padding: EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 10),
                               ),
-                              onPressed: () => {_submitHandler(context)},
+                              onPressed: () => {_printValue()},
                               child: Text(
                                 'Submit',
                                 style: TextStyle(
