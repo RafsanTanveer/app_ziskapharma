@@ -16,7 +16,8 @@ class Userinfoscreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AuthProvider>(context, listen: false);
-    final userData = useState([]);
+    final userData = useState<User?>(null);
+    var dataUser;
 
     _printValue() {
       print(userData.value);
@@ -32,28 +33,21 @@ class Userinfoscreen extends HookWidget {
         // print(response.body[0]);
 
         final jsonData = json.decode(response.body);
-
-        print(jsonData['Table'][0]['user_OID']);
+        // dataUser = jsonData;
+        // print(dataUser);
+        // userData.value = jsonData;
+        // print(userData.value);
+        // print(jsonData['Table'][0]['user_OID']);
+        // print(jsonData['Table'][0]['user_imagePicture']);
 
         User user = parseUserFromJson(response.body);
-
-        print(user.userFullName);
-
-        // data['user_imagePicture']
-
-        // final responseData = await json.decode(json.encode(response.body));
-        // User user = parseUserFromJson(responseData);
-        //final Map<String, dynamic> data = json.decode(responseData.body);
-        // print(responseData);
-        // print(data['Table'][0]['user_OID']);
-
-        // print(user.taskAccounts);
-        // print('ggggggggggggggggggggggggggggggggggggg');
-        // print(responseData[0]);
-        // print(responseData[1]);
-        // print(responseData[2]);
-        // print(responseData[3]);
-        // userData.value = responseData;
+         userData.value = user;
+        // dataUser = user;
+        // print(dataUser.userFullName);
+        // print("Hello");
+        // print(user.userFullName);
+        // print(user.userOID);
+        // print(user.userImagePicture);
       } catch (e) {}
     }
 
@@ -94,14 +88,14 @@ class Userinfoscreen extends HookWidget {
                   ),
                   textFeild(provider.user_id, "User Id"),
                   textFeild(provider.user_pass, "Password"),
-                  textFeild("Full Name", "Full Name"),
-                  textFeild("Designation", "Designation"),
-                  textFeild("Mobile no.", "Mobile no."),
-                  textFeild("Email", "Email"),
-                  textFeild("Department Code", "Department Code"),
-                  textFeild("Department Name", "Department Name"),
+                  textFeild(userData.value!.userFullName, "Full Name"),
+                  textFeild(userData.value!.userDesignation, "Designation"),
+                  textFeild(userData.value!.userMobileNo, "Mobile no."),
+                  textFeild(userData.value!.userEmail, "Email"),
+                  textFeild(userData.value!.userDepartment, "Department Code"),
+                  textFeild(userData.value!.userDepartment, "Department Name"),
                   textFeild("Branch Code", "Branch Code"),
-                  textFeild("Branch Name", "Branch Name"),
+                  textFeild(userData.value!.userBrnName, "Branch Name"),
                   Image.asset(
                     'assets/images/sign.png',
                   ),
