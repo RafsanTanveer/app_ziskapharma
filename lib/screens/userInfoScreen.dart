@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'dart:convert';
+import '../model/sample.dart';
 
 class Userinfoscreen extends HookWidget {
   const Userinfoscreen({super.key});
@@ -24,15 +25,35 @@ class Userinfoscreen extends HookWidget {
     _fetchData() async {
       try {
         final url = Uri.parse(
-            'http://192.168.0.106:45455/api/LogIn/ProcessTableCompanyInfo/?user_UID=admin');
+            'http://192.168.0.106:45455/api/UserInfo/Proc_UserDisplayByApi/?user_UID=admin');
 
         final response = await http.get(url);
 
-        // print(response.body);
+        // print(response.body[0]);
 
-        final responseData = await json.decode(json.encode(response.body));
-        print(responseData);
-        userData.value = responseData;
+        final jsonData = json.decode(response.body);
+
+        print(jsonData['Table'][0]['user_OID']);
+
+        User user = parseUserFromJson(response.body);
+
+        print(user.userFullName);
+
+        // data['user_imagePicture']
+
+        // final responseData = await json.decode(json.encode(response.body));
+        // User user = parseUserFromJson(responseData);
+        //final Map<String, dynamic> data = json.decode(responseData.body);
+        // print(responseData);
+        // print(data['Table'][0]['user_OID']);
+
+        // print(user.taskAccounts);
+        // print('ggggggggggggggggggggggggggggggggggggg');
+        // print(responseData[0]);
+        // print(responseData[1]);
+        // print(responseData[2]);
+        // print(responseData[3]);
+        // userData.value = responseData;
       } catch (e) {}
     }
 
