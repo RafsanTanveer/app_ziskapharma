@@ -102,6 +102,7 @@ class User {
   // final bool superAdministrator;
   // final bool statusActive;
   // final bool statusInactive;
+  
 
   final String userImagePicture;
   final String userImageSignature;
