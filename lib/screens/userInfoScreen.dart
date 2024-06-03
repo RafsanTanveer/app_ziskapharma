@@ -8,6 +8,8 @@ import '../model/sample.dart';
 
 import '../dataaccess/apiAccess.dart' as apiAccess;
 
+import '../custom_widgets/textFormField.dart';
+
 class Userinfoscreen extends HookWidget {
   const Userinfoscreen({super.key});
 
@@ -85,7 +87,6 @@ class Userinfoscreen extends HookWidget {
           }
         ]
       });
-      
 
       try {
         final response = await http.post(url, headers: headers, body: payload);
@@ -149,26 +150,50 @@ class Userinfoscreen extends HookWidget {
                                     userData.value!.userImagePicture)))
                           ],
                         ),
-                        textFeild(userData.value!.userUID ?? "", "User Id",
-                            userIdController),
-                        textFeild(userData.value!.userPws ?? "", "Password",
-                            passwordController),
-                        textFeild(userData.value!.userFullName ?? "",
-                            "Full Name", fullNameController),
-                        textFeild(userData.value!.userDesignation ?? "",
-                            "Designation", userDesignationController),
-                        textFeild(userData.value!.userMobileNo ?? "",
-                            "Mobile no.", userMobileNoController),
-                        textFeild(userData.value!.userEmail ?? "", "Email",
-                            userEmailController),
-                        textFeild(userData.value!.userDepartmentCode ?? "",
-                            "Department Code", userDepartmentCodeController),
-                        textFeild(userData.value!.userDepartment ?? "",
-                            "Department Name", userDepartmentController),
-                        textFeild(userData.value!.userBrnCode ?? "",
-                            "Branch Code", userBrnCodeController),
-                        textFeild(userData.value!.userBrnName ?? "",
-                            "Branch Name", userBrnNameController),
+                        CustomTextFormField(
+                            controller: userIdController,
+                            hint: userData.value!.userUID ?? "",
+                            title: "User Id"),
+                        CustomTextFormField(
+                            controller: passwordController,
+                            hint: userData.value!.userPws ?? "",
+                            title: "Password"),
+                        CustomTextFormField(
+                            controller: fullNameController,
+                            hint: userData.value!.userFullName ?? "",
+                            title: "Full Name"),
+                        CustomTextFormField(
+                            controller: userDesignationController,
+                            hint: userData.value!.userDesignation ?? "",
+                            title: "Designation"),
+                        CustomTextFormField(
+                            controller: userMobileNoController,
+                            hint: userData.value!.userMobileNo ?? "",
+                            title: "Mobile no."),
+                        CustomTextFormField(
+                            controller: userEmailController,
+                            hint: userData.value!.userEmail ?? "",
+                            title: "Email"),
+                        CustomTextFormField(
+                            controller: userDepartmentCodeController,
+                            hint: userData.value!.userDepartmentCode ?? "",
+                            title: "Department Code"),
+                        CustomTextFormField(
+                            controller: userDepartmentController,
+                            hint: userData.value!.userDepartment ?? "",
+                            title: "Department Name"),
+                        CustomTextFormField(
+                            controller: userBrnCodeController,
+                            hint: userData.value!.userBrnCode ?? "",
+                            title: "Branch Code"),
+                        CustomTextFormField(
+                            controller: userBrnNameController,
+                            hint: userData.value!.userBrnName ?? "",
+                            title: "Branch Name"),
+                        CustomTextFormField(
+                            controller: userBrnNameController,
+                            hint: userData.value!.userBrnName ?? "",
+                            title: "Branch Name"),
                         SizedBox(
                             width: MediaQuery.of(context).size.width * .3,
                             child: Image.memory(base64Decode(
@@ -240,30 +265,5 @@ class Userinfoscreen extends HookWidget {
     );
   }
 
-  Widget textFeild(String hint, String title, TextEditingController? control) {
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(bottom: 12),
-          child: TextFormField(
-            controller: control,
-            onChanged: (text) {
-              // Update the text in the controller when the text field changes
-              control?.text = text;
-              print(text);
-            },
-            decoration: InputDecoration(
-                hintText: hint, enabledBorder: const OutlineInputBorder()),
-          ),
-        ),
-      ],
-    );
-  }
+
 }
