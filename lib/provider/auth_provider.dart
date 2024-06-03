@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AuthProvider extends ChangeNotifier {
-  String user_id = 'aliiiiiiiiii';
-  String user_pass = 'aliiiiiiiiii';
+  String user_id = '';
+  String user_pass = '';
 
   setUserId(String uid) {
     user_id = uid;

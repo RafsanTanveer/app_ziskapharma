@@ -1,3 +1,4 @@
+import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
 import 'package:flutter/material.dart';
 
 class CustomerSettingScreen extends StatelessWidget {
@@ -5,15 +6,27 @@ class CustomerSettingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController typeNameController = TextEditingController();
+    TextEditingController territoryCodeController = TextEditingController();
+    TextEditingController territoryNameController = TextEditingController();
+    TextEditingController customerNameController = TextEditingController();
+    TextEditingController addressController = TextEditingController();
+    TextEditingController mobileController = TextEditingController();
+    TextEditingController categoryCodeController = TextEditingController();
+    TextEditingController categoryNameController = TextEditingController();
+    TextEditingController refCodeController = TextEditingController();
+    TextEditingController refNameController = TextEditingController();
+    TextEditingController rulesNoController = TextEditingController();
+    TextEditingController rulesNameController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Customer Information Settings',
           style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: MediaQuery.of(context).size.height*.022
-          ),
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: MediaQuery.of(context).size.height * .022),
         ),
         backgroundColor: Colors.greenAccent[400],
       ),
@@ -28,20 +41,54 @@ class CustomerSettingScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-
-                  textFeild("Type Name", "Type Name"),
-                  textFeild("Territory Code", "Territory Code"),
-                  textFeild("Territory Name", "Territory Name"),
-                  textFeild("Customer Name", "Customer Name *"),
-                  textFeild("Address", "Address *"),
-                  textFeild("Mobile", "Mobile *"),
-                  textFeild("Mobile", "Mobile *"),
-                  textFeild("Category Code", "Category Code"),
-                  textFeild("Category Name", "Category Name"),
-                  textFeild("Ref. Code", "Ref. Code"),
-                  textFeild("Ref. Name", "Ref. Name"),
-                  textFeild("Rules No.", "Rules No."),
-                  textFeild("Rules Name.", "Rules Name."),
+                  CustomTextFormField(
+                      controller: typeNameController,
+                      hint: "hint",
+                      title: "Type Name"),
+                  CustomTextFormField(
+                      controller: territoryCodeController,
+                      hint: 'hint',
+                      title: "Territory Code"),
+                  CustomTextFormField(
+                      controller: territoryNameController,
+                      hint: "hint",
+                      title: "Territory Name"),
+                  CustomTextFormField(
+                      controller: customerNameController,
+                      hint: "hint",
+                      title: "Customer Name"),
+                  CustomTextFormField(
+                      controller: addressController,
+                      hint: 'hint',
+                      title: "Address *"),
+                  CustomTextFormField(
+                      controller: mobileController,
+                      hint: 'hint',
+                      title: "Mobile *"),
+                  CustomTextFormField(
+                      controller: categoryCodeController,
+                      hint: 'hint',
+                      title: "Category Code"),
+                  CustomTextFormField(
+                      controller: categoryNameController,
+                      hint: 'hint',
+                      title: "Category Name"),
+                  CustomTextFormField(
+                      controller: refCodeController,
+                      hint: 'hint',
+                      title: "Ref. Code"),
+                  CustomTextFormField(
+                      controller: refNameController,
+                      hint: 'hint',
+                      title: "Ref. Name"),
+                  CustomTextFormField(
+                      controller: rulesNoController,
+                      hint: 'hint',
+                      title: "Rules No."),
+                  CustomTextFormField(
+                      controller: rulesNameController,
+                      hint: 'hint',
+                      title: "Rules Name."),
                   Row(
                     children: [
                       Container(
@@ -85,7 +132,7 @@ class CustomerSettingScreen extends StatelessWidget {
                             onPressed: () =>
                                 {Navigator.pop(context, '/salesmgt')},
                             child: Text(
-                              'BAC',
+                              'BACK',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w900,
@@ -104,24 +151,5 @@ class CustomerSettingScreen extends StatelessWidget {
     );
   }
 
-  Widget textFeild(String hint, String title) {
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(bottom: 12),
-          child: TextFormField(
-            decoration: InputDecoration(
-                hintText: hint, enabledBorder: const OutlineInputBorder()),
-          ),
-        ),
-      ],
-    );
-  }
+
 }

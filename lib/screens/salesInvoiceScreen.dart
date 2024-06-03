@@ -63,8 +63,12 @@ class _SalesinvoicescreenState extends State<Salesinvoicescreen> {
           ),
           Container(
               margin: EdgeInsets.all(15),
-              child: Text('Press on invoice no. for details')),
-          _createDataTable()
+              child: Text('Press on invoice no. for details', style: TextStyle(fontWeight: FontWeight.w700),)),
+          Scrollbar(
+              thumbVisibility: true,
+              thickness: 5,
+              interactive: true,
+              radius: Radius.circular(20), child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: _createDataTable()))
         ],
       ),
     );
@@ -87,7 +91,9 @@ class _SalesinvoicescreenState extends State<Salesinvoicescreen> {
     return _books
         .map((book) => DataRow(cells: [
               DataCell(TextButton(
-                  onPressed: () => {Navigator.pushNamed(context, '/slsinvview')}, child: Text(book['id'].toString()))),
+                  onPressed: () =>
+                      {Navigator.pushNamed(context, '/slsinvview')},
+                  child: Text(book['id'].toString()))),
               DataCell(Text(book['title'])),
               DataCell(Text(book['author'])),
               DataCell(Text(book['bill'].toString())),
