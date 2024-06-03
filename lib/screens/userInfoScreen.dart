@@ -6,97 +6,86 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'dart:convert';
 import '../model/sample.dart';
 
+import '../dataaccess/apiAccess.dart' as apiAccess;
+
 class Userinfoscreen extends HookWidget {
   const Userinfoscreen({super.key});
-
-  Future<void> _submitHandler(BuildContext context, User? userData) async {
-    final url = Uri.parse(
-        'http://192.168.0.106:45455/api/UserInfo/Proc_UserUpdateByApi');
-    final headers = {"Content-Type": "application/json"};
-    final body = json.encode({
-      "userId": userData?.userUID,
-      "userPass": userData?.userPws,
-      "userFullName": userData?.userFullName,
-      "userDesignation": userData?.userDesignation,
-      "userMobileNo": userData?.userMobileNo,
-      "userEmail": userData?.userEmail,
-      "userDepartment": userData?.userDepartment,
-      "userBrnCode": userData?.userBrnCode,
-      "userBrnName": userData?.userBrnName,
-      "userImageSignature": userData?.userImageSignature,
-      // Add other fields as needed
-    });
-
-    print(body);
-
-    // try {
-    //   final response = await http.post(url, headers: headers, body: body);
-    //   if (response.statusCode == 200) {
-    //     print('Data successfully posted.');
-    //   } else {
-    //     print('Failed to post data. Status code: ${response.statusCode}');
-    //   }
-    // } catch (e) {
-    //   print('Error posting data: $e');
-    // }
-  }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AuthProvider>(context, listen: false);
     final userData = useState<User?>(null);
-    var dataUser;
 
-////////////////////////////////////////////////////////////////////////////////////
-    ///
+///////////////////////////  TextField Contrllers  ///////////////////////////////////////////////
+
     TextEditingController userIdController =
         TextEditingController(text: userData.value?.userUID ?? "");
-    TextEditingController passwordController = TextEditingController(text: userData.value?.userPws ?? "");
-    TextEditingController fullNameController = TextEditingController(text: userData.value?.userFullName ?? "");
-    TextEditingController userDesignationController = TextEditingController(text: userData.value?.userDesignation ?? "");
-    TextEditingController userMobileNoController = TextEditingController(text: userData.value?.userMobileNo ?? "");
-    TextEditingController userEmailController = TextEditingController(text: userData.value?.userEmail ?? "");
-    TextEditingController userDepartmentController = TextEditingController(text: userData.value?.userDepartment ?? "");
+    TextEditingController passwordController =
+        TextEditingController(text: userData.value?.userPws ?? "");
+    TextEditingController fullNameController =
+        TextEditingController(text: userData.value?.userFullName ?? "");
+    TextEditingController userDesignationController =
+        TextEditingController(text: userData.value?.userDesignation ?? "");
+    TextEditingController userMobileNoController =
+        TextEditingController(text: userData.value?.userMobileNo ?? "");
+    TextEditingController userEmailController =
+        TextEditingController(text: userData.value?.userEmail ?? "");
+    TextEditingController userDepartmentController =
+        TextEditingController(text: userData.value?.userDepartment ?? "");
     TextEditingController userDepartmentCodeController =
         TextEditingController(text: userData.value?.userDepartmentCode ?? "");
-    TextEditingController userBrnCodeController = TextEditingController(text: userData.value?.userBrnCode ?? "");
-    TextEditingController userBrnNameController = TextEditingController(text: userData.value?.userBrnName ?? "");
+    TextEditingController userBrnCodeController =
+        TextEditingController(text: userData.value?.userBrnCode ?? "");
+    TextEditingController userBrnNameController =
+        TextEditingController(text: userData.value?.userBrnName ?? "");
 
-// Create controllers for other fields as needed
-
-///////////////////////////////////////////////////////////////////////////////////////
-    ///
-    ///
-    ///
+///////////////////////////  TextField Contrllers  ///////////////////////////////////////////////
 
     Future<void> _submitPost() async {
-      final url =
-          Uri.parse('http://192.168.0.106:45455/api/UserInfo/Proc_SaveByApi');
+      final url = Uri.parse('${apiAccess.apiBaseUrl}/UserInfo/Proc_SaveByApi');
       final headers = {"Content-Type": "application/json"};
 
       // Create the JSON payload
       final payload = json.encode({
         "UserTable": [
           {
-            "user_ID": userIdController.text ?? userData.value!.userID,
+            "user_ID": userData.value!.userID,
             "user_UID": userIdController.text,
             "user_Pws": passwordController.text,
-            "user_FullName": fullNameController,
-            "user_Department": userDepartmentController,
-            "user_DepartmentCode": userDepartmentCodeController,
-            "user_Designation": userDesignationController,
-            "user_MobileNo": userMobileNoController,
-            "user_Email": userEmailController,
+            "user_FullName": fullNameController.text.isEmpty
+                ? userData.value!.userFullName
+                : fullNameController.text,
+            "user_Department": userDepartmentController.text.isEmpty
+                ? userData.value!.userDepartment
+                : userDepartmentController.text,
+            "user_DepartmentCode": userDepartmentCodeController.text.isEmpty
+                ? userData.value!.userDepartmentCode
+                : userDepartmentCodeController.text,
+            "user_Designation": userDesignationController.text.isEmpty
+                ? userData.value!.userDesignation
+                : userDesignationController.text,
+            "user_MobileNo": userMobileNoController.text.isEmpty
+                ? userData.value!.userMobileNo
+                : userMobileNoController.text,
+            "user_Email": userEmailController.text.isEmpty
+                ? userData.value!.userEmail
+                : userEmailController.text,
             "user_BrnID": userData.value!.userBrnID,
-            "user_BrnCode": userBrnCodeController,
-            "user_BrnName": userBrnNameController,
+            "user_BrnCode": userBrnCodeController.text.isEmpty
+                ? userData.value!.userBrnCode
+                : userBrnCodeController.text,
+            "user_BrnName": userBrnNameController.text.isEmpty
+                ? userData.value!.userBrnName
+                : userBrnNameController.text,
             "user_imagePicture": userData.value!.userImagePicture,
             "user_imageSignature": userData.value!.userImageSignature,
+            "user_MUID": userData.value!.muid,
+            "user_ComID": userData?.value?.userComID,
+            "user_ComCode": userData?.value?.userComCode,
           }
         ]
       });
-
-      print(payload);
+      
 
       try {
         final response = await http.post(url, headers: headers, body: payload);
@@ -110,42 +99,22 @@ class Userinfoscreen extends HookWidget {
       }
     }
 
-    _printValue() {
-      print(userData.value);
-    }
-
     _fetchData() async {
       try {
         final url = Uri.parse(
-            'http://192.168.0.106:45455/api/UserInfo/Proc_UserDisplayByApi/?user_UID=' +
+            '${apiAccess.apiBaseUrl}/UserInfo/Proc_UserDisplayByApi/?user_UID=' +
                 provider.user_id);
 
         final response = await http.get(url);
 
-        // print(response.body[0]);
-
         final jsonData = json.decode(response.body);
-        // dataUser = jsonData;
-        // print(dataUser);
-        // userData.value = jsonData;
-        // print(userData.value);
-        // print(jsonData['Table'][0]['user_OID']);
-        // print(jsonData['Table'][0]['user_imagePicture']);
 
         User user = parseUserFromJson(response.body);
         userData.value = user;
-        // dataUser = user;
-        // print(dataUser.userFullName);
-        // print("Hello");
-        // print(user.userFullName);
-        // print(user.userOID);
-        // print(user.userImagePicture);
       } catch (e) {}
     }
 
     useEffect(() {
-      print('fffffffffffffffffffffffffffffffffffffffffffffff');
-
       _fetchData();
     }, []);
 
@@ -169,97 +138,101 @@ class Userinfoscreen extends HookWidget {
           child: Container(
             margin: EdgeInsets.only(top: 20.0, left: 15, right: 25),
             child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                          margin: EdgeInsets.only(bottom: 15),
-                          child: Image.memory(
-                              base64Decode(userData.value!.userImagePicture)))
-                    ],
-                  ),
-                  textFeild(userData.value!.userUID ?? "", "User Id",
-                      userIdController),
-                  textFeild(userData.value!.userPws ?? "", "Password",
-                      passwordController),
-                  textFeild(userData.value!.userFullName ?? "", "Full Name",
-                      fullNameController),
-                  textFeild(userData.value!.userDesignation ?? "",
-                      "Designation", userDesignationController),
-                  textFeild(userData.value!.userMobileNo ?? "", "Mobile no.",
-                      userMobileNoController),
-                  textFeild(userData.value!.userEmail ?? "", "Email",
-                      userEmailController),
-                  textFeild(userData.value!.userDepartmentCode ?? "",
-                      "Department Code", userDepartmentCodeController),
-                  textFeild(userData.value!.userDepartment ?? "",
-                      "Department Name", userDepartmentController),
-                  textFeild(userData.value!.userBrnCode ?? "", "Branch Code",
-                      userBrnCodeController),
-                  textFeild(userData.value!.userBrnName ?? "", "Branch Name",
-                      userBrnNameController),
-                  SizedBox(
-                      width: MediaQuery.of(context).size.width * .3,
-                      child: Image.memory(
-                          base64Decode(userData.value!.userImageSignature))),
-                  Row(
-                    children: [
-                      Container(
-                          margin: EdgeInsets.only(right: 10),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                elevation: 3,
-                                maximumSize: Size(150, 150),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(12), // <-- Radius
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 10),
-                              ),
-                              onPressed: () => {
-                                    _submitPost(),
-                                  },
-                              child: Text(
-                                'Submit',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize:
-                                        MediaQuery.of(context).size.height *
-                                            .020),
-                              ))),
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              elevation: 3,
-                              maximumSize: Size(150, 150),
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(12), // <-- Radius
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 10),
+              child: userData.value != null
+                  ? Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                                margin: EdgeInsets.only(bottom: 15),
+                                child: Image.memory(base64Decode(
+                                    userData.value!.userImagePicture)))
+                          ],
+                        ),
+                        textFeild(userData.value!.userUID ?? "", "User Id",
+                            userIdController),
+                        textFeild(userData.value!.userPws ?? "", "Password",
+                            passwordController),
+                        textFeild(userData.value!.userFullName ?? "",
+                            "Full Name", fullNameController),
+                        textFeild(userData.value!.userDesignation ?? "",
+                            "Designation", userDesignationController),
+                        textFeild(userData.value!.userMobileNo ?? "",
+                            "Mobile no.", userMobileNoController),
+                        textFeild(userData.value!.userEmail ?? "", "Email",
+                            userEmailController),
+                        textFeild(userData.value!.userDepartmentCode ?? "",
+                            "Department Code", userDepartmentCodeController),
+                        textFeild(userData.value!.userDepartment ?? "",
+                            "Department Name", userDepartmentController),
+                        textFeild(userData.value!.userBrnCode ?? "",
+                            "Branch Code", userBrnCodeController),
+                        textFeild(userData.value!.userBrnName ?? "",
+                            "Branch Name", userBrnNameController),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * .3,
+                            child: Image.memory(base64Decode(
+                                userData.value!.userImageSignature))),
+                        Row(
+                          children: [
+                            Container(
+                                margin: EdgeInsets.only(right: 10),
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      elevation: 3,
+                                      maximumSize: Size(150, 150),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            12), // <-- Radius
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 10),
+                                    ),
+                                    onPressed: () => {
+                                          _submitPost(),
+                                        },
+                                    child: Text(
+                                      'Submit',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .020),
+                                    ))),
+                            Container(
+                              margin: EdgeInsets.all(10),
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    elevation: 3,
+                                    maximumSize: Size(150, 150),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          12), // <-- Radius
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 10),
+                                  ),
+                                  onPressed: () =>
+                                      {Navigator.pop(context, '/salesmgt')},
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                .020),
+                                  )),
                             ),
-                            onPressed: () =>
-                                {Navigator.pop(context, '/salesmgt')},
-                            child: Text(
-                              'Cancel',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: MediaQuery.of(context).size.height *
-                                      .020),
-                            )),
-                      ),
-                    ],
-                  )
-                ],
-              ),
+                          ],
+                        )
+                      ],
+                    )
+                  : Center(child: CircularProgressIndicator()),
             ),
           ),
         ),

@@ -9,6 +9,8 @@ import 'package:http/http.dart' as http;
 
 import 'package:provider/provider.dart';
 
+import '../dataaccess/apiAccess.dart' as apiAccess;
+
 class Loginscreen extends StatefulWidget {
   @override
   State<Loginscreen> createState() => _LoginscreenState();
@@ -32,12 +34,7 @@ class _LoginscreenState extends State<Loginscreen> {
 //http://192.168.0.106:45455/Default.aspx
     try {
       final url = Uri.parse(
-          // 'http://10.0.2.2:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
-          // 'http://192.168.0.106:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
-          'http://192.168.0.106:45455/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
-      // 'http://localhost:65143/api/LogIn/Proc_UserCheckYesNoByApiDataSet');
-
-      print(url);
+          '${apiAccess.apiBaseUrl}/LogIn/Proc_UserCheckYesNoByApiDataSet');
 
       final response = await http.post(
         url,
@@ -108,8 +105,8 @@ class _LoginscreenState extends State<Loginscreen> {
             children: [
               _header(context),
               _inputField(context),
-              _forgotPassword(context),
-              _signup(context),
+              _companyLogo(context),
+              _footer(context),
             ],
           ),
         ),
@@ -187,7 +184,7 @@ class _LoginscreenState extends State<Loginscreen> {
     );
   }
 
-  _forgotPassword(context) {
+  _companyLogo(context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Column(
@@ -206,7 +203,7 @@ class _LoginscreenState extends State<Loginscreen> {
     );
   }
 
-  _signup(context) {
+  _footer(context) {
     final provider = Provider.of<AuthProvider>(context);
 
     var height = MediaQuery.of(context).size.height;

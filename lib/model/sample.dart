@@ -8,8 +8,8 @@ class User {
 
   final String userFullName;
 
-  // final double userComID;
-  // final String userComCode;
+  final double userComID;
+  final String userComCode;
   final double userBrnID;
 
   final String userBrnCode;
@@ -56,7 +56,7 @@ class User {
   // final bool utiTollCompany;
   // final bool utiTollCharge;
   // final String? cuid;
-  // final String muid;
+  final String muid;
   // final DateTime? cDate;
   // final DateTime mDate;
   // final bool taskOperation;
@@ -113,8 +113,8 @@ class User {
     required this.userUID,
     required this.userPws,
     required this.userFullName,
-    // required this.userComID,
-    // required this.userComCode,
+    required this.userComID,
+    required this.userComCode,
     required this.userBrnID,
     required this.userBrnCode,
     required this.userBrnName,
@@ -159,7 +159,7 @@ class User {
     // required this.utiTollCompany,
     // required this.utiTollCharge,
     // this.cuid,
-    // required this.muid,
+    required this.muid,
     // this.cDate,
     // required this.mDate,
     // required this.taskOperation,
@@ -213,19 +213,18 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-        userOID: json['user_OID'].toDouble(),
-        userID: json['user_ID'].toDouble(),
-        userUID: json['user_UID'],
-        userPws: json['user_Pws'],
-        userFullName: json['user_FullName'],
-
-        // userComID: json['user_ComID'].toDouble(),
-        // userComCode: json['user_ComCode'],
+        userOID: json['user_OID'].toDouble() ?? 0,
+        userID: json['user_ID'].toDouble() ?? 0,
+        userUID: json['user_UID'] ?? '',
+        userPws: json['user_Pws'] ?? '',
+        userFullName: json['user_FullName'] ?? '',
+        userComID: json['user_ComID'].toDouble() ?? 0,
+        userComCode: json['user_ComCode'] ?? '',
         userBrnID: json['user_BrnID'] ?? '',
         userBrnCode: json['user_BrnCode'] ?? '',
-        userBrnName: json['user_BrnName'],
-        userDepartmentCode: json['user_DepartmentCode'],
-        userDepartment: json['user_Department'],
+        userBrnName: json['user_BrnName'] ?? '',
+        userDepartmentCode: json['user_DepartmentCode'] ?? '',
+        userDepartment: json['user_Department'] ?? '',
 
         // userStatus: json['user_Status'],
         // userReportMenu: json['user_ReportMenu'],
@@ -266,7 +265,7 @@ class User {
         // utiTollCompany: json['user_UtiTollCompany'] == 'True',
         // utiTollCharge: json['user_UtiTollCharge'] == 'True',
         // cuid: json['user_CUID'],
-        // muid: json['user_MUID'],
+        muid: json['user_MUID'] ?? '',
         // cDate: json['user_CDate'] != null
         //     ? DateTime.parse(json['user_CDate'])
         //     : null,
@@ -306,9 +305,9 @@ class User {
         // taskAccounts: json['user_TaskAccounts'],
         // taskEngineering: json['user_TaskEngineering'],
 
-        userDesignation: json['user_Designation'],
-        userMobileNo: json['user_MobileNo'],
-        userEmail: json['user_Email'],
+        userDesignation: json['user_Designation'] ?? '',
+        userMobileNo: json['user_MobileNo'] ?? '',
+        userEmail: json['user_Email'] ?? '',
 
         // administratorUser: json['user_AdministratorUser'] == 'True',
         // normalUser: json['user_NormalUser'] == 'True',
