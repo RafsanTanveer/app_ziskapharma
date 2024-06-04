@@ -25,6 +25,7 @@ class CustomTextFormField extends StatelessWidget {
         Container(
           margin: EdgeInsets.only(bottom: 12),
           child: TextFormField(
+            readOnly: title == 'User Id' ? true : false,
             controller: controller,
             onChanged: (text) {
               // Update the text in the controller when the text field changes

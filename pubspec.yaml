@@ -37,6 +37,7 @@ dependencies:
   http: ^1.2.1
   shared_preferences: ^2.2.3
   flutter_hooks: ^0.20.5
+  camera: ^0.11.0+1
 
 dev_dependencies:
   provider: ^5.0.0

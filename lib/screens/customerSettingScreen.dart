@@ -1,7 +1,8 @@
 import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class CustomerSettingScreen extends StatelessWidget {
+class CustomerSettingScreen extends HookWidget {
   const CustomerSettingScreen({super.key});
 
   @override
