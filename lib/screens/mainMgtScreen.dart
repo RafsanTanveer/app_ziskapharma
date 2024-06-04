@@ -43,7 +43,6 @@ class Mainmgtscreen extends StatelessWidget {
           child: Column(
             children: [
               _header(context),
-              // _inputField(context),
               _forgotPassword(context),
               _signup(context),
             ],

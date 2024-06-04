@@ -1,3 +1,4 @@
+import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
 import 'package:flutter/material.dart';
 
 class Salesinvoiceviewscreen extends StatelessWidget {
@@ -5,6 +6,15 @@ class Salesinvoiceviewscreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController invoiceNoController = TextEditingController();
+    TextEditingController customerNameController = TextEditingController();
+    TextEditingController prdAmountController = TextEditingController();
+    TextEditingController discountController = TextEditingController();
+    TextEditingController amountController = TextEditingController();
+    TextEditingController vatController = TextEditingController();
+    TextEditingController specialDiscountController = TextEditingController();
+    TextEditingController billAmountController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -27,19 +37,38 @@ class Salesinvoiceviewscreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-
-                  textFeild("Invoice No.", "Invoice No."),
-                  textFeild("Customer Name", "Customer Name"),
-                  textFeild("Prd. Amount", "Prd. Amount"),
-                  textFeild("Discount", "Discount"),
-                  textFeild("Amount", "Amount"),
-                  textFeild("VAT", "VAT"),
-                  textFeild("Special Discount", "Special Discount"),
-                  textFeild("Bill Amount", "Bill Amount"),
-
+                  CustomTextFormField(
+                      controller: invoiceNoController,
+                      hint: 'hint',
+                      title: "Invoice No."),
+                  CustomTextFormField(
+                      controller: customerNameController,
+                      hint: 'hint',
+                      title: "Customer Name"),
+                  CustomTextFormField(
+                      controller: prdAmountController,
+                      hint: 'hint',
+                      title: "Prd. Amount"),
+                  CustomTextFormField(
+                      controller: discountController,
+                      hint: 'hint',
+                      title: "Discount"),
+                  CustomTextFormField(
+                      controller: amountController,
+                      hint: 'hint',
+                      title: "Amount"),
+                  CustomTextFormField(
+                      controller: vatController, hint: 'hint', title: "VAT"),
+                  CustomTextFormField(
+                      controller: specialDiscountController,
+                      hint: 'hint',
+                      title: "Special Discount"),
+                  CustomTextFormField(
+                      controller: billAmountController,
+                      hint: 'hint',
+                      title: "Bill Amount"),
                   Row(
                     children: [
-
                       Container(
                         margin: EdgeInsets.only(top: 15),
                         child: ElevatedButton(
@@ -76,24 +105,5 @@ class Salesinvoiceviewscreen extends StatelessWidget {
     );
   }
 
-  Widget textFeild(String hint, String title) {
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(bottom: 12),
-          child: TextFormField(
-            decoration: InputDecoration(
-                hintText: hint, enabledBorder: const OutlineInputBorder()),
-          ),
-        ),
-      ],
-    );
-  }
+
 }
