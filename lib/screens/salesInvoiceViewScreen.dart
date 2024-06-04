@@ -39,33 +39,33 @@ class Salesinvoiceviewscreen extends StatelessWidget {
                 children: [
                   CustomTextFormField(
                       controller: invoiceNoController,
-                      hint: 'hint',
+                      hint: 'Invoice No.',
                       title: "Invoice No."),
                   CustomTextFormField(
                       controller: customerNameController,
-                      hint: 'hint',
+                      hint: 'Customer Name',
                       title: "Customer Name"),
                   CustomTextFormField(
                       controller: prdAmountController,
-                      hint: 'hint',
+                      hint: 'Prd. Amount',
                       title: "Prd. Amount"),
                   CustomTextFormField(
                       controller: discountController,
-                      hint: 'hint',
+                      hint: 'Discount',
                       title: "Discount"),
                   CustomTextFormField(
                       controller: amountController,
-                      hint: 'hint',
+                      hint: 'Amount',
                       title: "Amount"),
                   CustomTextFormField(
                       controller: vatController, hint: 'hint', title: "VAT"),
                   CustomTextFormField(
                       controller: specialDiscountController,
-                      hint: 'hint',
+                      hint: 'Special Discount',
                       title: "Special Discount"),
                   CustomTextFormField(
                       controller: billAmountController,
-                      hint: 'hint',
+                      hint: 'Bill Amount',
                       title: "Bill Amount"),
                   Row(
                     children: [

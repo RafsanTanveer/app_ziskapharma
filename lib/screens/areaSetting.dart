@@ -1,3 +1,4 @@
+import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
 import 'package:flutter/material.dart';
 
 class Areasetting extends StatelessWidget {
@@ -5,6 +6,16 @@ class Areasetting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController territoryCodeController = TextEditingController();
+    TextEditingController territoryNameController = TextEditingController();
+    TextEditingController areaCodeController = TextEditingController();
+    TextEditingController areaNameController = TextEditingController();
+    TextEditingController regionCodeController = TextEditingController();
+    TextEditingController regionNameController = TextEditingController();
+    TextEditingController depotCodeController = TextEditingController();
+    TextEditingController depotNameController = TextEditingController();
+    TextEditingController userIdController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -27,17 +38,42 @@ class Areasetting extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-
-                  textFeild("Territory Code", "Territory Code"),
-                  textFeild("Territory Name", "Territory Name"),
-                  textFeild("Area Code", "Area Code"),
-                  textFeild("Area Name", "Area Name"),
-                  textFeild("Region Code", "Region Code"),
-                  textFeild("Region Name", "Region Name"),
-                  textFeild("Depot Code", "Depot Code"),
-                  textFeild("Depot Name", "Depot Name"),
-                  textFeild("User Id", "User Id"),
-
+                  CustomTextFormField(
+                      controller: territoryCodeController,
+                      hint: 'hint',
+                      title: "Territory Code"),
+                  CustomTextFormField(
+                      controller: territoryNameController,
+                      hint: 'hint',
+                      title: "Territory Name"),
+                  CustomTextFormField(
+                      controller: areaCodeController,
+                      hint: 'hint',
+                      title: "Area Code"),
+                  CustomTextFormField(
+                      controller: areaNameController,
+                      hint: 'hint',
+                      title: "Area Name"),
+                  CustomTextFormField(
+                      controller: regionCodeController,
+                      hint: "Region Code",
+                      title: "Region Code"),
+                  CustomTextFormField(
+                      controller: regionNameController,
+                      hint: "Region Name",
+                      title: "Region Name"),
+                  CustomTextFormField(
+                      controller: depotCodeController,
+                      hint: "Depot Code",
+                      title: "Depot Code"),
+                  CustomTextFormField(
+                      controller: depotNameController,
+                      hint: "Depot Name",
+                      title: "Depot Name"),
+                  CustomTextFormField(
+                      controller: userIdController,
+                      hint: "User Id",
+                      title: "User Id"),
                   Row(
                     children: [
                       Container(
@@ -97,27 +133,6 @@ class Areasetting extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget textFeild(String hint, String title) {
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(bottom: 12),
-          child: TextFormField(
-            decoration: InputDecoration(
-                hintText: hint, enabledBorder: const OutlineInputBorder()),
-          ),
-        ),
-      ],
     );
   }
 }
