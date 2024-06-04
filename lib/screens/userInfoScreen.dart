@@ -18,9 +18,6 @@ class Userinfoscreen extends HookWidget {
     final provider = Provider.of<AuthProvider>(context, listen: false);
     final userData = useState<User?>(null);
 
-
-   
-
 ///////////////////////////  TextField Contrllers  ///////////////////////////////////////////////
 
     TextEditingController userIdController =
@@ -148,9 +145,14 @@ class Userinfoscreen extends HookWidget {
                         Row(
                           children: [
                             Container(
-                                margin: EdgeInsets.only(bottom: 15),
+                                margin: EdgeInsets.only(bottom: 15, right: 15),
                                 child: Image.memory(base64Decode(
-                                    userData.value!.userImagePicture)))
+                                    userData.value!.userImagePicture))),
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: ElevatedButton(
+                                  onPressed: () {}, child: Text('Upload Photo')),
+                            )
                           ],
                         ),
                         CustomTextFormField(
@@ -267,6 +269,4 @@ class Userinfoscreen extends HookWidget {
       ),
     );
   }
-
-
 }

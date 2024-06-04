@@ -84,7 +84,7 @@ class Areasetting extends HookWidget {
           child: Container(
             margin: EdgeInsets.only(top: 20.0, left: 15, right: 25),
             child: SingleChildScrollView(
-              child: Column(
+              child: territoryData.value!=null ? Column(
                 children: [
                   CustomTextFormField(
                       controller: territoryCodeController,
@@ -176,7 +176,7 @@ class Areasetting extends HookWidget {
                     ],
                   )
                 ],
-              ),
+              ) :Center(child: CircularProgressIndicator()),
             ),
           ),
         ),

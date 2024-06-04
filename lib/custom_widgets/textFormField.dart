@@ -13,30 +13,36 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.w700),
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                title,
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+            ),
           ),
-        ),
-        Container(
-          margin: EdgeInsets.only(bottom: 12),
-          child: TextFormField(
-            readOnly: title == 'User Id' ? true : false,
-            controller: controller,
-            onChanged: (text) {
-              // Update the text in the controller when the text field changes
-              controller?.text = text;
-              print(text);
-            },
-            decoration: InputDecoration(
-                hintText: hint, enabledBorder: const OutlineInputBorder()),
+          Expanded(
+            flex: 2,
+            child: TextFormField(
+              readOnly: title == 'User Id' ? true : false,
+              controller: controller,
+              onChanged: (text) {
+                // Update the text in the controller when the text field changes
+                controller?.text = text;
+                print(text);
+              },
+              decoration: InputDecoration(
+                  hintText: hint, enabledBorder: const OutlineInputBorder()),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
     ;
   }
