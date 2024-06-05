@@ -13,12 +13,12 @@ import './screens/salesInvoiceViewScreen.dart';
 
 import 'package:provider/provider.dart';
 
-
-
 void main() {
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_)=>AuthProvider())
-  ], child: const MyApp()));
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

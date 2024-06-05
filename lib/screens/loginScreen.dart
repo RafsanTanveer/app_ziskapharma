@@ -20,7 +20,7 @@ class _LoginscreenState extends State<Loginscreen> {
   void _loginPressed(BuildContext context) async {
     final provider = Provider.of<AuthProvider>(context, listen: false);
 
-    // Navigator.pushReplacementNamed(context, '/mainmgt');
+    Navigator.pushReplacementNamed(context, '/mainmgt');
     print("Login pressed*****************************************************");
 
     final String userUID = userTxtCntrl.text;

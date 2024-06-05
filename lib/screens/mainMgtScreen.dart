@@ -1,6 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+
+import '../utility/camera.dart';
 
 class Mainmgtscreen extends StatelessWidget {
   void _loginPressed(BuildContext context) {
@@ -8,9 +15,32 @@ class Mainmgtscreen extends StatelessWidget {
     Navigator.pushReplacementNamed(context, '/areasetting');
   }
 
+  File? image;
+
+  Future _pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.camera);
+      print(image?.name);
+      if (image == null) return;
+
+      final imageTemporary = File(image.path);
+
+      File file = File(image.path);
+      Uint8List bytes = file.readAsBytesSync();
+
+      String base64Image = base64Encode(bytes);
+
+      print(base64Image);
+
+      print(imageTemporary);
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height ;
+    var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       drawer: Drawer(),
@@ -88,7 +118,7 @@ class Mainmgtscreen extends StatelessWidget {
                 width: width * .35,
                 margin: const EdgeInsets.all(10),
                 child: ElevatedButton(
-                  onPressed: () => {},
+                  onPressed: () => {_pickImage()},
                   child: Text(
                     "PRODUCTION",
                     style: TextStyle(fontSize: height * .022),
@@ -178,7 +208,7 @@ class Mainmgtscreen extends StatelessWidget {
   }
 
   _signup(context) {
-     final provider = Provider.of<AuthProvider>(context, listen: false);
+    final provider = Provider.of<AuthProvider>(context, listen: false);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
