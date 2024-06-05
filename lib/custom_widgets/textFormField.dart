@@ -28,7 +28,7 @@ class CustomTextFormField extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 2,
+            flex: 3,
             child: TextFormField(
               readOnly: title == 'User Id' ? true : false,
               controller: controller,

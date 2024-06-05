@@ -17,6 +17,62 @@ class Areasetting extends HookWidget {
     final provider = Provider.of<AuthProvider>(context, listen: false);
     final territoryData = useState<TerritoryModel?>(null);
 
+    final dropdownvalue = useState<String?>('Item 1');
+
+    // List of items in our dropdown menu
+    var items = [
+      'Item 1',
+      'Item 2',
+      'Item 3',
+      'Item 4',
+      'Item 5',
+    ];
+
+    // Future<void> _submitPost() async {
+    //   final url = Uri.parse('${apiAccess.apiBaseUrl}/UserInfo/Proc_SaveByApi');
+    //   final headers = {"Content-Type": "application/json"};
+
+    //   // Create the JSON payload
+    //   final payload = json.encode({
+    //     "UserTable": [
+    //       {
+    //         "user_UID":  territoryData.value!.userUID,
+    //         "tery_Code": territoryCodeController.text,
+    //         "tery_Name": passwordController.text,
+    //         "tery_AreaCode": fullNameController.text.isEmpty
+    //             ? userData.value!.userFullName
+    //             : fullNameController.text,
+    //         "tery_AreaName": userDepartmentController.text.isEmpty
+    //             ? userData.value!.userDepartment
+    //             : userDepartmentController.text,
+    //         "tery_RegionCode": userDepartmentCodeController.text.isEmpty
+    //             ? userData.value!.userDepartmentCode
+    //             : userDepartmentCodeController.text,
+    //         "tery_RegionName": userDesignationController.text.isEmpty
+    //             ? userData.value!.userDesignation
+    //             : userDesignationController.text,
+    //         "tery_DepotCode": userMobileNoController.text.isEmpty
+    //             ? userData.value!.userMobileNo
+    //             : userMobileNoController.text,
+    //         "tery_DepotName": userEmailController.text.isEmpty
+    //             ? userData.value!.userEmail
+    //             : userEmailController.text,
+    //       }
+    //     ]
+    //   });
+
+    //   try {
+    //     final response = await http.post(url, headers: headers, body: payload);
+    //     if (response.statusCode == 200) {
+    //       print('Data successfully posted.');
+    //     } else {
+    //       print('Failed to post data. Status code: ${response.statusCode}');
+    //     }
+    //   } catch (e) {
+    //     print('Error posting data: $e');
+    //   }
+    // }
+
     _fetchData() async {
       try {
         //SalesMobile/Proc_UserAreaInfoByApi?tery_UserId=admin
@@ -35,12 +91,36 @@ class Areasetting extends HookWidget {
         TerritoryModel terrytory = parseTerritoryFromJson(response.body);
         print(terrytory.teryCode);
         territoryData.value = terrytory;
-          print(territoryData.value?.teryCode ?? "not available");
+        print(territoryData.value?.teryCode ?? "not available");
       } catch (e) {}
     }
 
+_fetchDropDownData() async {
+      try {
+        //SalesMobile/Proc_UserAreaInfoByApi?tery_UserId=admin
+        //http://localhost:65143/api/SalesMobile/Proc_UserAreaInfoByApi?tery_UserId=admin
+        final url = Uri.parse(
+            '${apiAccess.apiBaseUrl}/SalesMobile/Proc_UserAreaInfoByApi?tery_UserId=' +
+                provider.user_id);
+        print(url);
+        final response = await http.get(url);
+
+        final jsonData = json.decode(response.body);
+        print(
+            'ffffffffffffffffffffffff-------------------------------------------');
+        //print(jsonData['Table']);
+
+        TerritoryModel terrytory = parseTerritoryFromJson(response.body);
+        print(terrytory.teryCode);
+        territoryData.value = terrytory;
+        print(territoryData.value?.teryCode ?? "not available");
+      } catch (e) {}
+    }
+
+    
     useEffect(() {
       _fetchData();
+      _fetchDropDownData();
     }, []);
 
 //////////////////////////// controllers ///////////////////////////////////////////////
@@ -84,99 +164,131 @@ class Areasetting extends HookWidget {
           child: Container(
             margin: EdgeInsets.only(top: 20.0, left: 15, right: 25),
             child: SingleChildScrollView(
-              child: territoryData.value!=null ? Column(
-                children: [
-                  CustomTextFormField(
-                      controller: territoryCodeController,
-                      hint: 'hint',
-                      title: "Territory Code"),
-                  CustomTextFormField(
-                      controller: territoryNameController,
-                      hint: 'hint',
-                      title: "Territory Name"),
-                  CustomTextFormField(
-                      controller: areaCodeController,
-                      hint: 'hint',
-                      title: "Area Code"),
-                  CustomTextFormField(
-                      controller: areaNameController,
-                      hint: 'hint',
-                      title: "Area Name"),
-                  CustomTextFormField(
-                      controller: regionCodeController,
-                      hint: "Region Code",
-                      title: "Region Code"),
-                  CustomTextFormField(
-                      controller: regionNameController,
-                      hint: "Region Name",
-                      title: "Region Name"),
-                  CustomTextFormField(
-                      controller: depotCodeController,
-                      hint: "Depot Code",
-                      title: "Depot Code"),
-                  CustomTextFormField(
-                      controller: depotNameController,
-                      hint: "Depot Name",
-                      title: "Depot Name"),
-                  CustomTextFormField(
-                      controller: userIdController,
-                      hint: "User Id",
-                      title: "User Id"),
-                  Row(
-                    children: [
-                      Container(
-                          margin: EdgeInsets.only(right: 10),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                elevation: 3,
-                                maximumSize: Size(150, 150),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(12), // <-- Radius
+              child: territoryData.value != null
+                  ? Column(
+                      children: [
+                        Container(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 4,
+                                child: CustomTextFormField(
+                                    controller: territoryCodeController,
+                                    hint: 'hint',
+                                    title: "Territory Code"),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 3),
+                                  child: DropdownButton<String>(
+                                      value: dropdownvalue.value,
+                                      icon:
+                                          const Icon(Icons.keyboard_arrow_down),
+                                      items: items.map((String items) {
+                                        return DropdownMenuItem(
+                                          value: items,
+                                          child: Text(items),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? newValue) {
+                                        dropdownvalue.value = newValue!;
+                                      }),
                                 ),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 10),
                               ),
-                              onPressed: () => {},
-                              child: Text(
-                                'Save',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize:
-                                        MediaQuery.of(context).size.height *
-                                            .020),
-                              ))),
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              elevation: 3,
-                              maximumSize: Size(150, 150),
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(12), // <-- Radius
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 10),
+                            ],
+                          ),
+                        ),
+                        CustomTextFormField(
+                            controller: territoryNameController,
+                            hint: 'hint',
+                            title: "Territory Name"),
+                        CustomTextFormField(
+                            controller: areaCodeController,
+                            hint: 'hint',
+                            title: "Area Code"),
+                        CustomTextFormField(
+                            controller: areaNameController,
+                            hint: 'hint',
+                            title: "Area Name"),
+                        CustomTextFormField(
+                            controller: regionCodeController,
+                            hint: "Region Code",
+                            title: "Region Code"),
+                        CustomTextFormField(
+                            controller: regionNameController,
+                            hint: "Region Name",
+                            title: "Region Name"),
+                        CustomTextFormField(
+                            controller: depotCodeController,
+                            hint: "Depot Code",
+                            title: "Depot Code"),
+                        CustomTextFormField(
+                            controller: depotNameController,
+                            hint: "Depot Name",
+                            title: "Depot Name"),
+                        CustomTextFormField(
+                            controller: userIdController,
+                            hint: "User Id",
+                            title: "User Id"),
+                        Row(
+                          children: [
+                            Container(
+                                margin: EdgeInsets.only(right: 10),
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      elevation: 3,
+                                      maximumSize: Size(150, 150),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            12), // <-- Radius
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 10),
+                                    ),
+                                    onPressed: () => {},
+                                    child: Text(
+                                      'Save',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .020),
+                                    ))),
+                            Container(
+                              margin: EdgeInsets.all(10),
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    elevation: 3,
+                                    maximumSize: Size(150, 150),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          12), // <-- Radius
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 10),
+                                  ),
+                                  onPressed: () =>
+                                      {Navigator.pop(context, '/salesmgt')},
+                                  child: Text(
+                                    'Close',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                .020),
+                                  )),
                             ),
-                            onPressed: () =>
-                                {Navigator.pop(context, '/salesmgt')},
-                            child: Text(
-                              'Close',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: MediaQuery.of(context).size.height *
-                                      .020),
-                            )),
-                      ),
-                    ],
-                  )
-                ],
-              ) :Center(child: CircularProgressIndicator()),
+                          ],
+                        )
+                      ],
+                    )
+                  : Center(child: CircularProgressIndicator()),
             ),
           ),
         ),

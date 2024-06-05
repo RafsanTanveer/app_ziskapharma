@@ -1,10 +1,15 @@
+import 'dart:typed_data';
+
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'dart:convert';
 import '../model/sample.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 import '../dataaccess/apiAccess.dart' as apiAccess;
 
@@ -17,6 +22,7 @@ class Userinfoscreen extends HookWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<AuthProvider>(context, listen: false);
     final userData = useState<User?>(null);
+    final snapData = useState<String?>(null);
 
 ///////////////////////////  TextField Contrllers  ///////////////////////////////////////////////
 
@@ -79,7 +85,9 @@ class Userinfoscreen extends HookWidget {
             "user_BrnName": userBrnNameController.text.isEmpty
                 ? userData.value!.userBrnName
                 : userBrnNameController.text,
-            "user_imagePicture": userData.value!.userImagePicture,
+            "user_imagePicture": snapData.value == null
+                ? userData.value!.userImagePicture
+                : snapData!.value ?? "",
             "user_imageSignature": userData.value!.userImageSignature,
             "user_MUID": userData.value!.muid,
             "user_ComID": userData?.value?.userComID,
@@ -119,6 +127,31 @@ class Userinfoscreen extends HookWidget {
       _fetchData();
     }, []);
 
+    File? image;
+    Future _pickImage() async {
+      try {
+        final image = await ImagePicker().pickImage(
+            source: ImageSource.camera, maxHeight: 200, maxWidth: 200);
+        print(image?.name);
+        if (image == null) return;
+
+        final imageTemporary = File(image.path);
+
+        File file = File(image.path);
+        Uint8List bytes = file.readAsBytesSync();
+
+        String base64Image = base64Encode(bytes);
+
+        snapData.value = base64Image;
+
+        print(base64Image);
+
+        print(imageTemporary);
+      } on PlatformException catch (e) {
+        print('Failed to pick image: $e');
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -147,11 +180,23 @@ class Userinfoscreen extends HookWidget {
                             Container(
                                 margin: EdgeInsets.only(bottom: 15, right: 15),
                                 child: Image.memory(base64Decode(
-                                    userData.value!.userImagePicture))),
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: ElevatedButton(
-                                  onPressed: () {}, child: Text('Upload Photo')),
+                                    snapData.value == null
+                                        ? userData.value!.userImagePicture
+                                        : snapData!.value ?? ""))),
+                            Container(
+                              padding: EdgeInsets.all(10),
+                              width: MediaQuery.of(context).size.width * .3,
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      _pickImage();
+                                    },
+                                    child: Text(
+                                      'Upload Photo',
+                                      textAlign: TextAlign.center,
+                                    )),
+                              ),
                             )
                           ],
                         ),
