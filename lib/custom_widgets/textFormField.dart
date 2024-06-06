@@ -19,11 +19,14 @@ class CustomTextFormField extends StatelessWidget {
         children: [
           Expanded(
             flex: 1,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                title,
-                style: TextStyle(fontWeight: FontWeight.w700),
+            child: Container(
+              margin: EdgeInsets.only(right: 10),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  title,
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
               ),
             ),
           ),

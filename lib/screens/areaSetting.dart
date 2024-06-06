@@ -28,50 +28,50 @@ class Areasetting extends HookWidget {
       'Item 5',
     ];
 
-    // Future<void> _submitPost() async {
-    //   final url = Uri.parse('${apiAccess.apiBaseUrl}/UserInfo/Proc_SaveByApi');
-    //   final headers = {"Content-Type": "application/json"};
+    Future<void> _submitPost() async {
+      final url = Uri.parse('${apiAccess.apiBaseUrl}/UserInfo/Proc_SaveByApi');
+      final headers = {"Content-Type": "application/json"};
 
-    //   // Create the JSON payload
-    //   final payload = json.encode({
-    //     "UserTable": [
-    //       {
-    //         "user_UID":  territoryData.value!.userUID,
-    //         "tery_Code": territoryCodeController.text,
-    //         "tery_Name": passwordController.text,
-    //         "tery_AreaCode": fullNameController.text.isEmpty
-    //             ? userData.value!.userFullName
-    //             : fullNameController.text,
-    //         "tery_AreaName": userDepartmentController.text.isEmpty
-    //             ? userData.value!.userDepartment
-    //             : userDepartmentController.text,
-    //         "tery_RegionCode": userDepartmentCodeController.text.isEmpty
-    //             ? userData.value!.userDepartmentCode
-    //             : userDepartmentCodeController.text,
-    //         "tery_RegionName": userDesignationController.text.isEmpty
-    //             ? userData.value!.userDesignation
-    //             : userDesignationController.text,
-    //         "tery_DepotCode": userMobileNoController.text.isEmpty
-    //             ? userData.value!.userMobileNo
-    //             : userMobileNoController.text,
-    //         "tery_DepotName": userEmailController.text.isEmpty
-    //             ? userData.value!.userEmail
-    //             : userEmailController.text,
-    //       }
-    //     ]
-    //   });
+      // Create the JSON payload
+      final payload = json.encode({
+        "UserTable": [
+          {
+            "user_UID":  territoryData.value!.userUID,
+            //  "tery_Code": territoryCodeController.text.isEmpty ? territoryData.value!.teryCode : territoryCodeController.text,
+            // "tery_Name": "",
+            // "tery_AreaCode": areaNameController.text.isEmpty
+            //     ? territoryData.value!.teryAreaCode
+            //     : areaNameController.text,
+            // "tery_AreaName": userDepartmentController.text.isEmpty
+            //     ? userData.value!.userDepartment
+            //     : userDepartmentController.text,
+            // "tery_RegionCode": userDepartmentCodeController.text.isEmpty
+            //     ? userData.value!.userDepartmentCode
+            //     : userDepartmentCodeController.text,
+            // "tery_RegionName": userDesignationController.text.isEmpty
+            //     ? userData.value!.userDesignation
+            //     : userDesignationController.text,
+            // "tery_DepotCode": userMobileNoController.text.isEmpty
+            //     ? userData.value!.userMobileNo
+            //     : userMobileNoController.text,
+            // "tery_DepotName": userEmailController.text.isEmpty
+            //     ? userData.value!.userEmail
+            //     : userEmailController.text,
+          }
+        ]
+      });
 
-    //   try {
-    //     final response = await http.post(url, headers: headers, body: payload);
-    //     if (response.statusCode == 200) {
-    //       print('Data successfully posted.');
-    //     } else {
-    //       print('Failed to post data. Status code: ${response.statusCode}');
-    //     }
-    //   } catch (e) {
-    //     print('Error posting data: $e');
-    //   }
-    // }
+      try {
+        final response = await http.post(url, headers: headers, body: payload);
+        if (response.statusCode == 200) {
+          print('Data successfully posted.');
+        } else {
+          print('Failed to post data. Status code: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error posting data: $e');
+      }
+    }
 
     _fetchData() async {
       try {
@@ -95,10 +95,11 @@ class Areasetting extends HookWidget {
       } catch (e) {}
     }
 
-_fetchDropDownData() async {
+    _fetchDropDownData() async {
       try {
         //SalesMobile/Proc_UserAreaInfoByApi?tery_UserId=admin
         //http://localhost:65143/api/SalesMobile/Proc_UserAreaInfoByApi?tery_UserId=admin
+        http: //localhost:65143/api/SalesMobile/Proc_UserAreaListSingleDepotForHelpByApi?vDepotCode=DHK
         final url = Uri.parse(
             '${apiAccess.apiBaseUrl}/SalesMobile/Proc_UserAreaInfoByApi?tery_UserId=' +
                 provider.user_id);
@@ -117,7 +118,6 @@ _fetchDropDownData() async {
       } catch (e) {}
     }
 
-    
     useEffect(() {
       _fetchData();
       _fetchDropDownData();
@@ -167,38 +167,32 @@ _fetchDropDownData() async {
               child: territoryData.value != null
                   ? Column(
                       children: [
-                        Container(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 4,
-                                child: CustomTextFormField(
-                                    controller: territoryCodeController,
-                                    hint: 'hint',
-                                    title: "Territory Code"),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  margin: EdgeInsets.only(left: 3),
-                                  child: DropdownButton<String>(
-                                      value: dropdownvalue.value,
-                                      icon:
-                                          const Icon(Icons.keyboard_arrow_down),
-                                      items: items.map((String items) {
-                                        return DropdownMenuItem(
-                                          value: items,
-                                          child: Text(items),
-                                        );
-                                      }).toList(),
-                                      onChanged: (String? newValue) {
-                                        dropdownvalue.value = newValue!;
-                                      }),
-                                ),
-                              ),
-                            ],
-                          ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Text('Find', style: TextStyle(fontWeight: FontWeight.w700),)),
+                            Expanded(
+                              flex: 3,
+                              child: DropdownButton<String>(
+                                  value: dropdownvalue.value,
+                                  icon: const Icon(Icons.keyboard_arrow_down),
+                                  items: items.map((String items) {
+                                    return DropdownMenuItem(
+                                      value: items,
+                                      child: Text(items),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    dropdownvalue.value = newValue!;
+                                  }),
+                            ),
+                          ],
                         ),
+                        CustomTextFormField(
+                            controller: territoryCodeController,
+                            hint: 'hint',
+                            title: "Territory Code"),
                         CustomTextFormField(
                             controller: territoryNameController,
                             hint: 'hint',

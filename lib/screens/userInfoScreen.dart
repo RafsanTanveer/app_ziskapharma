@@ -131,7 +131,7 @@ class Userinfoscreen extends HookWidget {
     Future _pickImage() async {
       try {
         final image = await ImagePicker().pickImage(
-            source: ImageSource.camera, maxHeight: 200, maxWidth: 200);
+            source: ImageSource.gallery, maxHeight: 200, maxWidth: 200);
         print(image?.name);
         if (image == null) return;
 
