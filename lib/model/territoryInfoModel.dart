@@ -24,8 +24,8 @@ class TerritoryModel {
   });
 
   factory TerritoryModel.fromJson(Map<String, dynamic> json) {
-    print('in jsonnnnnnnnnnnnnnnnnnnnnnnnnn');
-    print(json);
+    // print('in jsonnnnnnnnnnnnnnnnnnnnnnnnnn');
+    // print(json);
     return TerritoryModel(
       userUID: json['user_UID'] ?? '',
       teryCode: json['tery_Code'] ?? '',
@@ -45,7 +45,7 @@ TerritoryModel parseTerritoryFromJson(String jsonString) {
   final Map<String, dynamic> parsedJson = jsonDecode(jsonString);
   // print(parsedJson);
   final Map<String, dynamic> territoryJson = parsedJson['Table'][0];
-  print('teeeeeeeeeeeeeeeeeeeeeeeeeery');
+  // print('teeeeeeeeeeeeeeeeeeeeeeeeeery');
   // print(userJson);
   print(territoryJson);
   return TerritoryModel.fromJson(territoryJson);

@@ -23,6 +23,7 @@ class Userinfoscreen extends HookWidget {
     final provider = Provider.of<AuthProvider>(context, listen: false);
     final userData = useState<User?>(null);
     final snapData = useState<String?>(null);
+    final signatureData = useState<String?>(null);
 
 ///////////////////////////  TextField Contrllers  ///////////////////////////////////////////////
 
@@ -88,7 +89,9 @@ class Userinfoscreen extends HookWidget {
             "user_imagePicture": snapData.value == null
                 ? userData.value!.userImagePicture
                 : snapData!.value ?? "",
-            "user_imageSignature": userData.value!.userImageSignature,
+            "user_imageSignature": signatureData.value == null
+                ? userData.value!.userImageSignature
+                : signatureData!.value ?? "",
             "user_MUID": userData.value!.muid,
             "user_ComID": userData?.value?.userComID,
             "user_ComCode": userData?.value?.userComCode,
@@ -128,6 +131,33 @@ class Userinfoscreen extends HookWidget {
     }, []);
 
     File? image;
+    File? imageSignature;
+    // _pickSignature()
+
+    Future _pickSignature() async {
+      try {
+        final image = await ImagePicker().pickImage(
+            source: ImageSource.gallery, maxHeight: 100, maxWidth: 200);
+        print(image?.name);
+        if (image == null) return;
+
+        final imageTemporary = File(image.path);
+
+        File file = File(image.path);
+        Uint8List bytes = file.readAsBytesSync();
+
+        String base64Image = base64Encode(bytes);
+
+        signatureData.value = base64Image;
+
+        print(base64Image);
+
+        print(imageTemporary);
+      } on PlatformException catch (e) {
+        print('Failed to pick image: $e');
+      }
+    }
+
     Future _pickImage() async {
       try {
         final image = await ImagePicker().pickImage(
@@ -244,10 +274,34 @@ class Userinfoscreen extends HookWidget {
                             controller: userBrnNameController,
                             hint: userData.value!.userBrnName ?? "",
                             title: "Branch Name"),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * .3,
-                            child: Image.memory(base64Decode(
-                                userData.value!.userImageSignature))),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: SizedBox(
+                                  width: MediaQuery.of(context).size.width * .3,
+                                  child: Image.memory(base64Decode(
+                                      signatureData.value == null
+                                          ? userData.value!.userImageSignature
+                                          : signatureData!.value ?? ""))),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                width: MediaQuery.of(context).size.width * .3,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      _pickSignature();
+                                    },
+                                    child: Text(
+                                      'Upload Signature',
+                                      textAlign: TextAlign.center,
+                                    )),
+                              ),
+                            )
+                          ],
+                        ),
                         Row(
                           children: [
                             Container(
