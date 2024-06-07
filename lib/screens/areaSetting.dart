@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
 import 'package:app_ziskapharma/model/territoryInfoModel.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
@@ -58,17 +60,27 @@ class Areasetting extends HookWidget {
 //////////////////////////// controllers ///////////////////////////////////////////////
 
     Future<void> _submitPost() async {
-      final url = Uri.parse('${apiAccess.apiBaseUrl}/UserInfo/Proc_SaveByApi');
-      final headers = {"Content-Type": "application/json"};
+      // final url = Uri.parse(
+      //     '${apiAccess.apiBaseUrl}/SalesMobile/Proc_SaveUserAreaByApi');
+      // final headers = {"Content-Type": "application/json"};
 
-      // Create the JSON payload
+      print(
+          'ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss');
+      // print(url);
+      // Create the JSON payload SalesMobile/Proc_UserAreaInfoByApi?tery_UserId=admin
       final payload = json.encode({
-        "UserTable": [
+        "Table": [
           {
+            "user_SysId": territoryData.value!.userSysId,
             "user_UID": territoryData.value!.userUID,
             "tery_Code": territoryCodeController.text.isEmpty
                 ? territoryData.value!.teryCode
                 : territoryCodeController.text,
+            "tery_Status": territoryData.value!.teryStatus,
+            "user_CUID": territoryData.value!.userCUID,
+            "user_MUID": territoryData.value!.muid,
+            "user_ComID":territoryData.value!.userComCode,
+            "user_ComCode":territoryData.value!.userComCode,
             "tery_Name": territoryNameController.text.isEmpty
                 ? territoryData.value!.teryName
                 : territoryNameController.text,
@@ -94,16 +106,18 @@ class Areasetting extends HookWidget {
         ]
       });
 
-      try {
-        final response = await http.post(url, headers: headers, body: payload);
-        if (response.statusCode == 200) {
-          print('Data successfully posted.');
-        } else {
-          print('Failed to post data. Status code: ${response.statusCode}');
-        }
-      } catch (e) {
-        print('Error posting data: $e');
-      }
+      print(payload);
+
+      // try {
+      //   final response = await http.post(url, headers: headers, body: payload);
+      //   if (response.statusCode == 200) {
+      //     print('Data successfully posted.');
+      //   } else {
+      //     print('Failed to post data. Status code: ${response.statusCode}');
+      //   }
+      // } catch (e) {
+      //   print('Error posting data: $e');
+      // }
     }
 
     _fetchData() async {
@@ -113,22 +127,23 @@ class Areasetting extends HookWidget {
                 provider.user_id);
 
         final response = await http.get(url);
+        print('main response llllllllllllllll');
+        print(response);
 
         final jsonData = json.decode(response.body);
+        print('ffffffffffffffffffffffff+++++++++++++++++++++++++++++++++');
+        // print(jsonData?.user_SysId);
 
         TerritoryModel terrytory = parseTerritoryFromJson(response.body);
 
         territoryData.value = terrytory;
-
-           print(territoryData.value!.userCUID);
-        print(territoryData.value!.muid);
-        print(territoryData.value!.teryStatus);
+        print(territoryData?.value?.muid);
       } catch (e) {}
     }
 
-    _fetchDropDownData() async {
-      print(
-          'in doropppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp//////////////////');
+    Future _fetchDropDownData() async {
+      Future.delayed(Duration(seconds: 2));
+      // print('in dorpppppppppppppppppppppppppppppppppppp//////////////////');
       try {
         final url = Uri.parse(
             '${apiAccess.apiBaseUrl}/SalesMobile/Proc_UserAreaListSingleDepotForHelpByApi?vDepotCode=' +
@@ -136,17 +151,16 @@ class Areasetting extends HookWidget {
         print(url);
         final response = await http.get(url);
 
-        print('dropdownldddddddddddddddddddddddddddddddd');
-        print(response);
+        // print('dropdownldddddddddddddddddddddddddddddddd');
+        // print(response);
 
         final jsonData = json.decode(response.body);
 
-        //print(jsonData['Table']);
+         print(jsonData['Table']);
 
-        TerritoryModel terrytory = parseTerritoryFromJson(response.body);
+        // TerritoryModel terrytory = parseTerritoryFromJson(response.body);
 
-        territoryData.value = terrytory;
-
+        // territoryData.value = terrytory;
       } catch (e) {
         print('errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrror');
         print(e);
@@ -181,30 +195,41 @@ class Areasetting extends HookWidget {
               child: territoryData.value != null
                   ? Column(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                                flex: 1,
-                                child: Text(
-                                  'Find',
-                                  style: TextStyle(fontWeight: FontWeight.w700),
-                                )),
-                            Expanded(
-                              flex: 3,
-                              child: DropdownButton<String>(
-                                  value: dropdownvalue.value,
-                                  icon: const Icon(Icons.keyboard_arrow_down),
-                                  items: items.map((String items) {
-                                    return DropdownMenuItem(
-                                      value: items,
-                                      child: Text(items),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    dropdownvalue.value = newValue!;
-                                  }),
-                            ),
-                          ],
+                        FutureBuilder(
+                          future: _fetchDropDownData(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else
+                              return Row(
+                                children: [
+                                  Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'Find',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700),
+                                      )),
+                                  Expanded(
+                                    flex: 3,
+                                    child: DropdownButton<String>(
+                                        value: dropdownvalue.value,
+                                        icon: const Icon(
+                                            Icons.keyboard_arrow_down),
+                                        items: items.map((String items) {
+                                          return DropdownMenuItem(
+                                            value: items,
+                                            child: Text(items),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          dropdownvalue.value = newValue!;
+                                        }),
+                                  ),
+                                ],
+                              );
+                          },
                         ),
                         CustomTextFormField(
                             controller: territoryCodeController,
@@ -258,7 +283,7 @@ class Areasetting extends HookWidget {
                                       padding: EdgeInsets.symmetric(
                                           vertical: 10, horizontal: 10),
                                     ),
-                                    onPressed: () => {},
+                                    onPressed: () => {_submitPost()},
                                     child: Text(
                                       'Save',
                                       style: TextStyle(
