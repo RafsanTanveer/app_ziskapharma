@@ -119,6 +119,10 @@ class Areasetting extends HookWidget {
         TerritoryModel terrytory = parseTerritoryFromJson(response.body);
 
         territoryData.value = terrytory;
+
+           print(territoryData.value!.userCUID);
+        print(territoryData.value!.muid);
+        print(territoryData.value!.teryStatus);
       } catch (e) {}
     }
 
@@ -142,6 +146,7 @@ class Areasetting extends HookWidget {
         TerritoryModel terrytory = parseTerritoryFromJson(response.body);
 
         territoryData.value = terrytory;
+
       } catch (e) {
         print('errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrror');
         print(e);
