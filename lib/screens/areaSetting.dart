@@ -10,6 +10,7 @@ import '../dataaccess/apiAccess.dart' as apiAccess;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../model/territoryInfoModel.dart';
+import '../model/terrytorydropdownModel.dart';
 
 class Areasetting extends HookWidget {
   const Areasetting({super.key});
@@ -19,8 +20,10 @@ class Areasetting extends HookWidget {
     final provider = Provider.of<AuthProvider>(context, listen: false);
     final territoryData = useState<TerritoryModel?>(null);
 
-    final dropdownvalue = useState<String?>('Item 1');
-
+    final dropdownvalue = useState<TerritoryDropDownlModel?>(null);
+    final terryDropdown = useState<List<TerritoryDropDownlModel>>([]);
+    List<TerritoryDropDownlModel> tempObj = [];
+    var itemList = useState<TerritoryDropDownlModel?>(null);
     // List of items in our dropdown menu
     var items = [
       'Item 1',
@@ -60,67 +63,146 @@ class Areasetting extends HookWidget {
 //////////////////////////// controllers ///////////////////////////////////////////////
 
     Future<void> _submitPost() async {
-      // final url = Uri.parse(
-      //     '${apiAccess.apiBaseUrl}/SalesMobile/Proc_SaveUserAreaByApi');
-      // final headers = {"Content-Type": "application/json"};
+      print(dropdownvalue.value?.teryCode);
+
+      final url = Uri.parse(
+          '${apiAccess.apiBaseUrl}/SalesMobile/Proc_SaveUserAreaByApi');
+      final headers = {"Content-Type": "application/json"};
 
       print(
           'ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss');
-      // print(url);
+      // print(url); SalesMobile/Proc_SaveUserAreaByApi/
       // Create the JSON payload SalesMobile/Proc_UserAreaInfoByApi?tery_UserId=admin
       final payload = json.encode({
         "Table": [
           {
             "user_SysId": territoryData.value!.userSysId,
             "user_UID": territoryData.value!.userUID,
-            "tery_Code": territoryCodeController.text.isEmpty
-                ? territoryData.value!.teryCode
-                : territoryCodeController.text,
-            "tery_Status": territoryData.value!.teryStatus,
+            "tery_Code": dropdownvalue.value?.teryCode,
+            "tery_Status": 'True',
             "user_CUID": territoryData.value!.userCUID,
             "user_MUID": territoryData.value!.muid,
-            "user_ComID":territoryData.value!.userComCode,
-            "user_ComCode":territoryData.value!.userComCode,
-            "tery_Name": territoryNameController.text.isEmpty
-                ? territoryData.value!.teryName
-                : territoryNameController.text,
-            "tery_AreaCode": areaNameController.text.isEmpty
-                ? territoryData.value!.teryAreaCode
-                : areaNameController.text,
-            "tery_AreaName": areaCodeController.text.isEmpty
-                ? territoryData.value!.teryAreaName
-                : areaNameController.text,
-            "tery_RegionCode": regionCodeController.text.isEmpty
-                ? territoryData.value!.teryRegionCode
-                : regionCodeController.text,
-            "tery_RegionName": regionNameController.text.isEmpty
-                ? territoryData.value!.teryRegionName
-                : regionNameController.text,
-            "tery_DepotCode": depotCodeController.text.isEmpty
-                ? territoryData.value!.teryDepotCode
-                : depotCodeController.text,
-            "tery_DepotName": depotNameController.text.isEmpty
-                ? territoryData.value!.teryDepotName
-                : depotNameController.text,
+            "user_ComID": territoryData.value!.userComID,
+            "user_ComCode": territoryData.value!.userComCode,
+            "user_ComName": territoryData.value!.userComName,
+
+            // "tery_Name": territoryNameController.text.isEmpty
+            //     ? territoryData.value!.teryName
+            //     : territoryNameController.text,
+            // "tery_AreaCode": areaNameController.text.isEmpty
+            //     ? territoryData.value!.teryAreaCode
+            //     : areaNameController.text,
+            // "tery_AreaName": areaCodeController.text.isEmpty
+            //     ? territoryData.value!.teryAreaName
+            //     : areaNameController.text,
+            // "tery_RegionCode": regionCodeController.text.isEmpty
+            //     ? territoryData.value!.teryRegionCode
+            //     : regionCodeController.text,
+            // "tery_RegionName": regionNameController.text.isEmpty
+            //     ? territoryData.value!.teryRegionName
+            //     : regionNameController.text,
+            // "tery_DepotCode": depotCodeController.text.isEmpty
+            //     ? territoryData.value!.teryDepotCode
+            //     : depotCodeController.text,
+            // "tery_DepotName": depotNameController.text.isEmpty
+            //     ? territoryData.value!.teryDepotName
+            //     : depotNameController.text,
           }
         ]
       });
 
       print(payload);
 
-      // try {
-      //   final response = await http.post(url, headers: headers, body: payload);
-      //   if (response.statusCode == 200) {
-      //     print('Data successfully posted.');
-      //   } else {
-      //     print('Failed to post data. Status code: ${response.statusCode}');
-      //   }
-      // } catch (e) {
-      //   print('Error posting data: $e');
-      // }
+      try {
+        final response = await http.post(url, headers: headers, body: payload);
+        if (response.statusCode == 200) {
+          print('Data successfully posted.');
+        } else {
+          print('Failed to post data. Status code: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error posting data: $e');
+      }
+    }
+
+    Future _fetchDropDownData() async {
+      //  Future.delayed(Duration(seconds: 1));
+      // print('in dorpppppppppppppppppppppppppppppppppppp//////////////////');
+      try {
+        final url = Uri.parse(
+            '${apiAccess.apiBaseUrl}/SalesMobile/Proc_UserAreaListSingleDepotForHelpByApi?vDepotCode=' +
+                territoryData.value!.teryDepotCode);
+        print(url);
+        final response = await http.get(url);
+        //final body = json.decode(response.body) as List;
+        print('dropdownldddddddddddddddddddddddddddddddd');
+        // print(response);
+
+        final jsonData = json.decode(response.body);
+
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        // Assuming the list you need is under a key 'data' or similar
+
+        List<dynamic> customerCategories = jsonResponse['Table'];
+
+        print(customerCategories);
+
+        var dt = customerCategories
+            .map((obj) => TerritoryDropDownlModel.fromJson(obj))
+            .toList();
+
+        // dt.map((obj) => print(obj.teryID.toString()));
+
+        // print(jsonData);
+        //print(body);
+        // return body.map((dynamic json) {
+        //   final map = json as Map<String, dynamic>;
+        //   return TerritoryDropDownlModel(
+        //     id: map['id'] as int,
+        //     title: map['title'] as String,
+        //     body: map['body'] as String,
+        //   );
+        // }).toList();
+
+        List<TerritoryDropDownlModel> terrytoryDropdown =
+            parseTerritoryDropDownListFromJson(response.body);
+
+        for (var item in terrytoryDropdown) {
+          tempObj.add(item);
+        }
+
+        terryDropdown.value = tempObj;
+
+        for (var item in terryDropdown.value) {
+          print(item.teryID);
+        }
+
+        // print(terrytoryDropdown);
+
+        // print('errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrror');
+        // print(jsonData['Table']);
+
+        //  for (var item in terrytoryDropdown) {
+        //     TerritoryDropDownlModel(item);
+        //   }
+
+        // itemList.value = tempObj;
+
+        // print(tempObj);
+
+        // print(itemList.value);
+        // TerritoryModel terrytory = parseTerritoryFromJson(response.body);
+        print('errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrror');
+        // territoryData.value = terrytory;
+      } catch (e) {
+        print('errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrror');
+        print(e);
+      }
     }
 
     _fetchData() async {
+      print(
+          'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAobject');
       try {
         final url = Uri.parse(
             '${apiAccess.apiBaseUrl}/SalesMobile/Proc_UserAreaInfoByApi?tery_UserId=' +
@@ -138,33 +220,11 @@ class Areasetting extends HookWidget {
 
         territoryData.value = terrytory;
         print(territoryData?.value?.muid);
+        print(territoryData?.value?.teryStatus);
+        print(territoryData?.value?.userCUID);
+
+        _fetchDropDownData();
       } catch (e) {}
-    }
-
-    Future _fetchDropDownData() async {
-      Future.delayed(Duration(seconds: 2));
-      // print('in dorpppppppppppppppppppppppppppppppppppp//////////////////');
-      try {
-        final url = Uri.parse(
-            '${apiAccess.apiBaseUrl}/SalesMobile/Proc_UserAreaListSingleDepotForHelpByApi?vDepotCode=' +
-                territoryData.value!.teryDepotCode);
-        print(url);
-        final response = await http.get(url);
-
-        // print('dropdownldddddddddddddddddddddddddddddddd');
-        // print(response);
-
-        final jsonData = json.decode(response.body);
-
-         print(jsonData['Table']);
-
-        // TerritoryModel terrytory = parseTerritoryFromJson(response.body);
-
-        // territoryData.value = terrytory;
-      } catch (e) {
-        print('errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrror');
-        print(e);
-      }
     }
 
     useEffect(() {
@@ -195,41 +255,42 @@ class Areasetting extends HookWidget {
               child: territoryData.value != null
                   ? Column(
                       children: [
-                        FutureBuilder(
-                          future: _fetchDropDownData(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            } else
-                              return Row(
-                                children: [
-                                  Expanded(
-                                      flex: 1,
-                                      child: Text(
-                                        'Find',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w700),
-                                      )),
-                                  Expanded(
-                                    flex: 3,
-                                    child: DropdownButton<String>(
-                                        value: dropdownvalue.value,
-                                        icon: const Icon(
-                                            Icons.keyboard_arrow_down),
-                                        items: items.map((String items) {
-                                          return DropdownMenuItem(
-                                            value: items,
-                                            child: Text(items),
-                                          );
-                                        }).toList(),
-                                        onChanged: (String? newValue) {
-                                          dropdownvalue.value = newValue!;
-                                        }),
-                                  ),
-                                ],
-                              );
-                          },
+                        Row(
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: Text(
+                                  'Find',
+                                  style: TextStyle(fontWeight: FontWeight.w700),
+                                )),
+                            Expanded(
+                              flex: 3,
+                              child: DropdownButton<TerritoryDropDownlModel>(
+                                  value: dropdownvalue.value,
+                                  icon: const Icon(Icons.keyboard_arrow_down),
+                                  items: terryDropdown.value
+                                      .map((TerritoryDropDownlModel items) {
+                                    print('+++++++++++++++++++++++++++++' +
+                                        items.teryCode);
+                                    return DropdownMenuItem(
+                                      value: items,
+                                      child: Text(items.teryName +
+                                          ' ' +
+                                          items.teryID.toString() +
+                                          ' ' +
+                                          items.teryParentID +
+                                          ' ' +
+                                          items.teryParentCode),
+                                    );
+                                  }).toList(),
+                                  onChanged:
+                                      (TerritoryDropDownlModel? newValue) {
+                                    dropdownvalue?.value = newValue!;
+                                    // territoryCodeController.text =
+                                    //     dropdownvalue.value!.teryCode.toString();
+                                  }),
+                            ),
+                          ],
                         ),
                         CustomTextFormField(
                             controller: territoryCodeController,

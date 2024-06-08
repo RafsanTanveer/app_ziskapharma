@@ -1,4 +1,10 @@
 import 'package:app_ziskapharma/provider/auth_provider.dart';
+import 'package:app_ziskapharma/screens/customerGroupListSalesOrderScreen.dart';
+import 'package:app_ziskapharma/screens/customerGroupListScreen.dart';
+import 'package:app_ziskapharma/screens/customerGroupListSettingScreen.dart';
+import 'package:app_ziskapharma/screens/customerListScreen.dart';
+import 'package:app_ziskapharma/screens/salesOrderCustomerScreen.dart';
+import 'package:app_ziskapharma/screens/salesOrderScreen.dart';
 import 'package:flutter/material.dart';
 import './screens/loginScreen.dart';
 import './screens/areaSetting.dart';
@@ -42,10 +48,44 @@ class MyApp extends StatelessWidget {
         "/mainmgt": (context) => Mainmgtscreen(),
         "/salesmgt": (context) => Salesmgtscreen(),
         "/userinfo": (context) => Userinfoscreen(),
+        "/cutomergrouplist": (context) => CustomerGroupListScreen(),
+        // "/cutomerlist": (context) => CustomerListScreen(),
+        "/cutomergrouplistforsetting": (context) =>
+            CustomerGroupListSettingScreen(),
+        "/cutomergrouplistforsales": (context) =>
+            CustomerGroupListSalesOrderScreen(),
         "/cstrstts": (context) => CustomerSettingScreen(),
         "/cusgrpstts": (context) => Customergroupsettingscreen(),
         "/slsinvapprvl": (context) => Salesinvoicescreen(),
         "/slsinvview": (context) => Salesinvoiceviewscreen(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/customerlist') {
+          final String vCustomerTypeCode = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (context) {
+              return CustomerListScreen(vCustomerTypeCode: vCustomerTypeCode);
+            },
+          );
+        } else if (settings.name == '/salesOrderCustomerlist') {
+          final String vCustomerTypeCode = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (context) {
+              return SalesOrderCustomerScreen(
+                  vCustomerTypeCode: vCustomerTypeCode);
+            },
+          );
+        } else if (settings.name == '/salesOrder') {
+          // final String vCustomerTypeCode = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (context) {
+              return SalesOrderScreen();
+            },
+          );
+        }
+
+        assert(false, 'Need to implement ${settings.name}');
+        return null;
       },
       home: Loginscreen(),
     );

@@ -6,7 +6,6 @@ class Salesmgtscreen extends StatelessWidget {
     Navigator.pushReplacementNamed(context, '/areasetting');
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +19,6 @@ class Salesmgtscreen extends StatelessWidget {
           ),
         ),
         backgroundColor: Colors.greenAccent[400],
-
       ),
       body: SafeArea(
         child: Container(
@@ -47,14 +45,15 @@ class Salesmgtscreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                height: MediaQuery.of(context).size.height*.12,
-                width: MediaQuery.of(context).size.width*.4,
+                height: MediaQuery.of(context).size.height * .12,
+                width: MediaQuery.of(context).size.width * .4,
                 margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
                   onPressed: () => {Navigator.pushNamed(context, '/userinfo')},
                   child: Text(
                     "USER INFO CHANGE",
-                    style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height * .022),
                     textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -68,14 +67,16 @@ class Salesmgtscreen extends StatelessWidget {
                 ),
               ),
               Container(
-                 height: MediaQuery.of(context).size.height * .12,
+                height: MediaQuery.of(context).size.height * .12,
                 width: MediaQuery.of(context).size.width * .4,
                 margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
-                  onPressed: () => {Navigator.pushNamed(context, '/areasetting')},
+                  onPressed: () =>
+                      {Navigator.pushNamed(context, '/areasetting')},
                   child: Text(
                     "DEFAULT TERRITORY",
-                    style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height * .022),
                     textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -97,16 +98,16 @@ class Salesmgtscreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                 height: MediaQuery.of(context).size.height * .12,
+                height: MediaQuery.of(context).size.height * .12,
                 width: MediaQuery.of(context).size.width * .4,
                 margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
-                                    onPressed: () =>
-                      {Navigator.pushNamed(context, '/cusgrpstts')},
-
+                  onPressed: () =>
+                      {Navigator.pushNamed(context, '/cutomergrouplist')},
                   child: Text(
                     "CUSTOMER LIST",
-                    style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height * .022),
                     textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -120,13 +121,16 @@ class Salesmgtscreen extends StatelessWidget {
                 ),
               ),
               Container(
-                 height: MediaQuery.of(context).size.height * .12,
+                height: MediaQuery.of(context).size.height * .12,
                 width: MediaQuery.of(context).size.width * .4,
                 margin: const EdgeInsets.all(10),
                 child: ElevatedButton(
-                  onPressed: () => {},
+                  onPressed: () => {
+                    Navigator.pushNamed(context, '/cutomergrouplistforsales')
+                  },
                   child: Text("SALES ORDER ONCO",
-                      style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.height * .022),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.visible),
                   style: ElevatedButton.styleFrom(
@@ -148,14 +152,17 @@ class Salesmgtscreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                 height: MediaQuery.of(context).size.height * .12,
+                height: MediaQuery.of(context).size.height * .12,
                 width: MediaQuery.of(context).size.width * .4,
                 margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
-                 onPressed: () => {Navigator.pushNamed(context, '/cstrstts')},
+                  onPressed: () => {
+                    Navigator.pushNamed(context, '/cutomergrouplistforsetting')
+                  },
                   child: Text(
                     "CUSTOMER SETTINGS",
-                    style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height * .022),
                     textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -169,14 +176,14 @@ class Salesmgtscreen extends StatelessWidget {
                 ),
               ),
               Container(
-                 height: MediaQuery.of(context).size.height * .12,
+                height: MediaQuery.of(context).size.height * .12,
                 width: MediaQuery.of(context).size.width * .4,
                 margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
-
                   onPressed: () => {},
                   child: Text("SALES ORDER ONCO LIST",
-                      style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.height * .022),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.visible),
                   style: ElevatedButton.styleFrom(
@@ -198,14 +205,16 @@ class Salesmgtscreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                 height: MediaQuery.of(context).size.height * .12,
+                height: MediaQuery.of(context).size.height * .12,
                 width: MediaQuery.of(context).size.width * .4,
                 margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
-                   onPressed: () => {Navigator.pushNamed(context, '/slsinvapprvl')},
+                  onPressed: () =>
+                      {Navigator.pushNamed(context, '/slsinvapprvl')},
                   child: Text(
                     "INVOICE APPROVAL",
-                    style: TextStyle(fontSize: MediaQuery.of(context).size.height * .022),
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height * .022),
                     textAlign: TextAlign.center,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -218,7 +227,6 @@ class Salesmgtscreen extends StatelessWidget {
                   ),
                 ),
               ),
-
             ],
           ),
         ),

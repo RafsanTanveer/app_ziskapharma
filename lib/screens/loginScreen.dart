@@ -1,14 +1,9 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'dart:convert';
 
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
-
 import 'package:http/http.dart' as http;
-
 import 'package:provider/provider.dart';
-
 import '../dataaccess/apiAccess.dart' as apiAccess;
 
 class Loginscreen extends StatefulWidget {
@@ -17,10 +12,19 @@ class Loginscreen extends StatefulWidget {
 }
 
 class _LoginscreenState extends State<Loginscreen> {
+  final userTxtCntrl = TextEditingController();
+  final passTxtCntrl = TextEditingController();
+
+  @override
+  void dispose() {
+    userTxtCntrl.dispose();
+    passTxtCntrl.dispose();
+    super.dispose();
+  }
+
   void _loginPressed(BuildContext context) async {
     final provider = Provider.of<AuthProvider>(context, listen: false);
 
-    // Navigator.pushReplacementNamed(context, '/mainmgt');
     print("Login pressed*****************************************************");
 
     final String userUID = userTxtCntrl.text;
@@ -31,7 +35,7 @@ class _LoginscreenState extends State<Loginscreen> {
         {"user_UID": userUID, "user_Pws": userPws}
       ]
     });
-//http://192.168.0.106:45455/Default.aspx
+
     try {
       final url = Uri.parse(
           '${apiAccess.apiBaseUrl}/LogIn/Proc_UserCheckYesNoByApiDataSet');
@@ -56,7 +60,6 @@ class _LoginscreenState extends State<Loginscreen> {
       print(responseData);
 
       if (responseData == 'true') {
-        // provider.setUserId(userUID.toString());
         context.read<AuthProvider>().setUserId(userUID);
         context.read<AuthProvider>().setUserPass(userPws);
         Navigator.pushReplacementNamed(context, '/mainmgt');
@@ -67,19 +70,8 @@ class _LoginscreenState extends State<Loginscreen> {
     }
   }
 
-  final userTxtCntrl = TextEditingController();
-  final passTxtCntrl = TextEditingController();
-
-  @override
-  void dispose() {
-    userTxtCntrl.dispose();
-    passTxtCntrl.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    // final provider = Provider.of<AuthProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -98,16 +90,18 @@ class _LoginscreenState extends State<Loginscreen> {
         ],
       ),
       body: SafeArea(
-        child: Container(
-          margin: EdgeInsets.all(14),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _header(context),
-              _inputField(context),
-              _companyLogo(context),
-              _footer(context),
-            ],
+        child: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.all(14),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _header(context),
+                _inputField(context),
+                _companyLogo(context),
+                _footer(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -127,7 +121,7 @@ class _LoginscreenState extends State<Loginscreen> {
         color: Colors.purple,
         border: Border.all(),
         borderRadius: BorderRadius.all(Radius.circular(11.0)),
-      ), //             <--- BoxDecoration here
+      ),
       child: Text(
         "Galaxy Pharma ERP",
         textAlign: TextAlign.center,
@@ -164,7 +158,7 @@ class _LoginscreenState extends State<Loginscreen> {
                 borderSide: BorderSide.none),
             fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
             filled: true,
-            prefixIcon: Icon(Icons.person),
+            prefixIcon: Icon(Icons.lock),
           ),
           obscureText: true,
         ),
@@ -213,8 +207,6 @@ class _LoginscreenState extends State<Loginscreen> {
       children: [
         Image.asset(
           'assets/images/alifsoft.PNG',
-          //  height: width * .2,
-          //   width: width * .2,
         ),
         Text(
           "Developed By : Alif Soft ",
