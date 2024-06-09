@@ -207,27 +207,32 @@ class Userinfoscreen extends HookWidget {
                       children: [
                         Row(
                           children: [
-                            Stack(
-                              alignment: Alignment.bottomRight,
-                              children:[ Container(
-                                width: MediaQuery.of(context).size.width*.35,
-                                height: MediaQuery.of(context).size.width * .35,
-                                  margin: EdgeInsets.only(bottom: 15, right: 15),
+                            Stack(alignment: Alignment.bottomRight, children: [
+                              Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .35,
+                                  height:
+                                      MediaQuery.of(context).size.width * .35,
+                                  margin:
+                                      EdgeInsets.only(bottom: 15, right: 15),
                                   child: ClipOval(
                                     child: SizedBox.fromSize(
                                       size: Size.fromRadius(48),
-                                      child: Image.memory(base64Decode(
-                                          snapData.value == null
-                                              ? userData.value!.userImagePicture
-                                              : snapData!.value ?? ""),),
+                                      child: Image.memory(
+                                        base64Decode(snapData.value == null
+                                            ? userData.value!.userImagePicture
+                                            : snapData!.value ?? ""),
+                                      ),
                                     ),
                                   )),
-                                   Positioned(
-                                right:15,
-                                bottom:15,
+                              Positioned(
+                                right: 15,
+                                bottom: 15,
                                 child: Container(
-                                  width: MediaQuery.of(context).size.width * .09,
-                                  height: MediaQuery.of(context).size.width * .09,
+                                  width:
+                                      MediaQuery.of(context).size.width * .09,
+                                  height:
+                                      MediaQuery.of(context).size.width * .09,
                                   child: FloatingActionButton(
                                     onPressed: _pickImage,
                                     mini: true,
@@ -235,9 +240,41 @@ class Userinfoscreen extends HookWidget {
                                   ),
                                 ),
                               ),
-                            ]
-                            ),
-
+                            ]),
+                            Stack(alignment: Alignment.bottomRight, children: [
+                              Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .25,
+                                  height:
+                                      MediaQuery.of(context).size.width * .25,
+                                  margin:
+                                      EdgeInsets.only(bottom: 15, right: 15, left: 15, top: MediaQuery.of(context).size.width *
+                                          .1),
+                                  child: SizedBox(
+                                      width:
+                                          MediaQuery.of(context).size.width *
+                                              .2,
+                                      child: Image.memory(base64Decode(
+                                          signatureData.value == null
+                                              ? userData
+                                                  .value!.userImageSignature
+                                              : signatureData!.value ?? "")))),
+                              Positioned(
+                                right: 15,
+                                bottom: 15,
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .09,
+                                  height:
+                                      MediaQuery.of(context).size.width * .09,
+                                  child: FloatingActionButton(
+                                    onPressed:_pickSignature,
+                                    mini: true,
+                                    child: Icon(Icons.camera_alt),
+                                  ),
+                                ),
+                              ),
+                            ])
                           ],
                         ),
                         CustomTextFormField(
@@ -284,34 +321,7 @@ class Userinfoscreen extends HookWidget {
                             controller: userBrnNameController,
                             hint: userData.value!.userBrnName ?? "",
                             title: "Branch Name"),
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: SizedBox(
-                                  width: MediaQuery.of(context).size.width * .3,
-                                  child: Image.memory(base64Decode(
-                                      signatureData.value == null
-                                          ? userData.value!.userImageSignature
-                                          : signatureData!.value ?? ""))),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                padding: EdgeInsets.all(10),
-                                width: MediaQuery.of(context).size.width * .3,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      _pickSignature();
-                                    },
-                                    child: Text(
-                                      'Upload Signature',
-                                      textAlign: TextAlign.center,
-                                    )),
-                              ),
-                            )
-                          ],
-                        ),
+                        
                         Row(
                           children: [
                             Container(
