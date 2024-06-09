@@ -207,27 +207,37 @@ class Userinfoscreen extends HookWidget {
                       children: [
                         Row(
                           children: [
-                            Container(
-                                margin: EdgeInsets.only(bottom: 15, right: 15),
-                                child: Image.memory(base64Decode(
-                                    snapData.value == null
-                                        ? userData.value!.userImagePicture
-                                        : snapData!.value ?? ""))),
-                            Container(
-                              padding: EdgeInsets.all(10),
-                              width: MediaQuery.of(context).size.width * .3,
-                              child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      _pickImage();
-                                    },
-                                    child: Text(
-                                      'Upload Photo',
-                                      textAlign: TextAlign.center,
-                                    )),
+                            Stack(
+                              alignment: Alignment.bottomRight,
+                              children:[ Container(
+                                width: MediaQuery.of(context).size.width*.35,
+                                height: MediaQuery.of(context).size.width * .35,
+                                  margin: EdgeInsets.only(bottom: 15, right: 15),
+                                  child: ClipOval(
+                                    child: SizedBox.fromSize(
+                                      size: Size.fromRadius(48),
+                                      child: Image.memory(base64Decode(
+                                          snapData.value == null
+                                              ? userData.value!.userImagePicture
+                                              : snapData!.value ?? ""),),
+                                    ),
+                                  )),
+                                   Positioned(
+                                right:15,
+                                bottom:15,
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width * .09,
+                                  height: MediaQuery.of(context).size.width * .09,
+                                  child: FloatingActionButton(
+                                    onPressed: _pickImage,
+                                    mini: true,
+                                    child: Icon(Icons.camera_alt),
+                                  ),
+                                ),
                               ),
-                            )
+                            ]
+                            ),
+
                           ],
                         ),
                         CustomTextFormField(

@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../dataaccess/apiAccess.dart' as apiAccess;
 import '../model/customerListModel.dart';
+import 'package:provider/provider.dart';
+import 'package:app_ziskapharma/provider/auth_provider.dart';
 
 Future<List<CustomerListModel>> fetchCustomerLists(
-    String vCustomerTypeCode) async {
+    String vCustomerTypeCode, String user_id) async {
   final url = Uri.parse(
-      '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=admin&vCustomerTypeCode=$vCustomerTypeCode');
+      '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=${user_id}&vCustomerTypeCode=$vCustomerTypeCode');
 
   final response = await http.get(url);
 
@@ -36,8 +38,10 @@ class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
 
   @override
   void initState() {
+    final provider = Provider.of<AuthProvider>(context, listen: false);
+
     super.initState();
-    _customerLists = fetchCustomerLists(widget.vCustomerTypeCode);
+    _customerLists = fetchCustomerLists(widget.vCustomerTypeCode, provider.user_id);
   }
 
   @override
