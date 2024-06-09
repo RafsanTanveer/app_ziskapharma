@@ -5,6 +5,7 @@ import 'package:app_ziskapharma/screens/customerGroupListSettingScreen.dart';
 import 'package:app_ziskapharma/screens/customerListScreen.dart';
 import 'package:app_ziskapharma/screens/salesOrderCustomerScreen.dart';
 import 'package:app_ziskapharma/screens/salesOrderScreen.dart';
+import 'package:app_ziskapharma/screens/splashScreen.dart';
 import 'package:flutter/material.dart';
 import './screens/loginScreen.dart';
 import './screens/areaSetting.dart';
@@ -87,7 +88,7 @@ class MyApp extends StatelessWidget {
         assert(false, 'Need to implement ${settings.name}');
         return null;
       },
-      home: Loginscreen(),
+      home: SplashScreen(),
     );
   }
 }
