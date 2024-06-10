@@ -131,8 +131,12 @@ class _CustomerGroupListSettingScreen
         DataCell(
           GestureDetector(
             onTap: () {
+              Navigator.pushNamed(context, '/cstrstts'
+                  //arguments: category.cpCode.toString(),
+                  );
+
               // Handle link click here
-              print('Customer Name clicked for cpID: ${category.cpID}');
+              //print('Customer Name clicked for cpID: ${category.cpID}');
             },
             child: Text(
               'Customer Name',

@@ -83,6 +83,12 @@ class MyApp extends StatelessWidget {
               return SalesOrderScreen();
             },
           );
+        } else if (settings.name == '/cstrstts') {
+          return MaterialPageRoute(
+            builder: (context) {
+              return CustomerSettingScreen();
+            },
+          );
         }
 
         assert(false, 'Need to implement ${settings.name}');

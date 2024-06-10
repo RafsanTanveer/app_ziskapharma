@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-
+import 'package:app_ziskapharma/model/branchModel.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,9 +10,7 @@ import 'dart:convert';
 import '../model/sample.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-
 import '../dataaccess/apiAccess.dart' as apiAccess;
-
 import '../custom_widgets/textFormField.dart';
 
 class Userinfoscreen extends HookWidget {
@@ -25,76 +23,51 @@ class Userinfoscreen extends HookWidget {
     final snapData = useState<String?>(null);
     final signatureData = useState<String?>(null);
 
-///////////////////////////  TextField Contrllers  ///////////////////////////////////////////////
+    void setControllerText(TextEditingController controller, String text) {
+      controller.text = text;
+      controller.selection = TextSelection.fromPosition(
+          TextPosition(offset: controller.text.length));
+    }
 
-    TextEditingController userIdController =
-        TextEditingController(text: userData.value?.userUID ?? "");
-    TextEditingController passwordController =
-        TextEditingController(text: userData.value?.userPws ?? "");
-    TextEditingController fullNameController =
-        TextEditingController(text: userData.value?.userFullName ?? "");
+    TextEditingController userIdController = useTextEditingController();
+    TextEditingController passwordController = useTextEditingController();
+    TextEditingController fullNameController = useTextEditingController();
     TextEditingController userDesignationController =
-        TextEditingController(text: userData.value?.userDesignation ?? "");
-    TextEditingController userMobileNoController =
-        TextEditingController(text: userData.value?.userMobileNo ?? "");
-    TextEditingController userEmailController =
-        TextEditingController(text: userData.value?.userEmail ?? "");
-    TextEditingController userDepartmentController =
-        TextEditingController(text: userData.value?.userDepartment ?? "");
+        useTextEditingController();
+    TextEditingController userMobileNoController = useTextEditingController();
+    TextEditingController userEmailController = useTextEditingController();
+    TextEditingController userDepartmentController = useTextEditingController();
     TextEditingController userDepartmentCodeController =
-        TextEditingController(text: userData.value?.userDepartmentCode ?? "");
-    TextEditingController userBrnCodeController =
-        TextEditingController(text: userData.value?.userBrnCode ?? "");
-    TextEditingController userBrnNameController =
-        TextEditingController(text: userData.value?.userBrnName ?? "");
-
-///////////////////////////  TextField Contrllers  ///////////////////////////////////////////////
+        useTextEditingController();
+    TextEditingController userBrnCodeController = useTextEditingController();
+    TextEditingController userBrnNameController = useTextEditingController();
 
     Future<void> _submitPost() async {
       final url = Uri.parse('${apiAccess.apiBaseUrl}/UserInfo/Proc_SaveByApi');
       final headers = {"Content-Type": "application/json"};
 
-      // Create the JSON payload
       final payload = json.encode({
         "UserTable": [
           {
             "user_ID": userData.value!.userID,
             "user_UID": userIdController.text,
             "user_Pws": passwordController.text,
-            "user_FullName": fullNameController.text.isEmpty
-                ? userData.value!.userFullName
-                : fullNameController.text,
-            "user_Department": userDepartmentController.text.isEmpty
-                ? userData.value!.userDepartment
-                : userDepartmentController.text,
-            "user_DepartmentCode": userDepartmentCodeController.text.isEmpty
-                ? userData.value!.userDepartmentCode
-                : userDepartmentCodeController.text,
-            "user_Designation": userDesignationController.text.isEmpty
-                ? userData.value!.userDesignation
-                : userDesignationController.text,
-            "user_MobileNo": userMobileNoController.text.isEmpty
-                ? userData.value!.userMobileNo
-                : userMobileNoController.text,
-            "user_Email": userEmailController.text.isEmpty
-                ? userData.value!.userEmail
-                : userEmailController.text,
+            "user_FullName": fullNameController.text,
+            "user_Department": userDepartmentController.text,
+            "user_DepartmentCode": userDepartmentCodeController.text,
+            "user_Designation": userDesignationController.text,
+            "user_MobileNo": userMobileNoController.text,
+            "user_Email": userEmailController.text,
             "user_BrnID": userData.value!.userBrnID,
-            "user_BrnCode": userBrnCodeController.text.isEmpty
-                ? userData.value!.userBrnCode
-                : userBrnCodeController.text,
-            "user_BrnName": userBrnNameController.text.isEmpty
-                ? userData.value!.userBrnName
-                : userBrnNameController.text,
-            "user_imagePicture": snapData.value == null
-                ? userData.value!.userImagePicture
-                : snapData!.value ?? "",
-            "user_imageSignature": signatureData.value == null
-                ? userData.value!.userImageSignature
-                : signatureData!.value ?? "",
+            "user_BrnCode": userBrnCodeController.text,
+            "user_BrnName": userBrnNameController.text,
+            "user_imagePicture":
+                snapData.value ?? userData.value!.userImagePicture,
+            "user_imageSignature":
+                signatureData.value ?? userData.value!.userImageSignature,
             "user_MUID": userData.value!.muid,
-            "user_ComID": userData?.value?.userComID,
-            "user_ComCode": userData?.value?.userComCode,
+            "user_ComID": userData.value?.userComID,
+            "user_ComCode": userData.value?.userComCode,
           }
         ]
       });
@@ -111,74 +84,82 @@ class Userinfoscreen extends HookWidget {
       }
     }
 
-    _fetchData() async {
+    Future<void> _fetchData() async {
       try {
         final url = Uri.parse(
             '${apiAccess.apiBaseUrl}/UserInfo/Proc_UserDisplayByApi/?user_UID=' +
                 provider.user_id);
-
         final response = await http.get(url);
-
         final jsonData = json.decode(response.body);
-
         User user = parseUserFromJson(response.body);
         userData.value = user;
-      } catch (e) {}
+
+        setControllerText(userIdController, user.userUID);
+        setControllerText(passwordController, user.userPws);
+        setControllerText(fullNameController, user.userFullName);
+        setControllerText(userDesignationController, user.userDesignation);
+        setControllerText(userMobileNoController, user.userMobileNo);
+        setControllerText(userEmailController, user.userEmail);
+        setControllerText(userDepartmentController, user.userDepartment);
+        setControllerText(
+            userDepartmentCodeController, user.userDepartmentCode);
+        setControllerText(userBrnCodeController, user.userBrnCode);
+        setControllerText(userBrnNameController, user.userBrnName);
+      } catch (e) {
+        print('Error fetching data: $e');
+      }
+    }
+
+    Future<List<Branch>> _fetchBranch() async {
+      final url =
+          Uri.parse('${apiAccess.apiBaseUrl}/UserInfo/Proc_BranchListByApi');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        // Assuming the list you need is under a key 'data' or similar
+        List<dynamic> branches = jsonResponse['Table'];
+
+        List<Branch> branch =
+            branches.map((obj) => Branch.fromJson(obj)).toList();
+
+        return branch;
+      } else {
+        throw Exception('Failed to load data');
+      }
     }
 
     useEffect(() {
       _fetchData();
     }, []);
 
-    File? image;
-    File? imageSignature;
-    // _pickSignature()
-
-    Future _pickSignature() async {
+    Future<void> _pickImage() async {
       try {
-        final image = await ImagePicker().pickImage(
-            source: ImageSource.gallery, maxHeight: 100, maxWidth: 200);
-        print(image?.name);
-        if (image == null) return;
+        final pickedImage = await ImagePicker().pickImage(
+            source: ImageSource.gallery, maxHeight: 200, maxWidth: 200);
+        if (pickedImage == null) return;
 
-        final imageTemporary = File(image.path);
-
-        File file = File(image.path);
-        Uint8List bytes = file.readAsBytesSync();
-
+        final imageTemporary = File(pickedImage.path);
+        Uint8List bytes = imageTemporary.readAsBytesSync();
         String base64Image = base64Encode(bytes);
-
-        signatureData.value = base64Image;
-
-        print(base64Image);
-
-        print(imageTemporary);
+        snapData.value = base64Image;
       } on PlatformException catch (e) {
         print('Failed to pick image: $e');
       }
     }
 
-    Future _pickImage() async {
+    Future<void> _pickSignature() async {
       try {
-        final image = await ImagePicker().pickImage(
-            source: ImageSource.gallery, maxHeight: 200, maxWidth: 200);
-        print(image?.name);
-        if (image == null) return;
+        final pickedSignature = await ImagePicker().pickImage(
+            source: ImageSource.gallery, maxHeight: 100, maxWidth: 200);
+        if (pickedSignature == null) return;
 
-        final imageTemporary = File(image.path);
-
-        File file = File(image.path);
-        Uint8List bytes = file.readAsBytesSync();
-
-        String base64Image = base64Encode(bytes);
-
-        snapData.value = base64Image;
-
-        print(base64Image);
-
-        print(imageTemporary);
+        final signatureTemporary = File(pickedSignature.path);
+        Uint8List bytes = signatureTemporary.readAsBytesSync();
+        String base64Signature = base64Encode(bytes);
+        signatureData.value = base64Signature;
       } on PlatformException catch (e) {
-        print('Failed to pick image: $e');
+        print('Failed to pick signature: $e');
       }
     }
 
@@ -207,8 +188,10 @@ class Userinfoscreen extends HookWidget {
                       children: [
                         Row(
                           children: [
-                            Stack(alignment: Alignment.bottomRight, children: [
-                              Container(
+                            Stack(
+                              alignment: Alignment.bottomRight,
+                              children: [
+                                Container(
                                   width:
                                       MediaQuery.of(context).size.width * .35,
                                   height:
@@ -219,166 +202,179 @@ class Userinfoscreen extends HookWidget {
                                     child: SizedBox.fromSize(
                                       size: Size.fromRadius(48),
                                       child: Image.memory(
-                                        base64Decode(snapData.value == null
-                                            ? userData.value!.userImagePicture
-                                            : snapData!.value ?? ""),
+                                        base64Decode(snapData.value ??
+                                            userData.value!.userImagePicture),
                                       ),
                                     ),
-                                  )),
-                              Positioned(
-                                right: 15,
-                                bottom: 15,
-                                child: Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .09,
-                                  height:
-                                      MediaQuery.of(context).size.width * .09,
-                                  child: FloatingActionButton(
-                                    onPressed: _pickImage,
-                                    mini: true,
-                                    child: Icon(Icons.camera_alt),
                                   ),
                                 ),
-                              ),
-                            ]),
-                            Stack(alignment: Alignment.bottomRight, children: [
-                              Container(
+                                Positioned(
+                                  right: 15,
+                                  bottom: 15,
+                                  child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .09,
+                                    height:
+                                        MediaQuery.of(context).size.width * .09,
+                                    child: FloatingActionButton(
+                                      onPressed: _pickImage,
+                                      mini: true,
+                                      child: Icon(Icons.camera_alt),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Stack(
+                              alignment: Alignment.bottomRight,
+                              children: [
+                                Container(
                                   width:
                                       MediaQuery.of(context).size.width * .25,
                                   height:
                                       MediaQuery.of(context).size.width * .25,
-                                  margin:
-                                      EdgeInsets.only(bottom: 15, right: 15, left: 15, top: MediaQuery.of(context).size.width *
+                                  margin: EdgeInsets.only(
+                                      bottom: 15,
+                                      right: 15,
+                                      left: 15,
+                                      top: MediaQuery.of(context).size.width *
                                           .1),
                                   child: SizedBox(
-                                      width:
-                                          MediaQuery.of(context).size.width *
-                                              .2,
-                                      child: Image.memory(base64Decode(
-                                          signatureData.value == null
-                                              ? userData
-                                                  .value!.userImageSignature
-                                              : signatureData!.value ?? "")))),
-                              Positioned(
-                                right: 15,
-                                bottom: 15,
-                                child: Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .09,
-                                  height:
-                                      MediaQuery.of(context).size.width * .09,
-                                  child: FloatingActionButton(
-                                    onPressed:_pickSignature,
-                                    mini: true,
-                                    child: Icon(Icons.camera_alt),
+                                    width:
+                                        MediaQuery.of(context).size.width * .2,
+                                    child: Image.memory(base64Decode(
+                                        signatureData.value ??
+                                            userData
+                                                .value!.userImageSignature)),
                                   ),
                                 ),
-                              ),
-                            ])
+                                Positioned(
+                                  right: 15,
+                                  bottom: 15,
+                                  child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .09,
+                                    height:
+                                        MediaQuery.of(context).size.width * .09,
+                                    child: FloatingActionButton(
+                                      onPressed: _pickSignature,
+                                      mini: true,
+                                      child: Icon(Icons.camera_alt),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
+                        TextFeildWithSearchBtn(
+                          controller: userIdController,
+                          hint: userData.value!.userUID ?? "",
+                          title: "User Id",
+                        ),
                         CustomTextFormField(
-                            controller: userIdController,
-                            hint: userData.value!.userUID ?? "",
-                            title: "User Id"),
+                          controller: passwordController,
+                          hint: userData.value!.userPws ?? "",
+                          title: "Password",
+                        ),
                         CustomTextFormField(
-                            controller: passwordController,
-                            hint: userData.value!.userPws ?? "",
-                            title: "Password"),
+                          controller: fullNameController,
+                          hint: userData.value!.userFullName ?? "",
+                          title: "Full Name",
+                        ),
                         CustomTextFormField(
-                            controller: fullNameController,
-                            hint: userData.value!.userFullName ?? "",
-                            title: "Full Name"),
+                          controller: userDesignationController,
+                          hint: userData.value!.userDesignation ?? "",
+                          title: "Designation",
+                        ),
                         CustomTextFormField(
-                            controller: userDesignationController,
-                            hint: userData.value!.userDesignation ?? "",
-                            title: "Designation"),
+                          controller: userMobileNoController,
+                          hint: userData.value!.userMobileNo ?? "",
+                          title: "Mobile no.",
+                        ),
                         CustomTextFormField(
-                            controller: userMobileNoController,
-                            hint: userData.value!.userMobileNo ?? "",
-                            title: "Mobile no."),
+                          controller: userEmailController,
+                          hint: userData.value!.userEmail ?? "",
+                          title: "Email",
+                        ),
                         CustomTextFormField(
-                            controller: userEmailController,
-                            hint: userData.value!.userEmail ?? "",
-                            title: "Email"),
+                          controller: userDepartmentCodeController,
+                          hint: userData.value!.userDepartmentCode ?? "",
+                          title: "Department Code",
+                        ),
                         CustomTextFormField(
-                            controller: userDepartmentCodeController,
-                            hint: userData.value!.userDepartmentCode ?? "",
-                            title: "Department Code"),
+                          controller: userDepartmentController,
+                          hint: userData.value!.userDepartment ?? "",
+                          title: "Department Name",
+                        ),
+                        CustomTextFormFieldAreaSetting(
+                          controller: userBrnCodeController,
+                          hint: userData.value!.userBrnCode ?? "",
+                          title: "Branch Code",
+                          isEnable: false,
+                        ),
                         CustomTextFormField(
-                            controller: userDepartmentController,
-                            hint: userData.value!.userDepartment ?? "",
-                            title: "Department Name"),
-                        CustomTextFormField(
-                            controller: userBrnCodeController,
-                            hint: userData.value!.userBrnCode ?? "",
-                            title: "Branch Code"),
-                        CustomTextFormField(
-                            controller: userBrnNameController,
-                            hint: userData.value!.userBrnName ?? "",
-                            title: "Branch Name"),
-                        CustomTextFormField(
-                            controller: userBrnNameController,
-                            hint: userData.value!.userBrnName ?? "",
-                            title: "Branch Name"),
-                        
+                          controller: userBrnNameController,
+                          hint: userData.value!.userBrnName ?? "",
+                          title: "Branch Name",
+                        ),
                         Row(
                           children: [
                             Container(
-                                margin: EdgeInsets.only(right: 10),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.green,
-                                      elevation: 3,
-                                      maximumSize: Size(150, 150),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            12), // <-- Radius
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 10),
-                                    ),
-                                    onPressed: () => {
-                                          _submitPost(),
-                                        },
-                                    child: Text(
-                                      'Submit',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .020),
-                                    ))),
+                              margin: EdgeInsets.only(right: 10),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  elevation: 3,
+                                  maximumSize: Size(150, 150),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 10),
+                                ),
+                                onPressed: _submitPost,
+                                child: Text(
+                                  'Submit',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize:
+                                        MediaQuery.of(context).size.height *
+                                            .020,
+                                  ),
+                                ),
+                              ),
+                            ),
                             Container(
                               margin: EdgeInsets.all(10),
                               child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    elevation: 3,
-                                    maximumSize: Size(150, 150),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          12), // <-- Radius
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 10),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  elevation: 3,
+                                  maximumSize: Size(150, 150),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                  onPressed: () =>
-                                      {Navigator.pop(context, '/salesmgt')},
-                                  child: Text(
-                                    'Cancel',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w900,
-                                        fontSize:
-                                            MediaQuery.of(context).size.height *
-                                                .020),
-                                  )),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 10),
+                                ),
+                                onPressed: () =>
+                                    Navigator.pop(context, '/salesmgt'),
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize:
+                                        MediaQuery.of(context).size.height *
+                                            .020,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
-                        )
+                        ),
                       ],
                     )
                   : Center(child: CircularProgressIndicator()),
