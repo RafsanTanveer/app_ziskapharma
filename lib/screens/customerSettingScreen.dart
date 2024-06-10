@@ -109,7 +109,7 @@ class CustomerSettingScreen extends HookWidget {
                     hint: 'Mobile',
                     title: "Mobile *",
                   ),
-                  CustomTextFormField(
+                  TextFeildWithSearchBtn(
                     controller: categoryCodeController,
                     hint: 'Category Code',
                     title: "Category Code",
@@ -119,7 +119,7 @@ class CustomerSettingScreen extends HookWidget {
                     hint: 'Category Name',
                     title: "Category Name",
                   ),
-                  CustomTextFormField(
+                  TextFeildWithSearchBtn(
                     controller: refCodeController,
                     hint: 'Ref. Code',
                     title: "Ref. Code",
@@ -129,7 +129,7 @@ class CustomerSettingScreen extends HookWidget {
                     hint: 'hint',
                     title: "Ref. Name",
                   ),
-                  CustomTextFormField(
+                  TextFeildWithSearchBtn(
                     controller: rulesNoController,
                     hint: 'hint',
                     title: "Rules No.",

@@ -267,7 +267,7 @@ class Userinfoscreen extends HookWidget {
                             ),
                           ],
                         ),
-                        TextFeildWithSearchBtn(
+                        CustomTextFormField(
                           controller: userIdController,
                           hint: userData.value!.userUID ?? "",
                           title: "User Id",
@@ -307,11 +307,11 @@ class Userinfoscreen extends HookWidget {
                           hint: userData.value!.userDepartment ?? "",
                           title: "Department Name",
                         ),
-                        CustomTextFormFieldAreaSetting(
+                        TextFeildWithSearchBtn(
                           controller: userBrnCodeController,
                           hint: userData.value!.userBrnCode ?? "",
                           title: "Branch Code",
-                          isEnable: false,
+                          
                         ),
                         CustomTextFormField(
                           controller: userBrnNameController,

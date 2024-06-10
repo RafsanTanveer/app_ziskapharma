@@ -173,7 +173,7 @@ class TextFeildWithSearchBtn extends StatelessWidget {
           Expanded(
             flex: 5,
             child: TextFormField(
-              readOnly: title == 'User Id' ? true : false,
+              readOnly: title == 'Branch Code' ? true : false,
               controller: controller,
               onChanged: (text) {
                 // Update the text in the controller when the text field changes
