@@ -131,8 +131,8 @@ class _CustomerGroupListSettingScreen
         DataCell(
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/cstrstts'
-                  //arguments: category.cpCode.toString(),
+              Navigator.pushNamed(context, '/cstrstts',
+                  arguments: category.cpCode.toString(),
                   );
 
               // Handle link click here

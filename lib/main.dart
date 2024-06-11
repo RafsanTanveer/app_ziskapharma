@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
             CustomerGroupListSettingScreen(),
         "/cutomergrouplistforsales": (context) =>
             CustomerGroupListSalesOrderScreen(),
-        "/cstrstts": (context) => CustomerSettingScreen(),
+        // "/cstrstts": (context) => CustomerSettingScreen(),
         "/cusgrpstts": (context) => Customergroupsettingscreen(),
         "/slsinvapprvl": (context) => Salesinvoicescreen(),
         "/slsinvview": (context) => Salesinvoiceviewscreen(),
@@ -86,7 +86,8 @@ class MyApp extends StatelessWidget {
         } else if (settings.name == '/cstrstts') {
           return MaterialPageRoute(
             builder: (context) {
-              return CustomerSettingScreen();
+               final String vCustomerTypeCode = settings.arguments as String;
+              return CustomerSettingScreen(param_cpCode: vCustomerTypeCode);
             },
           );
         }

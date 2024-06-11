@@ -51,7 +51,6 @@ class CustomTextFormField extends StatelessWidget {
     );
     ;
   }
-
 }
 
 class CustomTextFormFieldAreaSetting extends StatelessWidget {
@@ -144,12 +143,14 @@ class TextFeildWithSearchBtn extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final String title;
+  final VoidCallback onPressed;
 
-  const TextFeildWithSearchBtn({super.key,
-    required this.controller,
+  const TextFeildWithSearchBtn(
+      {super.key,
+      required this.controller,
       required this.hint,
-      required this.title
-  });
+      required this.title,
+      required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -189,12 +190,13 @@ class TextFeildWithSearchBtn extends StatelessWidget {
           Expanded(
               flex: 1,
               child: Container(
-                padding: EdgeInsets.only(right: 5),
+               
+                padding: EdgeInsets.only(right: 1, left: 5),
                 child: Material(
-                  elevation: 5,shape: const CircleBorder(),
+                  elevation: 5,
+                  shape: const CircleBorder(),
                   child: IconButton(
-
-                          onPressed: () => {}, icon: const Icon(Icons.search)),
+                      onPressed: () => onPressed(), icon: const Icon(Icons.search)),
                 ),
               ))
         ],
@@ -202,5 +204,4 @@ class TextFeildWithSearchBtn extends StatelessWidget {
     );
     ;
   }
-
 }

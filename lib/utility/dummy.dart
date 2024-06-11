@@ -86,6 +86,83 @@ class Userinfoscreen extends HookWidget {
       }
     }
 
+    Future<void> _fetchBranch() async {
+      final url =
+          Uri.parse('${apiAccess.apiBaseUrl}/UserInfo/Proc_BranchListByApi');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        List<dynamic> branches = jsonResponse['Table'];
+        List<Branch> branch =
+            branches.map((obj) => Branch.fromJson(obj)).toList();
+
+        branchDropdown.value = branch;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    }
+
+    Future<void> _fetchData() async {
+      try {
+        final url = Uri.parse(
+            '${apiAccess.apiBaseUrl}/UserInfo/Proc_UserDisplayByApi/?user_UID=' +
+                provider.user_id);
+        final response = await http.get(url);
+        final jsonData = json.decode(response.body);
+        User user = parseUserFromJson(response.body);
+        userData.value = user;
+        await _fetchBranch();
+        setControllerText(userIdController, user.userUID);
+        setControllerText(passwordController, user.userPws);
+        setControllerText(fullNameController, user.userFullName);
+        setControllerText(userDesignationController, user.userDesignation);
+        setControllerText(userMobileNoController, user.userMobileNo);
+        setControllerText(userEmailController, user.userEmail);
+        setControllerText(userDepartmentController, user.userDepartment);
+        setControllerText(
+            userDepartmentCodeController, user.userDepartmentCode);
+        setControllerText(userBrnCodeController, user.userBrnCode);
+        setControllerText(userBrnNameController, user.userBrnName);
+      } catch (e) {
+        print('Error fetching data: $e');
+      }
+    }
+
+    useEffect(() {
+      _fetchData();
+    }, []);
+
+    Future<void> _pickImage() async {
+      try {
+        final pickedImage = await ImagePicker().pickImage(
+            source: ImageSource.gallery, maxHeight: 200, maxWidth: 200);
+        if (pickedImage == null) return;
+
+        final imageTemporary = File(pickedImage.path);
+        Uint8List bytes = imageTemporary.readAsBytesSync();
+        String base64Image = base64Encode(bytes);
+        snapData.value = base64Image;
+      } on PlatformException catch (e) {
+        print('Failed to pick image: $e');
+      }
+    }
+
+    Future<void> _pickSignature() async {
+      try {
+        final pickedSignature = await ImagePicker().pickImage(
+            source: ImageSource.gallery, maxHeight: 100, maxWidth: 200);
+        if (pickedSignature == null) return;
+
+        final signatureTemporary = File(pickedSignature.path);
+        Uint8List bytes = signatureTemporary.readAsBytesSync();
+        String base64Signature = base64Encode(bytes);
+        signatureData.value = base64Signature;
+      } on PlatformException catch (e) {
+        print('Failed to pick signature: $e');
+      }
+    }
+
     Future<void> _showDropdownDialog(BuildContext context) async {
       final selectedValue = await showModalBottomSheet<Branch>(
         context: context,
@@ -153,85 +230,6 @@ class Userinfoscreen extends HookWidget {
         branchValue.value = selectedValue;
         userBrnCodeController.text = selectedValue.brnCode.toString();
         userBrnNameController.text = selectedValue.brnName.toString();
-      }
-    }
-
-    Future<void> _fetchBranch() async {
-      final url =
-          Uri.parse('${apiAccess.apiBaseUrl}/UserInfo/Proc_BranchListByApi');
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        Map<String, dynamic> jsonResponse = json.decode(response.body);
-        List<dynamic> branches = jsonResponse['Table'];
-        List<Branch> branch =
-            branches.map((obj) => Branch.fromJson(obj)).toList();
-
-        branchDropdown.value = branch;
-      } else {
-        throw Exception('Failed to load data');
-      }
-    }
-
-    Future<void> _fetchData() async {
-      try {
-        final url = Uri.parse(
-            '${apiAccess.apiBaseUrl}/UserInfo/Proc_UserDisplayByApi/?user_UID=' +
-                provider.user_id);
-        final response = await http.get(url);
-        final jsonData = json.decode(response.body);
-        User user = parseUserFromJson(response.body);
-        userData.value = user;
-        await _fetchBranch();
-        setControllerText(userIdController, user.userUID);
-        setControllerText(passwordController, user.userPws);
-        setControllerText(fullNameController, user.userFullName);
-        setControllerText(userDesignationController, user.userDesignation);
-        setControllerText(userMobileNoController, user.userMobileNo);
-        setControllerText(userEmailController, user.userEmail);
-        setControllerText(userDepartmentController, user.userDepartment);
-        setControllerText(
-            userDepartmentCodeController, user.userDepartmentCode);
-        setControllerText(userBrnCodeController, user.userBrnCode);
-        setControllerText(userBrnNameController, user.userBrnName);
-      } catch (e) {
-        print('Error fetching data: $e');
-      }
-    }
-
-   
-
-    useEffect(() {
-      _fetchData();
-    }, []);
-
-    Future<void> _pickImage() async {
-      try {
-        final pickedImage = await ImagePicker().pickImage(
-            source: ImageSource.gallery, maxHeight: 200, maxWidth: 200);
-        if (pickedImage == null) return;
-
-        final imageTemporary = File(pickedImage.path);
-        Uint8List bytes = imageTemporary.readAsBytesSync();
-        String base64Image = base64Encode(bytes);
-        snapData.value = base64Image;
-      } on PlatformException catch (e) {
-        print('Failed to pick image: $e');
-      }
-    }
-
-    Future<void> _pickSignature() async {
-      try {
-        final pickedSignature = await ImagePicker().pickImage(
-            source: ImageSource.gallery, maxHeight: 100, maxWidth: 200);
-        if (pickedSignature == null) return;
-
-        final signatureTemporary = File(pickedSignature.path);
-        Uint8List bytes = signatureTemporary.readAsBytesSync();
-        String base64Signature = base64Encode(bytes);
-        signatureData.value = base64Signature;
-      } on PlatformException catch (e) {
-        print('Failed to pick signature: $e');
       }
     }
 
@@ -379,11 +377,27 @@ class Userinfoscreen extends HookWidget {
                           hint: userData.value!.userDepartment ?? "",
                           title: "Department Name",
                         ),
-                        TextFeildWithSearchBtn(
-                            controller: userBrnCodeController,
-                            hint: userData.value!.userBrnCode ?? "",
-                            title: "Branch Code",
-                            onPressed: () => _showDropdownDialog(context)),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomTextFormFieldAreaSetting(
+                                controller: userBrnCodeController,
+                                hint: userData.value!.userBrnCode ?? "",
+                                title: "Branch Code",
+                                isEnable: false,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                // Handle the icon tap event here
+                                _showDropdownDialog(context);
+                              },
+                              child: Icon(
+                                IconData(0xe567, fontFamily: 'MaterialIcons'),
+                              ),
+                            ),
+                          ],
+                        ),
                         CustomTextFormField(
                           controller: userBrnNameController,
                           hint: userData.value!.userBrnName ?? "",

@@ -206,54 +206,12 @@ class Areasetting extends HookWidget {
               child: territoryData.value != null
                   ? Column(
                       children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  'Find',
-                                  style: TextStyle(fontWeight: FontWeight.w700),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: InkWell(
-                                  onTap: () => _showDropdownDialog(context),
-                                  child: InputDecorator(
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      border: UnderlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      dropdownvalue.value != null
-                                          ? '${dropdownvalue.value!.teryName} (${dropdownvalue.value!.teryParentCode})'
-                                          : 'Select Territory',
-                                      style: TextStyle(
-                                        color: dropdownvalue.value != null
-                                            ? Colors.black
-                                            : Colors.grey.shade700,
-                                        fontWeight: dropdownvalue.value != null
-                                            ? FontWeight.w600
-                                            : FontWeight.w400,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        CustomTextFormFieldAreaSetting(
+                        
+                        TextFeildWithSearchBtn(
                           controller: territoryCodeController,
                           hint: 'Territory Code',
                           title: "Territory Code",
-                          isEnable: false,
+                          onPressed: () => _showDropdownDialog(context)
                         ),
                         CustomTextFormFieldAreaSetting(
                           controller: territoryNameController,

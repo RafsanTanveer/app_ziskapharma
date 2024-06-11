@@ -1,7 +1,7 @@
 class DoctorListModel {
   final double custID;
   final String custNumber;
-  final String customerName;
+  final String custName;
   final String custMobile;
   final String custAddress;
 
@@ -17,7 +17,7 @@ class DoctorListModel {
   DoctorListModel({
     required this.custID,
     required this.custNumber,
-    required this.customerName,
+    required this.custName,
     required this.custMobile,
     required this.custAddress,
     required this.custContractPerson,
@@ -34,7 +34,7 @@ class DoctorListModel {
     return DoctorListModel(
       custID: json['cust_ID'],
       custNumber: json['cust_Number'],
-      customerName: json['cust_Name'],
+      custName: json['cust_Name'],
       custMobile: json['cust_Mobile'],
       custAddress: json['cust_Address'],
       custContractPerson: json['cust_ContractPerson'],
