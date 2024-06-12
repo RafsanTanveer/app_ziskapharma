@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:app_ziskapharma/screens/customerListScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../dataaccess/apiAccess.dart' as apiAccess;
@@ -35,13 +34,41 @@ class SalesOrderCustomerScreen extends StatefulWidget {
 
 class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
   late Future<List<CustomerListModel>> _customerLists;
+  List<CustomerListModel> _allCustomers = [];
+  List<CustomerListModel> _filteredCustomers = [];
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     final provider = Provider.of<AuthProvider>(context, listen: false);
 
     super.initState();
-    _customerLists = fetchCustomerLists(widget.vCustomerTypeCode, provider.user_id);
+    _customerLists =
+        fetchCustomerLists(widget.vCustomerTypeCode, provider.user_id);
+    _customerLists.then((value) {
+      setState(() {
+        _allCustomers = value;
+        _filteredCustomers = value;
+      });
+    });
+
+    _searchController.addListener(_filterCustomers);
+  }
+
+  void _filterCustomers() {
+    String query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredCustomers = _allCustomers.where((customer) {
+        return customer.custNumber.toLowerCase().contains(query) ||
+            customer.customerName.toLowerCase().contains(query);
+      }).toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -59,42 +86,7 @@ class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
       ),
       body: Column(
         children: [
-          Row(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width * .7,
-                margin: EdgeInsets.all(10),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search ... ',
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context, '/cutomergrouplistforsales');
-                },
-                child: Text(
-                  'Close',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: MediaQuery.of(context).size.width * .040,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  elevation: 10,
-                  minimumSize: Size(MediaQuery.of(context).size.width * .2,
-                      MediaQuery.of(context).size.height * .055),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12), // <-- Radius
-                  ),
-                ),
-              ),
-            ],
-          ),
+          _buildSearchBar(context),
           Expanded(
             child: FutureBuilder<List<CustomerListModel>>(
               future: _customerLists,
@@ -106,18 +98,62 @@ class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('No data found'));
                 } else {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(
-                      columns: _createColumns(),
-                      rows: _createRows(snapshot.data!),
-                    ),
-                  );
+                  return _buildDataTable();
                 }
               },
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width * .7,
+          margin: EdgeInsets.all(10),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search ... ',
+              prefixIcon: Icon(Icons.search),
+            ),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context, '/cutomergrouplistforsales');
+          },
+          child: Text(
+            'Close',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: MediaQuery.of(context).size.width * .040,
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            elevation: 10,
+            minimumSize: Size(MediaQuery.of(context).size.width * .2,
+                MediaQuery.of(context).size.height * .055),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12), // <-- Radius
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDataTable() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        columns: _createColumns(),
+        rows: _createRows(_filteredCustomers),
       ),
     );
   }

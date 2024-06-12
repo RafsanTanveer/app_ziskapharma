@@ -11,11 +11,8 @@ Future<List<CustomerCategory>> fetchCustomerCategory() async {
 
   if (response.statusCode == 200) {
     Map<String, dynamic> jsonResponse = json.decode(response.body);
-    print("Hello Json");
 
-    // Assuming the list you need is under a key 'data' or similar
     List<dynamic> customerCategories = jsonResponse['Table'];
-
     return customerCategories
         .map((obj) => CustomerCategory.fromJson(obj))
         .toList();
@@ -34,11 +31,38 @@ class CustomerGroupListScreen extends StatefulWidget {
 
 class _CustomerGroupListScreenState extends State<CustomerGroupListScreen> {
   late Future<List<CustomerCategory>> _customerCategory;
+  List<CustomerCategory> _allCategories = [];
+  List<CustomerCategory> _filteredCategories = [];
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _customerCategory = fetchCustomerCategory();
+    _customerCategory.then((value) {
+      setState(() {
+        _allCategories = value;
+        _filteredCategories = value;
+      });
+    });
+
+    _searchController.addListener(_filterCustomerCategories);
+  }
+
+  void _filterCustomerCategories() {
+    String query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredCategories = _allCategories.where((category) {
+        return category.cpCode.toLowerCase().contains(query) ||
+            category.cpName.toLowerCase().contains(query);
+      }).toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -56,37 +80,7 @@ class _CustomerGroupListScreenState extends State<CustomerGroupListScreen> {
       ),
       body: Column(
         children: [
-          Row(
-            children: [
-              Container(
-                  width: MediaQuery.of(context).size.width * .7,
-                  margin: EdgeInsets.all(10),
-                  child: SearchBar(
-                    hintText: 'Search ... ',
-                    leading: IconButton(
-                        onPressed: () => {}, icon: const Icon(Icons.search)),
-                  )),
-              ElevatedButton(
-                onPressed: () => {Navigator.pop(context, '/salesmgt')},
-                child: Text(
-                  'Close',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: MediaQuery.of(context).size.width * .040),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  elevation: 10,
-                  minimumSize: Size(MediaQuery.of(context).size.width * .2,
-                      MediaQuery.of(context).size.height * .055),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12), // <-- Radius
-                  ),
-                ),
-              )
-            ],
-          ),
+          _buildSearchBar(context),
           Expanded(
             child: FutureBuilder<List<CustomerCategory>>(
               future: _customerCategory,
@@ -98,18 +92,62 @@ class _CustomerGroupListScreenState extends State<CustomerGroupListScreen> {
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('No data found'));
                 } else {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(
-                      columns: _createColumns(),
-                      rows: _createRows(snapshot.data!),
-                    ),
-                  );
+                  return _buildDataTable();
                 }
               },
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width * .7,
+          margin: EdgeInsets.all(10),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search ... ',
+              prefixIcon: Icon(Icons.search),
+            ),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context, '/salesmgt');
+          },
+          child: Text(
+            'Close',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: MediaQuery.of(context).size.width * .040,
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            elevation: 10,
+            minimumSize: Size(MediaQuery.of(context).size.width * .2,
+                MediaQuery.of(context).size.height * .055),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12), // <-- Radius
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDataTable() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        columns: _createColumns(),
+        rows: _createRows(_filteredCategories),
       ),
     );
   }
