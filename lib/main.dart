@@ -1,3 +1,4 @@
+import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:app_ziskapharma/screens/customerGroupListSalesOrderScreen.dart';
 import 'package:app_ziskapharma/screens/customerGroupListScreen.dart';
@@ -55,7 +56,7 @@ class MyApp extends StatelessWidget {
             CustomerGroupListSettingScreen(),
         "/cutomergrouplistforsales": (context) =>
             CustomerGroupListSalesOrderScreen(),
-        // "/cstrstts": (context) => CustomerSettingScreen(),
+        "/cstrstts": (context) => CustomerSettingScreen(),
         "/cusgrpstts": (context) => Customergroupsettingscreen(),
         "/slsinvapprvl": (context) => Salesinvoicescreen(),
         "/slsinvview": (context) => Salesinvoiceviewscreen(),
@@ -83,14 +84,19 @@ class MyApp extends StatelessWidget {
               return SalesOrderScreen();
             },
           );
-        } else if (settings.name == '/cstrstts') {
-          return MaterialPageRoute(
-            builder: (context) {
-               final String vCustomerTypeCode = settings.arguments as String;
-              return CustomerSettingScreen(param_cpCode: vCustomerTypeCode);
-            },
-          );
         }
+        // else if (settings.name == '/cstrstts') {
+        //   return MaterialPageRoute(
+        //     builder: (context) {
+        //       final String vCustomerTypeCode = settings.arguments as String;
+        //       final String vCustomerType = settings.arguments as String;
+        //       CustomerSettingScreenArgs args = CustomerSettingScreenArgs(
+        //            vCustomerType,
+        //            vCustomerTypeCode);
+        //       return CustomerSettingScreen(args: args);
+        //     },
+        //   );
+        // }
 
         assert(false, 'Need to implement ${settings.name}');
         return null;

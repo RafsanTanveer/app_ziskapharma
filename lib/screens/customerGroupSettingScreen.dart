@@ -19,21 +19,17 @@ class Customergroupsettingscreen extends HookWidget {
           '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_sal_SalesCustomerTypeListByApi');
       final response = await http.get(url);
 
-      print(
-          'object____________________________________________________________________________lllllllll');
-      print(url);
-      print(response.body);
-      print(response.statusCode);
+
+
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
         // Assuming the list you need is under a key 'data' or similar
         List<dynamic> customerCategories = jsonResponse['Table'];
-        print(
-            'ffffffffffff((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))');
-        print(customerCategories);
+
+
         List<Map> tempObj = [];
         for (var item in customerCategories) {
-          print('::::::::::::::::::::::::::::::::::::::');
+
           var obj = {
             'code': item['cp_Code'],
             'name': item['cp_Name'],
@@ -41,20 +37,19 @@ class Customergroupsettingscreen extends HookWidget {
           };
           tempObj.add(obj);
           // print(obj);
-          print('::::::::::::::::::::::::::::::::::::::');
+
         }
 
         customerList.value = tempObj;
-        print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-        print(customerList);
-        print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+
+
+
 
         dynamic customerCategoryList = customerCategories
             .map((obj) => CustomerCategory.fromJson(obj))
             .toList();
-        print(
-            'ffffffffffff{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}');
-        print(customerCategoryList);
+
+       
 
         return customerCategoryList;
       } else {

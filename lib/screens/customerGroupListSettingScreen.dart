@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../dataaccess/apiAccess.dart' as apiAccess;
@@ -172,7 +173,7 @@ class _CustomerGroupListSettingScreen
               Navigator.pushNamed(
                 context,
                 '/cstrstts',
-                arguments: category.cpCode.toString(),
+                arguments:new CustomerSettingScreenArgs(category.cpCode.toString(), category.cpName.toString()),
               );
             },
             child: Text(

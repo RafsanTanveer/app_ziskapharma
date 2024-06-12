@@ -1,10 +1,12 @@
 import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
+import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
 import 'package:app_ziskapharma/model/customerCategoryModel.dart';
 import 'package:app_ziskapharma/model/customerTypeInfo.dart';
 import 'package:app_ziskapharma/model/salesRule.dart';
 import 'package:app_ziskapharma/model/territoryInfoModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:http/retry.dart';
 import '../dataaccess/apiAccess.dart' as apiAccess;
 import '../model/DoctorListModel.dart';
 import 'dart:convert';
@@ -13,37 +15,64 @@ import 'package:provider/provider.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 
 class CustomerSettingScreen extends HookWidget {
-  const CustomerSettingScreen({required this.param_cpCode});
-
-  final String param_cpCode;
-
   //final provider = Provider.of<AuthProvider>(context, listen: false);
 
   @override
   Widget build(BuildContext context) {
+    final CustomerSettingScreenArgs args =
+        ModalRoute.of(context)!.settings.arguments as CustomerSettingScreenArgs;
+
     final provider = Provider.of<AuthProvider>(context, listen: false);
 
     final customerTypeDropdownvalue = useState<CustomerTypeInfo?>(null);
+    final customerTypeDropdown = useState<List<CustomerTypeInfo>>([]);
     final doctorDropdown = useState<List<DoctorListModel>>([]);
     final doctorDropdownvalue = useState<DoctorListModel?>(null);
+    final territoryData = useState<TerritoryModel?>(null);
 
+    final customerCategoryDropDown = useState<List<CustomerCategory>>([]);
+    final customerCategoryDropDownValue = useState<CustomerCategory?>(null);
+
+    final salesRuleDropDown = useState<List<SalesRule>>([]);
+    final salesRuleDropDownValue = useState<SalesRule?>(null);
+
+    TextEditingController _creditLimitController = TextEditingController();
+    TextEditingController typeNameController =
+        TextEditingController(text: args.cpName);
+    TextEditingController territoryCodeController =
+        TextEditingController(text: territoryData.value?.teryCode);
+    TextEditingController territoryNameController =
+        TextEditingController(text: territoryData.value?.teryName);
+    TextEditingController customerNameController = TextEditingController();
+    TextEditingController addressController = TextEditingController();
+    TextEditingController mobileController = TextEditingController();
+    TextEditingController contactPersonController = TextEditingController();
+    TextEditingController categoryCodeController = useTextEditingController();
+    TextEditingController categoryNameController = useTextEditingController();
+    TextEditingController refCodeController = useTextEditingController();
+    TextEditingController refNameController = useTextEditingController();
+    TextEditingController rulesNoController = useTextEditingController();
+    TextEditingController rulesNameController = useTextEditingController();
 
     Future<void> _fetchData() async {
       try {
         final url = Uri.parse(
             '${apiAccess.apiBaseUrl}/SalesMobile/Proc_UserAreaInfoByApi?tery_UserId=${provider.user_id}');
+        print(url);
         final response = await http.get(url);
         TerritoryModel terrytory = parseTerritoryFromJson(response.body);
-        // territoryData.value = terrytory;
+        print(response.body);
+        territoryData.value = terrytory;
+        print(
+            '------------------------------------------------------------------------f');
+        print(terrytory.teryAreaName);
         // await _fetchDropDownData();
 
         // Set the initial values for the text controllers
-
       } catch (e) {
         print('Error fetching data: $e');
       }
     }
-
 
     fetchCustomerTypeInfo(String cpCode) async {
       try {
@@ -62,7 +91,7 @@ class CustomerSettingScreen extends HookWidget {
       } catch (e) {}
     }
 
-     fetchSingleCustomerTypeInfo(String cpCode) async {
+    fetchSingleCustomerTypeInfo(String cpCode) async {
       try {
         final url = Uri.parse(
             '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_CustomerCategoryInfoByApi?cp_Code=$cpCode');
@@ -71,16 +100,23 @@ class CustomerSettingScreen extends HookWidget {
         if (response.statusCode == 200) {
           final jsonResponse = json.decode(response.body);
           final List<dynamic> table = jsonResponse['Table'];
-          final Map<String, dynamic> data = table.first;
-          customerTypeDropdownvalue.value = CustomerTypeInfo.fromJson(data);
+
+          List<CustomerTypeInfo> listCustomer =
+              table.map((item) => CustomerTypeInfo.fromJson(item)).toList();
+
+          customerTypeDropdown.value = listCustomer;
+
+          print('444444444444444444444444444444444444');
+          print(customerTypeDropdown.value.first.cpCode);
+
+          categoryCodeController.text = customerTypeDropdown.value.first.cpCode;
         } else {
           throw Exception('Failed to load data');
         }
       } catch (e) {}
     }
 
-
-Future<void> fetchCustomerCategoryHelpListByApi() async {
+    Future<void> fetchCustomerCategoryHelpListByApi() async {
       final url = Uri.parse(
           '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_CustomerCategoryHelpListByApi');
       final response = await http.get(url);
@@ -90,26 +126,29 @@ Future<void> fetchCustomerCategoryHelpListByApi() async {
         final List<dynamic> table = jsonResponse['Table'];
         List<CustomerCategory> data =
             table.map((item) => CustomerCategory.fromJson(item)).toList();
+
+        customerCategoryDropDown.value = data;
       } else {
         throw Exception('Failed to load data');
       }
     }
 
-    // Future<void> fetchSalesRulesHelpListByApi() async {
-    //   final url = Uri.parse(
-    //       '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SalesRulesHelpListByApi');
-    //   final response = await http.get(url);
+    Future<void> fetchSalesRulesHelpListByApi() async {
+      final url = Uri.parse(
+          '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SalesRulesHelpListByApi');
+      final response = await http.get(url);
 
-    //   if (response.statusCode == 200) {
-    //     final jsonResponse = json.decode(response.body);
-    //     final List<dynamic> table = jsonResponse['Table'];
-    //     List<SalesRule> data =
-    //         table.map((item) => SalesRule.fromJson(item)).toList();
-    //   } else {
-    //     throw Exception('Failed to load data');
-    //   }
-    // }
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        final List<dynamic> table = jsonResponse['Table'];
+        List<SalesRule> data =
+            table.map((item) => SalesRule.fromJson(item)).toList();
 
+        salesRuleDropDown.value = data;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    }
 
     fetchDoctorsTypeInfo(String cpCode) async {
       print(
@@ -129,11 +168,11 @@ Future<void> fetchCustomerCategoryHelpListByApi() async {
               'cpCode cpCode     cpCode cpCode=====================================');
           print(response.body);
           final List<dynamic> table = jsonResponse['Table'];
-          print('fffffffffffffffffffffffffffffffffffffffffffff');
+
           print(table.first);
           List<DoctorListModel> listDoctor =
               table.map((item) => DoctorListModel.fromJson(item)).toList();
-          print('fffffffffffffffffffffffffffffffffffffffffffff');
+
           print(listDoctor);
 
           doctorDropdown.value = listDoctor;
@@ -207,32 +246,166 @@ Future<void> fetchCustomerCategoryHelpListByApi() async {
       // Ensure that the UI is updated after receiving the selected value
       if (selectedValue != null) {
         doctorDropdownvalue.value = selectedValue;
-        // territoryCodeController.text = selectedValue.teryCode;
+        refNameController.text = selectedValue.custRefName;
+        refCodeController.text = selectedValue.custRefCode;
         // territoryNameController.text = selectedValue.teryName;
       }
     }
 
     Future<void> _showDropdownDialogCustomerTypeInfo(
-        BuildContext context) async {}
+        BuildContext context) async {
+      final selectedValue = await showModalBottomSheet<CustomerCategory>(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.8,
+            padding: EdgeInsets.all(10),
+            child: Column(
+              children: [
+                AppBar(
+                  title: Text('Select Territory'),
+                  automaticallyImplyLeading: false,
+                  actions: [
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    )
+                  ],
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: const [
+                          DataColumn(label: Text('Name')),
+                          DataColumn(label: Text('Parent Code')),
+                          DataColumn(
+                              label: Text(
+                                  'Territory Code')), // Corrected label name
+                        ],
+                        rows: customerCategoryDropDown.value.map((item) {
+                          return DataRow(
+                            cells: [
+                              DataCell(Text(item.cpCode), onTap: () {
+                                Navigator.pop(context, item);
+                              }),
+                              DataCell(Text(item.cpName), onTap: () {
+                                Navigator.pop(context, item);
+                              }),
+                              DataCell(Text(item.cpID.toString()), onTap: () {
+                                Navigator.pop(context, item);
+                              }),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+      // Ensure that the UI is updated after receiving the selected value
+      if (selectedValue != null) {
+        customerCategoryDropDownValue.value = selectedValue;
+        fetchSingleCustomerTypeInfo(selectedValue.cpCode);
+
+        print('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
+        print(customerTypeDropdown.value.first.cpCode);
+
+        categoryCodeController.text =
+            customerTypeDropdown.value.first.cpCode.toString();
+        categoryNameController.text =
+            customerTypeDropdown.value.first.cpName.toString();
+        // territoryCodeController.text = selectedValue.teryCode;
+        // territoryNameController.text = selectedValue.teryName;
+      }
+    }
+
+    Future<void> _showDropdownDialogSalesRules(BuildContext context) async {
+      final selectedValue = await showModalBottomSheet<SalesRule>(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.8,
+            padding: EdgeInsets.all(10),
+            child: Column(
+              children: [
+                AppBar(
+                  title: Text('Select Territory'),
+                  automaticallyImplyLeading: false,
+                  actions: [
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    )
+                  ],
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: const [
+                          DataColumn(label: Text('Name')),
+                          DataColumn(label: Text('Parent Code')),
+                          DataColumn(
+                              label: Text(
+                                  'Territory Code')), // Corrected label name
+                        ],
+                        rows: salesRuleDropDown.value.map((item) {
+                          return DataRow(
+                            cells: [
+                              DataCell(Text(item.pbRulesNo), onTap: () {
+                                Navigator.pop(context, item);
+                              }),
+                              DataCell(Text(item.pbRulesTypeName), onTap: () {
+                                Navigator.pop(context, item);
+                              }),
+                              DataCell(Text(item.pbID.toString()), onTap: () {
+                                Navigator.pop(context, item);
+                              }),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+      // Ensure that the UI is updated after receiving the selected value
+      if (selectedValue != null) {
+        salesRuleDropDownValue.value = selectedValue;
+        rulesNameController.text = selectedValue.pbRulesTypeName;
+        rulesNoController.text = selectedValue.pbRulesNo;
+        // territoryCodeController.text = selectedValue.teryCode;
+        // territoryNameController.text = selectedValue.teryName;
+      }
+    }
 
     useEffect(() {
-      fetchDoctorsTypeInfo(param_cpCode);
-      fetchCustomerTypeInfo(param_cpCode);
+      fetchDoctorsTypeInfo(args.cpCode);
+      fetchCustomerTypeInfo(args.cpCode);
+      _fetchData();
+      // fetchSingleCustomerTypeInfo(args.cpCode);
+      fetchCustomerCategoryHelpListByApi();
+      fetchSalesRulesHelpListByApi();
     }, []);
-
-    TextEditingController _creditLimitController = TextEditingController();
-    TextEditingController typeNameController = TextEditingController();
-    TextEditingController territoryCodeController = TextEditingController();
-    TextEditingController territoryNameController = TextEditingController();
-    TextEditingController customerNameController = TextEditingController();
-    TextEditingController addressController = TextEditingController();
-    TextEditingController mobileController = TextEditingController();
-    TextEditingController categoryCodeController = TextEditingController();
-    TextEditingController categoryNameController = TextEditingController();
-    TextEditingController refCodeController = TextEditingController();
-    TextEditingController refNameController = TextEditingController();
-    TextEditingController rulesNoController = TextEditingController();
-    TextEditingController rulesNameController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -287,7 +460,11 @@ Future<void> fetchCustomerCategoryHelpListByApi() async {
                     hint: 'Mobile',
                     title: "Mobile *",
                   ),
-
+                  CustomTextFormField(
+                    controller: contactPersonController,
+                    hint: 'Contact Person',
+                    title: "Contact Person",
+                  ),
                   TextFeildWithSearchBtn(
                     controller: categoryCodeController,
                     hint: 'Category Code',
@@ -312,11 +489,12 @@ Future<void> fetchCustomerCategoryHelpListByApi() async {
                     hint: 'hint',
                     title: "Ref. Name",
                   ),
-                  // TextFeildWithSearchBtn(
-                  //   controller: rulesNoController,
-                  //   hint: 'hint',
-                  //   title: "Rules No.",
-                  // ),
+                  TextFeildWithSearchBtn(
+                    controller: rulesNoController,
+                    hint: 'hint',
+                    title: "Rules No.",
+                    onPressed: () => _showDropdownDialogSalesRules(context),
+                  ),
                   CustomTextFormField(
                     controller: rulesNameController,
                     hint: 'Rules Name.',
