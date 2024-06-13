@@ -27,8 +27,7 @@ class Userinfoscreen extends HookWidget {
 
     void setControllerText(TextEditingController controller, String text) {
       controller.text = text;
-      controller.selection = TextSelection.fromPosition(
-          TextPosition(offset: controller.text.length));
+    
     }
 
     TextEditingController userIdController = useTextEditingController();
@@ -199,7 +198,7 @@ class Userinfoscreen extends HookWidget {
       }
     }
 
-   
+
 
     useEffect(() {
       _fetchData();
@@ -258,8 +257,10 @@ class Userinfoscreen extends HookWidget {
               child: userData.value != null
                   ? Column(
                       children: [
+
                         Row(
                           children: [
+
                             Stack(
                               alignment: Alignment.bottomRight,
                               children: [

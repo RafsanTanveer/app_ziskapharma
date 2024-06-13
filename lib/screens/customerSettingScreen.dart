@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
 import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
 import 'package:app_ziskapharma/model/customerCategoryModel.dart';
@@ -5,8 +8,10 @@ import 'package:app_ziskapharma/model/customerTypeInfo.dart';
 import 'package:app_ziskapharma/model/salesRule.dart';
 import 'package:app_ziskapharma/model/territoryInfoModel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/retry.dart';
+import 'package:image_picker/image_picker.dart';
 import '../dataaccess/apiAccess.dart' as apiAccess;
 import '../model/DoctorListModel.dart';
 import 'dart:convert';
@@ -35,6 +40,8 @@ class CustomerSettingScreen extends HookWidget {
 
     final salesRuleDropDown = useState<List<SalesRule>>([]);
     final salesRuleDropDownValue = useState<SalesRule?>(null);
+
+    final snapData = useState<String>('');
 
     TextEditingController _creditLimitController = TextEditingController();
     TextEditingController typeNameController =
@@ -398,6 +405,21 @@ class CustomerSettingScreen extends HookWidget {
       }
     }
 
+    Future<void> _pickImage() async {
+      try {
+        final pickedImage = await ImagePicker().pickImage(
+            source: ImageSource.camera, maxHeight: 200, maxWidth: 200);
+        if (pickedImage == null) return;
+
+        final imageTemporary = File(pickedImage.path);
+        Uint8List bytes = imageTemporary.readAsBytesSync();
+        String base64Image = base64Encode(bytes);
+        snapData.value = base64Image;
+      } on PlatformException catch (e) {
+        print('Failed to pick image: $e');
+      }
+    }
+
     useEffect(() {
       fetchDoctorsTypeInfo(args.cpCode);
       fetchCustomerTypeInfo(args.cpCode);
@@ -430,6 +452,37 @@ class CustomerSettingScreen extends HookWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width * .35,
+                        height: MediaQuery.of(context).size.width * .35,
+                        margin: EdgeInsets.only(bottom: 15, right: 15),
+                        child: ClipOval(
+                          child: SizedBox.fromSize(
+                            size: Size.fromRadius(48),
+                            child: snapData.value!='' ? Image.memory(
+                              base64Decode(snapData.value)) : Image.asset('assets/images/person.png') ,
+                            ),
+                          ),
+                        ),
+
+                      Positioned(
+                        right: 15,
+                        bottom: 15,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * .09,
+                          height: MediaQuery.of(context).size.width * .09,
+                          child: FloatingActionButton(
+                            onPressed: _pickImage,
+                            mini: true,
+                            child: Icon(Icons.camera_alt),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   CustomTextFormField(
                     controller: typeNameController,
                     hint: "Type Name",
