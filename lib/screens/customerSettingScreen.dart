@@ -33,6 +33,7 @@ class CustomerSettingScreen extends HookWidget {
     final customerTypeDropdown = useState<List<CustomerTypeInfo>>([]);
     final doctorDropdown = useState<List<DoctorListModel>>([]);
     final doctorDropdownvalue = useState<DoctorListModel?>(null);
+
     final territoryData = useState<TerritoryModel?>(null);
 
     final customerCategoryDropDown = useState<List<CustomerCategory>>([]);
@@ -42,6 +43,11 @@ class CustomerSettingScreen extends HookWidget {
     final salesRuleDropDownValue = useState<SalesRule?>(null);
 
     final snapData = useState<String>('');
+
+    final isCash = useState<String>('false');
+    final isCredit = useState<String>('false');
+
+    final _groupValue = useState<String>("Credit");
 
     TextEditingController _creditLimitController = TextEditingController();
     TextEditingController typeNameController =
@@ -420,6 +426,72 @@ class CustomerSettingScreen extends HookWidget {
       }
     }
 
+    Future<void> _submitPost() async {
+      final url = Uri.parse(
+          '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SaveCustomerSettingsByApi');
+      print(
+          '=================================================================' +
+              url.toString());
+      final headers = {"Content-Type": "application/json"};
+
+      final payload = json.encode({
+        "Table": [
+          {
+            'cust_ID': doctorDropdownvalue.value?.custID,
+            'cust_Number': doctorDropdownvalue.value?.custNumber,
+            'cust_Name': customerNameController
+                .text, // doctorDropdownvalue.value?.custName,
+            'cust_Address': addressController.text,
+            'cust_RefID': '',
+            'cust_RefCode': refCodeController.text,
+            'cust_RefName': refNameController.text,
+            'cust_ContractPerson': contactPersonController.text,
+            'cust_Mobile': mobileController.text,
+            'cust_BillingTypeCash': isCash.value.toString(),
+            'cust_BillingTypeCredit': isCredit.value.toString(),
+            'cust_BillingCreditLimit': _creditLimitController.text == ''
+                ? '0'
+                : _creditLimitController.text.trim(),
+            'cust_MultipleProjectYn': 'False',
+            'cust_SingleProjectYn': 'True',
+            'cust_TypeCode': doctorDropdownvalue.value?.custRefCode,
+            'cust_TypeName': args.cpName,
+            'cust_CategoryCode':
+                customerTypeDropdown.value.first.cpCode.toString(),
+            'cust_CategoryName':
+                customerTypeDropdown.value.first.cpName.toString(),
+            'tery_Code': territoryCodeController.text,
+            'tery_Name': territoryNameController.text,
+            'tery_DepotCode': territoryData.value?.teryDepotCode,
+            'cust_ReferenceYesNo':
+                customerTypeDropdown.value.first.cpReferenceYes,
+            'pb_RulesNo': rulesNoController.text,
+            'cust_CUID': customerTypeDropdown.value.first.cpCUID,
+            'cust_MUID': customerTypeDropdown.value.first.cpMUID,
+            'cust_ComID': customerTypeDropdown.value.first.cpComID,
+            'cust_ComCode': customerTypeDropdown.value.first.cpComCode,
+            'cust_ComName': customerTypeDropdown.value.first.cpComName,
+          }
+        ]
+      });
+
+      print(
+          'payloadpayloadpayloadpyloadpayloadpaadpayloadpayloadpayloadpayloadpayloadpayload');
+          
+      print(payload);
+
+      try {
+        final response = await http.post(url, headers: headers, body: payload);
+        if (response.statusCode == 200) {
+          print('Data successfully posted.');
+        } else {
+          print('Failed to post data. Status code: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error posting data: $e');
+      }
+    }
+
     useEffect(() {
       fetchDoctorsTypeInfo(args.cpCode);
       fetchCustomerTypeInfo(args.cpCode);
@@ -462,12 +534,12 @@ class CustomerSettingScreen extends HookWidget {
                         child: ClipOval(
                           child: SizedBox.fromSize(
                             size: Size.fromRadius(48),
-                            child: snapData.value!='' ? Image.memory(
-                              base64Decode(snapData.value)) : Image.asset('assets/images/person.png') ,
-                            ),
+                            child: snapData.value != ''
+                                ? Image.memory(base64Decode(snapData.value))
+                                : Image.asset('assets/images/person.png'),
                           ),
                         ),
-
+                      ),
                       Positioned(
                         right: 15,
                         bottom: 15,
@@ -559,16 +631,16 @@ class CustomerSettingScreen extends HookWidget {
                         flex: 2,
                         child: Row(
                           children: [
-                            Text("Cash", style: TextStyle(color: Colors.black)),
-                            Text(":", style: TextStyle(color: Colors.black)),
+                            Text("Cash :",
+                                style: TextStyle(color: Colors.black)),
                             Radio(
-                              value: true,
-                              groupValue: 1,
-                              //_paymentType,
+                              value: "Cash",
+                              groupValue: _groupValue.value,
                               onChanged: (value) {
-                                // setState(() {
-                                //   _paymentType = value;
-                                // });
+                                _groupValue.value = value!;
+                                isCredit.value = "false";
+                                isCash.value = "true";
+                                print(_groupValue.value);
                               },
                             ),
                           ],
@@ -578,23 +650,23 @@ class CustomerSettingScreen extends HookWidget {
                         flex: 2,
                         child: Row(
                           children: [
-                            Text("Credit",
+                            Text("Credit :",
                                 style: TextStyle(color: Colors.black)),
-                            Text(":", style: TextStyle(color: Colors.black)),
                             Radio(
-                              value: false,
-                              groupValue: 1,
+                              value: "Credit",
+                              groupValue: _groupValue.value,
                               onChanged: (value) {
-                                // setState(() {
-                                //   _paymentType = value;
-                                // });
+                                _groupValue.value = value!;
+                                isCredit.value = "true";
+                                isCash.value = "false";
+                                print(_groupValue.value);
                               },
                             ),
                           ],
                         ),
                       ),
                       Expanded(
-                        flex: 2,
+                        flex: 3,
                         child: Row(
                           children: [
                             Text("Limit ",
@@ -643,7 +715,7 @@ class CustomerSettingScreen extends HookWidget {
                             padding: EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 10),
                           ),
-                          onPressed: () => {},
+                          onPressed: () => {_submitPost()},
                           child: Text(
                             'SENT',
                             style: TextStyle(
