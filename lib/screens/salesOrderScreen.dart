@@ -4,6 +4,10 @@ import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
 import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
 import 'package:app_ziskapharma/model/DoctorListModel.dart';
 import 'package:app_ziskapharma/model/UserModel.dart';
+import 'package:app_ziskapharma/model/branchModel.dart';
+import 'package:app_ziskapharma/model/customerCategoryModel.dart';
+import 'package:app_ziskapharma/model/customerListModel.dart';
+import 'package:app_ziskapharma/model/productModel.dart';
 import 'package:app_ziskapharma/model/territoryInfoModel.dart';
 import 'package:app_ziskapharma/model/terrytorydropdownModel.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
@@ -14,12 +18,8 @@ import '../dataaccess/apiAccess.dart' as apiAccess;
 import 'package:http/http.dart' as http;
 
 class SalesOrderScreen extends HookWidget {
-
-
   @override
   Widget build(BuildContext context) {
-
-
     final CustomerSettingScreenArgs args =
         ModalRoute.of(context)!.settings.arguments as CustomerSettingScreenArgs;
 
@@ -33,7 +33,20 @@ class SalesOrderScreen extends HookWidget {
     final doctorDropdown = useState<List<DoctorListModel>>([]);
     final doctorDropdownvalue = useState<DoctorListModel?>(null);
 
+    final customerListDropDown = useState<List<CustomerListModel>>([]);
+    final customerListDropDownValue = useState<CustomerListModel?>(null);
+
+    final branchValue = useState<Branch?>(null);
+    final branchDropdown = useState<List<Branch>>([]);
+    final filteredBranches = useState<List<Branch>>([]);
+
+    final productValue = useState<Product?>(null);
+    final productDropdown = useState<List<Product>>([]);
+    final filteredProduct = useState<List<Product>>([]);
+
     final searchControllerRef = useTextEditingController();
+    final searchControllerCat = useTextEditingController();
+    final searchController = useTextEditingController();
 
     final depoNameController = useTextEditingController();
     final depoCodeController = useTextEditingController();
@@ -46,6 +59,18 @@ class SalesOrderScreen extends HookWidget {
     final deliveryDepotNameController = useTextEditingController();
     final refCodeController = useTextEditingController();
     final refNameController = useTextEditingController();
+
+    final slNo = useState<int>(0);
+
+
+    final productFields = [
+      useTextEditingController(),
+      useTextEditingController(),
+      useTextEditingController(),
+      useTextEditingController(),
+      useTextEditingController(),
+    ];
+    final products = useState<List<Map<String, String>>>([]);
 
     fetchDoctorsTypeInfo(String cpCode) async {
       print(cpCode);
@@ -168,6 +193,396 @@ class SalesOrderScreen extends HookWidget {
       }
     }
 
+//////////////////////////////////Customer List/////////////////////////////////////////////////
+    fetchCustomerLists(String vCustomerTypeCode, String user_id) async {
+      final url = Uri.parse(
+          '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=${user_id}&vCustomerTypeCode=$vCustomerTypeCode');
+
+      print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
+      print(url);
+      print(vCustomerTypeCode);
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        List<dynamic> customerLists = jsonResponse['Table'];
+        customerListDropDown.value = customerLists
+            .map((obj) => CustomerListModel.fromJson(obj))
+            .toList();
+      } else {
+        throw Exception('Failed to load data');
+      }
+    }
+
+    Future<void> _showDropdownDialogCustomerTypeInfo(
+        BuildContext context) async {
+      final selectedValue = await showModalBottomSheet<CustomerListModel>(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              List<CustomerListModel> filteredList =
+                  customerListDropDown.value.where((item) {
+                final queryCat = searchControllerCat.text.toLowerCase();
+                return item.customerName.toLowerCase().contains(queryCat) ||
+                    item.custID.toString().toLowerCase().contains(queryCat);
+              }).toList();
+
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.8,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    AppBar(
+                      title: Text('Select Category'),
+                      automaticallyImplyLeading: false,
+                      actions: [
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
+                    ),
+                    TextField(
+                      controller: searchControllerCat,
+                      decoration: InputDecoration(
+                        hintText: 'Search...',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (text) {
+                        setState(() {});
+                      },
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DataTable(
+                            columns: const [
+                              DataColumn(label: Text('Name')),
+                              DataColumn(label: Text('Parent Code')),
+                              DataColumn(label: Text('Territory Code')),
+                            ],
+                            rows: filteredList.map((item) {
+                              return DataRow(
+                                cells: [
+                                  DataCell(Text(item.customerName), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                  DataCell(Text(item.custNumber), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                  DataCell(Text(item.custID.toString()),
+                                      onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+      if (selectedValue != null) {
+        customerListDropDownValue.value = selectedValue;
+        // await fetchSingleCustomerTypeInfo(selectedValue.cpCode);
+
+        customerCodeController.text =
+            customerListDropDownValue.value!.custID.toString();
+
+        customerNameController.text =
+            customerListDropDownValue.value!.customerName;
+
+        // categoryCodeController.text =
+        //     customerTypeDropdown.value.first.cpCode.toString();
+        // categoryNameController.text =
+        //     customerTypeDropdown.value.first.cpName.toString();
+      }
+    }
+
+//////////////////////////////////Customer List/////////////////////////////////////////////////
+
+//////////////////////////////////Depo List/////////////////////////////////////////////////
+    Future<void> _showDepoDropdownDialog(BuildContext context) async {
+      final selectedValue = await showModalBottomSheet<Branch>(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              final query = searchController.text.toLowerCase();
+              List<Branch> filteredList = branchDropdown.value
+                  .where((branch) =>
+                      branch.brnName!
+                          .toLowerCase()
+                          .contains(query.toLowerCase()) ||
+                      branch.brnCode!
+                          .toLowerCase()
+                          .contains(query.toLowerCase()))
+                  .toList();
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.8,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    AppBar(
+                      title: Text('Select Branch'),
+                      automaticallyImplyLeading: false,
+                      actions: [
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          labelText: 'Search Branch',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: ValueListenableBuilder<List<Branch>>(
+                            valueListenable: filteredBranches,
+                            builder: (context, branches, child) {
+                              return DataTable(
+                                columns: const [
+                                  DataColumn(label: Text('Name')),
+                                  DataColumn(label: Text('Code')),
+                                  DataColumn(label: Text('Branch Address')),
+                                ],
+                                rows: filteredList.map((item) {
+                                  return DataRow(
+                                    cells: [
+                                      DataCell(Text(item.brnName.toString()),
+                                          onTap: () {
+                                        Navigator.pop(context, item);
+                                      }),
+                                      DataCell(Text(item.brnCode.toString()),
+                                          onTap: () {
+                                        Navigator.pop(context, item);
+                                      }),
+                                      DataCell(
+                                          Text(item.brnAddress1.toString()),
+                                          onTap: () {
+                                        Navigator.pop(context, item);
+                                      }),
+                                    ],
+                                  );
+                                }).toList(),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+
+      if (selectedValue != null) {
+        branchValue.value = selectedValue;
+        deliveryDepotCodeController.text = selectedValue.brnCode.toString();
+        deliveryDepotNameController.text = selectedValue.brnName.toString();
+
+        //deliveryDepotCodeController
+// deliveryDepotNameController
+      }
+    }
+
+    Future<void> _fetchDepo() async {
+      final url =
+          Uri.parse('${apiAccess.apiBaseUrl}/UserInfo/Proc_BranchListByApi');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        List<dynamic> branches = jsonResponse['Table'];
+        List<Branch> branch =
+            branches.map((obj) => Branch.fromJson(obj)).toList();
+
+        branchDropdown.value = branch;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    }
+
+//////////////////////////////////Depo List/////////////////////////////////////////////////
+
+//////////////////////////////////Depo List/////////////////////////////////////////////////
+    Future<void> _showProductDropdownDialog(BuildContext context) async {
+      final selectedValue = await showModalBottomSheet<Product>(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              final query = searchController.text.toLowerCase();
+              List<Product> filteredList = productDropdown.value
+                  .where((product) =>
+                      product.finPrdName!
+                          .toLowerCase()
+                          .contains(query.toLowerCase()) ||
+                      product.finPrdCode!
+                          .toLowerCase()
+                          .contains(query.toLowerCase()))
+                  .toList();
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.8,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    AppBar(
+                      title: Text('Select Product'),
+                      automaticallyImplyLeading: false,
+                      actions: [
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          labelText: 'Search Product',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: ValueListenableBuilder<List<Product>>(
+                            valueListenable: filteredProduct,
+                            builder: (context, branches, child) {
+                              return DataTable(
+                                columns: const [
+                                  DataColumn(label: Text('Name')),
+                                  DataColumn(label: Text('Code')),
+                                  DataColumn(label: Text('Pack Size')),
+                                  DataColumn(label: Text('Quantity')),
+                                ],
+                                rows: filteredList.map((item) {
+                                  return DataRow(
+                                    cells: [
+                                      DataCell(Text(item.finPrdName.toString()),
+                                          onTap: () {
+                                        Navigator.pop(context, item);
+                                      }),
+                                      DataCell(Text(item.finPrdCode.toString()),
+                                          onTap: () {
+                                        Navigator.pop(context, item);
+                                      }),
+                                      DataCell(Text(item.finPrdPackSize),
+                                          onTap: () {
+                                        Navigator.pop(context, item);
+                                      }),
+                                      DataCell(Text(item.orderQnty.toString()),
+                                          onTap: () {
+                                        Navigator.pop(context, item);
+                                      }),
+                                    ],
+                                  );
+                                }).toList(),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+
+      if (selectedValue != null) {
+        productValue.value = selectedValue;
+
+        //  Map<String, String> product = {
+        //   'Sl': '1',
+        //   'Code': productValue.value!.finPrdCode,
+        //   'Name': productValue.value!.finPrdName,
+        //   'Pack Size': productValue.value!.finPrdPackSize,
+        //   'Quantity': productValue.value!.orderQnty.toString(),
+        // };
+        // print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+        // // print(product);
+        //   products.value = [...products.value, product];
+
+        final product = {
+          'field1': '',
+          'Code': productValue.value!.finPrdCode,
+          'Name': productValue.value!.finPrdName,
+          'PackSize': productValue.value!.finPrdPackSize,
+          'Quantity': productValue.value!.orderQnty.toString(),
+        };
+        products.value = [...products.value, product];
+      }
+    }
+
+    Future<void> _fetchProduct() async {
+      final url =
+          Uri.parse('${apiAccess.apiBaseUrl}/SalesOrder/Proc_ProductListByApi');
+
+      print('************************************************');
+
+      print(url);
+      final response = await http.get(url);
+      print('************************************************');
+      if (response.statusCode == 200) {
+        print('************************************************');
+        print(response.body);
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        List<dynamic> products = jsonResponse['Table'];
+        List<Product> product =
+            products.map((obj) => Product.fromJson(obj)).toList();
+
+        productDropdown.value = product;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    }
+
+//////////////////////////////////Product List/////////////////////////////////////////////////
+
     Future<void> _fetchDepotData() async {
       try {
         final url = Uri.parse(
@@ -188,17 +603,11 @@ class SalesOrderScreen extends HookWidget {
 
     useEffect(() {
       _fetchDepotData();
-       fetchDoctorsTypeInfo(args!.cpCode);
+      fetchDoctorsTypeInfo(args!.cpCode);
+      fetchCustomerLists(args!.cpCode, provider.user_id);
+      _fetchDepo();
+      _fetchProduct();
     }, []);
-
-    final productFields = [
-      useTextEditingController(),
-      useTextEditingController(),
-      useTextEditingController(),
-      useTextEditingController(),
-      useTextEditingController(),
-    ];
-    final products = useState<List<Map<String, String>>>([]);
 
     Future<void> _selectDate(
         BuildContext context, TextEditingController controller) async {
@@ -236,7 +645,7 @@ class SalesOrderScreen extends HookWidget {
                 onPressed: () {
                   final product = {
                     'field1': productFields[0].text,
-                    'field2': productFields[1].text,
+                    'Code': productFields[1].text,
                     'field3': productFields[2].text,
                     'field4': productFields[3].text,
                     'field5': productFields[4].text,
@@ -345,7 +754,8 @@ class SalesOrderScreen extends HookWidget {
                 controller: customerCodeController,
                 hint: "Customer Code",
                 title: "Customer Code",
-                onPressed: () => {},
+                onPressed: () => {_showDropdownDialogCustomerTypeInfo(context)},
+                isEnable: false,
               ),
               CustomTextFormFieldAreaSetting(
                 controller: customerNameController,
@@ -357,7 +767,8 @@ class SalesOrderScreen extends HookWidget {
                 controller: deliveryDepotCodeController,
                 hint: "Delivery Depot Code",
                 title: "Delivery Depot Code",
-                onPressed: () => {},
+                onPressed: () => {_showDepoDropdownDialog(context)},
+                isEnable: false,
               ),
               CustomTextFormFieldAreaSetting(
                 controller: deliveryDepotNameController,
@@ -370,6 +781,7 @@ class SalesOrderScreen extends HookWidget {
                 hint: "Ref Code",
                 title: "Ref Code",
                 onPressed: () => {_showDropdownDialogDoctorsTypeInfo(context)},
+                isEnable: false,
               ),
               CustomTextFormFieldAreaSetting(
                 controller: refNameController,
@@ -379,7 +791,7 @@ class SalesOrderScreen extends HookWidget {
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: _openProductModal,
+                onPressed: () => _showProductDropdownDialog(context),
                 child: Text('Add Product'),
               ),
               SizedBox(height: 16.0),
@@ -389,11 +801,11 @@ class SalesOrderScreen extends HookWidget {
                   scrollDirection: Axis.vertical,
                   child: DataTable(
                     columns: [
-                      DataColumn(label: Text('Field 1')),
-                      DataColumn(label: Text('Field 2')),
-                      DataColumn(label: Text('Field 3')),
-                      DataColumn(label: Text('Field 4')),
-                      DataColumn(label: Text('Field 5')),
+                      DataColumn(label: Text('SL')),
+                      DataColumn(label: Text('Code')),
+                      DataColumn(label: Text('Name')),
+                      DataColumn(label: Text('Pack Size')),
+                      DataColumn(label: Text('Quantity')),
                       DataColumn(label: Text('Actions')),
                     ],
                     rows: products.value
@@ -402,21 +814,29 @@ class SalesOrderScreen extends HookWidget {
                         .map(
                           (entry) => DataRow(
                             cells: [
-                              DataCell(Text(entry.value['field1']!)),
-                              DataCell(Text(entry.value['field2']!)),
-                              DataCell(Text(entry.value['field3']!)),
-                              DataCell(Text(entry.value['field4']!)),
-                              DataCell(Text(entry.value['field5']!)),
+                              DataCell(Text((entry.key+1).toString())),
+                              DataCell(Text(entry.value['Code']!)),
+                              DataCell(Text(entry
+                                  .value['Name']!)), //entry.value['Quantity']!
+                              DataCell(Text(entry.value['PackSize']!)),
+                              DataCell(TextField(
+                                controller: TextEditingController(
+                                    text: entry.value['Quantity']!),
+                                keyboardType: TextInputType.number,
+                                onChanged: (value){
+
+                                    entry.value['Quantity'] = value;
+
+                                },
+                              )),
                               DataCell(
                                 Row(
                                   children: [
-                                    IconButton(
-                                      icon: Icon(Icons.edit),
-                                      onPressed: () => _editProduct(entry.key),
-                                    ),
+
                                     IconButton(
                                       icon: Icon(Icons.delete),
-                                      onPressed: () => _deleteProduct(entry.key),
+                                      onPressed: () =>
+                                          _deleteProduct(entry.key),
                                     ),
                                   ],
                                 ),

@@ -144,13 +144,15 @@ class TextFeildWithSearchBtn extends StatelessWidget {
   final String hint;
   final String title;
   final VoidCallback onPressed;
+  final bool isEnable;
 
   const TextFeildWithSearchBtn(
       {super.key,
       required this.controller,
       required this.hint,
       required this.title,
-      required this.onPressed});
+      required this.onPressed,
+      required this.isEnable});
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +176,7 @@ class TextFeildWithSearchBtn extends StatelessWidget {
           Expanded(
             flex: 5,
             child: TextFormField(
-              readOnly: title == 'Branch Code' ? true : false,
+               readOnly: !isEnable,
               controller: controller,
               onChanged: (text) {
                 // Update the text in the controller when the text field changes
@@ -190,7 +192,7 @@ class TextFeildWithSearchBtn extends StatelessWidget {
           Expanded(
               flex: 1,
               child: Container(
-               
+
                 padding: EdgeInsets.only(right: 1, left: 5),
                 child: Material(
                   elevation: 5,

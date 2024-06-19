@@ -233,6 +233,7 @@ class Areasetting extends HookWidget {
                           hint: 'Territory Code',
                           title: "Territory Code",
                           onPressed: () => _showDropdownDialog(context),
+                          isEnable: false,
                         ),
                         CustomTextFormFieldAreaSetting(
                           controller: territoryNameController,

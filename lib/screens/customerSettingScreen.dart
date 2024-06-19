@@ -36,7 +36,7 @@ class CustomerSettingScreen extends HookWidget {
 
     final customerTypeDropdownvalue = useState<CustomerTypeInfo?>(null);
     final customerTypeDropdown = useState<List<CustomerTypeInfo>>([]);
-    
+
     final doctorDropdown = useState<List<DoctorListModel>>([]);
     final doctorDropdownvalue = useState<DoctorListModel?>(null);
 
@@ -675,6 +675,7 @@ class CustomerSettingScreen extends HookWidget {
                     title: "Category Code",
                     onPressed: () =>
                         _showDropdownDialogCustomerTypeInfo(context),
+                        isEnable: false,
                   ),
                   CustomTextFormField(
                     controller: categoryNameController,
@@ -687,6 +688,7 @@ class CustomerSettingScreen extends HookWidget {
                     title: "Ref. Code",
                     onPressed: () =>
                         _showDropdownDialogDoctorsTypeInfo(context),
+                        isEnable: false,
                   ),
                   CustomTextFormField(
                     controller: refNameController,
@@ -698,6 +700,7 @@ class CustomerSettingScreen extends HookWidget {
                     hint: 'Rules No.',
                     title: "Rules No.",
                     onPressed: () => _showDropdownDialogSalesRules(context),
+                    isEnable: false,
                   ),
                   CustomTextFormField(
                     controller: rulesNameController,

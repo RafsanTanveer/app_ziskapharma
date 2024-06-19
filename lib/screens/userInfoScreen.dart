@@ -409,7 +409,11 @@ class Userinfoscreen extends HookWidget {
                             controller: userBrnCodeController,
                             hint: userData.value!.userBrnCode ?? "",
                             title: "Branch Code",
-                            onPressed: () => _showDropdownDialog(context)),
+                            onPressed: () => _showDropdownDialog(context),
+                            isEnable: false,),
+
+
+
                         CustomTextFormField(
                           controller: userBrnNameController,
                           hint: userData.value!.userBrnName ?? "",
