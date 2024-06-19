@@ -289,141 +289,147 @@ class SalesOrderScreen extends HookWidget {
         ),
         backgroundColor: Colors.greenAccent[400],
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomTextFormFieldAreaSetting(
-              controller: depoNameController,
-              hint: "Depot Name",
-              title: "Depot Name",
-              isEnable: false,
-            ),
-            CustomTextFormFieldAreaSetting(
-              controller: depoCodeController,
-              hint: "Depot Code",
-              title: "Depot Code",
-              isEnable: false,
-            ),
-            SizedBox(height: 16.0),
-            GestureDetector(
-              onTap: () => _selectDate(context, orderDateController),
-              child: AbsorbPointer(
-                child: CustomTextFormFieldAreaSetting(
-                  controller: orderDateController,
-                  hint: "Select Date",
-                  title: "Order Date",
-                  isEnable: true,
+      body: Scrollbar(
+        thumbVisibility: true,
+        thickness: 15,
+        interactive: true,
+        radius: Radius.circular(20),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomTextFormFieldAreaSetting(
+                controller: depoNameController,
+                hint: "Depot Name",
+                title: "Depot Name",
+                isEnable: false,
+              ),
+              CustomTextFormFieldAreaSetting(
+                controller: depoCodeController,
+                hint: "Depot Code",
+                title: "Depot Code",
+                isEnable: false,
+              ),
+              SizedBox(height: 16.0),
+              GestureDetector(
+                onTap: () => _selectDate(context, orderDateController),
+                child: AbsorbPointer(
+                  child: CustomTextFormFieldAreaSetting(
+                    controller: orderDateController,
+                    hint: "Select Date",
+                    title: "Order Date",
+                    isEnable: true,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 16.0),
-            GestureDetector(
-              onTap: () => _selectDate(context, deliveryDateController),
-              child: AbsorbPointer(
-                child: CustomTextFormFieldAreaSetting(
-                  controller: deliveryDateController,
-                  hint: "Delivery Date",
-                  title: "Delivery Date",
-                  isEnable: true,
+              SizedBox(height: 16.0),
+              GestureDetector(
+                onTap: () => _selectDate(context, deliveryDateController),
+                child: AbsorbPointer(
+                  child: CustomTextFormFieldAreaSetting(
+                    controller: deliveryDateController,
+                    hint: "Delivery Date",
+                    title: "Delivery Date",
+                    isEnable: true,
+                  ),
                 ),
               ),
-            ),
-            CustomTextFormFieldAreaSetting(
-              controller: orderNoController,
-              hint: "Order No",
-              title: "Order No",
-              isEnable: false,
-            ),
-            TextFeildWithSearchBtn(
-              controller: customerCodeController,
-              hint: "Customer Code",
-              title: "Customer Code",
-              onPressed: () => {},
-            ),
-            CustomTextFormFieldAreaSetting(
-              controller: customerNameController,
-              hint: "Customer Name",
-              title: "Customer Name",
-              isEnable: false,
-            ),
-            TextFeildWithSearchBtn(
-              controller: deliveryDepotCodeController,
-              hint: "Delivery Depot Code",
-              title: "Delivery Depot Code",
-              onPressed: () => {},
-            ),
-            CustomTextFormFieldAreaSetting(
-              controller: deliveryDepotNameController,
-              hint: "Delivery Depot Name",
-              title: "Delivery Depot Name",
-              isEnable: false,
-            ),
-            TextFeildWithSearchBtn(
-              controller: refCodeController,
-              hint: "Ref Code",
-              title: "Ref Code",
-              onPressed: () => {_showDropdownDialogDoctorsTypeInfo(context)},
-            ),
-            CustomTextFormFieldAreaSetting(
-              controller: refNameController,
-              hint: "Ref Name",
-              title: "Ref Name",
-              isEnable: false,
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _openProductModal,
-              child: Text('Add Product'),
-            ),
-            SizedBox(height: 16.0),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: DataTable(
-                  columns: [
-                    DataColumn(label: Text('Field 1')),
-                    DataColumn(label: Text('Field 2')),
-                    DataColumn(label: Text('Field 3')),
-                    DataColumn(label: Text('Field 4')),
-                    DataColumn(label: Text('Field 5')),
-                    DataColumn(label: Text('Actions')),
-                  ],
-                  rows: products.value
-                      .asMap()
-                      .entries
-                      .map(
-                        (entry) => DataRow(
-                          cells: [
-                            DataCell(Text(entry.value['field1']!)),
-                            DataCell(Text(entry.value['field2']!)),
-                            DataCell(Text(entry.value['field3']!)),
-                            DataCell(Text(entry.value['field4']!)),
-                            DataCell(Text(entry.value['field5']!)),
-                            DataCell(
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () => _editProduct(entry.key),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () => _deleteProduct(entry.key),
-                                  ),
-                                ],
+              CustomTextFormFieldAreaSetting(
+                controller: orderNoController,
+                hint: "Order No",
+                title: "Order No",
+                isEnable: false,
+              ),
+              TextFeildWithSearchBtn(
+                controller: customerCodeController,
+                hint: "Customer Code",
+                title: "Customer Code",
+                onPressed: () => {},
+              ),
+              CustomTextFormFieldAreaSetting(
+                controller: customerNameController,
+                hint: "Customer Name",
+                title: "Customer Name",
+                isEnable: false,
+              ),
+              TextFeildWithSearchBtn(
+                controller: deliveryDepotCodeController,
+                hint: "Delivery Depot Code",
+                title: "Delivery Depot Code",
+                onPressed: () => {},
+              ),
+              CustomTextFormFieldAreaSetting(
+                controller: deliveryDepotNameController,
+                hint: "Delivery Depot Name",
+                title: "Delivery Depot Name",
+                isEnable: false,
+              ),
+              TextFeildWithSearchBtn(
+                controller: refCodeController,
+                hint: "Ref Code",
+                title: "Ref Code",
+                onPressed: () => {_showDropdownDialogDoctorsTypeInfo(context)},
+              ),
+              CustomTextFormFieldAreaSetting(
+                controller: refNameController,
+                hint: "Ref Name",
+                title: "Ref Name",
+                isEnable: false,
+              ),
+              SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: _openProductModal,
+                child: Text('Add Product'),
+              ),
+              SizedBox(height: 16.0),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: DataTable(
+                    columns: [
+                      DataColumn(label: Text('Field 1')),
+                      DataColumn(label: Text('Field 2')),
+                      DataColumn(label: Text('Field 3')),
+                      DataColumn(label: Text('Field 4')),
+                      DataColumn(label: Text('Field 5')),
+                      DataColumn(label: Text('Actions')),
+                    ],
+                    rows: products.value
+                        .asMap()
+                        .entries
+                        .map(
+                          (entry) => DataRow(
+                            cells: [
+                              DataCell(Text(entry.value['field1']!)),
+                              DataCell(Text(entry.value['field2']!)),
+                              DataCell(Text(entry.value['field3']!)),
+                              DataCell(Text(entry.value['field4']!)),
+                              DataCell(Text(entry.value['field5']!)),
+                              DataCell(
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () => _editProduct(entry.key),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () => _deleteProduct(entry.key),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                      .toList(),
+                            ],
+                          ),
+                        )
+                        .toList(),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
