@@ -31,6 +31,7 @@ class Areasetting extends HookWidget {
     final depotCodeController = useTextEditingController();
     final depotNameController = useTextEditingController();
     final userIdController = useTextEditingController();
+    final searchController = useTextEditingController();
 
     Future<void> _fetchDropDownData() async {
       try {
@@ -101,11 +102,11 @@ class Areasetting extends HookWidget {
       try {
         final response = await http.post(url, headers: headers, body: payload);
         if (response.statusCode == 200) {
-          print('Data successfully posted.');
-          await _fetchData(); // Reload data after save
+          // await _fetchData(); // Reload data after save
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Data successfully saved')),
           );
+          Navigator.pop(context, '/salesmgt');
         } else {
           print('Failed to post data. Status code: ${response.statusCode}');
         }
@@ -124,56 +125,77 @@ class Areasetting extends HookWidget {
         context: context,
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.8,
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                AppBar(
-                  title: Text('Select Territory'),
-                  automaticallyImplyLeading: false,
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.pop(context);
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              List<TerritoryDropDownlModel> filteredList =
+                  terryDropdown.value.where((item) {
+                final query = searchController.text.toLowerCase();
+                return item.teryName.toLowerCase().contains(query) ||
+                    item.teryParentCode.toLowerCase().contains(query) ||
+                    item.teryCode.toLowerCase().contains(query);
+              }).toList();
+
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.8,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    AppBar(
+                      title: Text('Select Territory'),
+                      automaticallyImplyLeading: false,
+                      actions: [
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    ),
+                    TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search...',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (text) {
+                        setState(() {});
                       },
-                    )
-                  ],
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text('Name')),
-                          DataColumn(label: Text('Parent Code')),
-                          DataColumn(
-                              label: Text(
-                                  'Territory Code')), // Corrected label name
-                        ],
-                        rows: terryDropdown.value.map((item) {
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(item.teryName), onTap: () {
-                                Navigator.pop(context, item);
-                              }),
-                              DataCell(Text(item.teryParentCode), onTap: () {
-                                Navigator.pop(context, item);
-                              }),
-                              DataCell(Text(item.teryCode), onTap: () {
-                                Navigator.pop(context, item);
-                              }),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DataTable(
+                            columns: const [
+                              DataColumn(label: Text('Name')),
+                              DataColumn(label: Text('Parent Code')),
+                              DataColumn(label: Text('Territory Code')),
                             ],
-                          );
-                        }).toList(),
+                            rows: filteredList.map((item) {
+                              return DataRow(
+                                cells: [
+                                  DataCell(Text(item.teryName), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                  DataCell(Text(item.teryParentCode),
+                                      onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                  DataCell(Text(item.teryCode), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           );
         },
       );
@@ -206,12 +228,11 @@ class Areasetting extends HookWidget {
               child: territoryData.value != null
                   ? Column(
                       children: [
-                        
                         TextFeildWithSearchBtn(
                           controller: territoryCodeController,
                           hint: 'Territory Code',
                           title: "Territory Code",
-                          onPressed: () => _showDropdownDialog(context)
+                          onPressed: () => _showDropdownDialog(context),
                         ),
                         CustomTextFormFieldAreaSetting(
                           controller: territoryNameController,

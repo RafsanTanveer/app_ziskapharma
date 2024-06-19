@@ -24,7 +24,7 @@ class Userinfoscreen extends HookWidget {
     final signatureData = useState<String?>(null);
     final branchValue = useState<Branch?>(null);
     final branchDropdown = useState<List<Branch>>([]);
-
+    final filteredBranches = useState<List<Branch>>([]);
     void setControllerText(TextEditingController controller, String text) {
       controller.text = text;
     }
@@ -41,7 +41,7 @@ class Userinfoscreen extends HookWidget {
         useTextEditingController();
     TextEditingController userBrnCodeController = useTextEditingController();
     TextEditingController userBrnNameController = useTextEditingController();
-
+    final searchController = useTextEditingController();
     Future<void> _submitPost() async {
       final url = Uri.parse('${apiAccess.apiBaseUrl}/UserInfo/Proc_SaveByApi');
       final headers = {"Content-Type": "application/json"};
@@ -75,8 +75,7 @@ class Userinfoscreen extends HookWidget {
       try {
         final response = await http.post(url, headers: headers, body: payload);
         if (response.statusCode == 200) {
-          print('Data successfully posted.');
-          Navigator.pop(context);
+          Navigator.pop(context, '/salesmgt');
         } else {
           print('Failed to post data. Status code: ${response.statusCode}');
         }
@@ -90,64 +89,94 @@ class Userinfoscreen extends HookWidget {
         context: context,
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.8,
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                AppBar(
-                  title: Text('Select Branch'),
-                  automaticallyImplyLeading: false,
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    )
-                  ],
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text('Name')),
-                          DataColumn(label: Text('Code')),
-                          DataColumn(
-                              label: Text(
-                                  'Branch Address')), // Corrected label name
-                        ],
-                        rows: branchDropdown.value.map((item) {
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(item.brnName.toString()),
-                                  onTap: () {
-                                Navigator.pop(context, item);
-                              }),
-                              DataCell(Text(item.brnComCode.toString()),
-                                  onTap: () {
-                                Navigator.pop(context, item);
-                              }),
-                              DataCell(Text(item.brnAddress1.toString()),
-                                  onTap: () {
-                                Navigator.pop(context, item);
-                              }),
-                            ],
-                          );
-                        }).toList(),
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              final query = searchController.text.toLowerCase();
+              List<Branch> filteredList = branchDropdown.value
+                  .where((branch) =>
+                      branch.brnName!
+                          .toLowerCase()
+                          .contains(query.toLowerCase()) ||
+                      branch.brnCode!
+                          .toLowerCase()
+                          .contains(query.toLowerCase()))
+                  .toList();
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.8,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    AppBar(
+                      title: Text('Select Branch'),
+                      automaticallyImplyLeading: false,
+                      actions: [
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          labelText: 'Search Branch',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          setState(() {});
+                        },
                       ),
                     ),
-                  ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: ValueListenableBuilder<List<Branch>>(
+                            valueListenable: filteredBranches,
+                            builder: (context, branches, child) {
+                              return DataTable(
+                                columns: const [
+                                  DataColumn(label: Text('Name')),
+                                  DataColumn(label: Text('Code')),
+                                  DataColumn(label: Text('Branch Address')),
+                                ],
+                                rows: filteredList.map((item) {
+                                  return DataRow(
+                                    cells: [
+                                      DataCell(Text(item.brnName.toString()),
+                                          onTap: () {
+                                        Navigator.pop(context, item);
+                                      }),
+                                      DataCell(Text(item.brnCode.toString()),
+                                          onTap: () {
+                                        Navigator.pop(context, item);
+                                      }),
+                                      DataCell(
+                                          Text(item.brnAddress1.toString()),
+                                          onTap: () {
+                                        Navigator.pop(context, item);
+                                      }),
+                                    ],
+                                  );
+                                }).toList(),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           );
         },
       );
 
-      // Ensure that the UI is updated after receiving the selected value
       if (selectedValue != null) {
         branchValue.value = selectedValue;
         userBrnCodeController.text = selectedValue.brnCode.toString();

@@ -54,6 +54,11 @@ class CustomerSettingScreen extends HookWidget {
 
     final _groupValue = useState<String>("Credit");
 
+
+    final searchControllerCat = useTextEditingController();
+    final searchControllerRef = useTextEditingController();
+    final searchControllerRule = useTextEditingController();
+
     TextEditingController _creditLimitController = TextEditingController();
     TextEditingController typeNameController =
         TextEditingController(text: args.cpName);
@@ -169,8 +174,7 @@ class CustomerSettingScreen extends HookWidget {
     }
 
     fetchDoctorsTypeInfo(String cpCode) async {
-      print(
-          'cpCode cpCode     cpCode cpCode=====================================');
+    
       print(cpCode);
       try {
         // CustomerSettings/Proc_CustomerDoctorHelpListByApi?tery_UserId=1
@@ -182,8 +186,7 @@ class CustomerSettingScreen extends HookWidget {
 
         if (response.statusCode == 200) {
           final jsonResponse = json.decode(response.body);
-          print(
-              '+++++++++++++++++++++++++++++++++++++=====================================');
+
           print(response.body);
           final List<dynamic> table = jsonResponse['Table'];
 
@@ -203,61 +206,82 @@ class CustomerSettingScreen extends HookWidget {
 
     Future<void> _showDropdownDialogDoctorsTypeInfo(
         BuildContext context) async {
-      print('in reffffffffffffffffffffffffffffffffffffffffffff');
       final selectedValue = await showModalBottomSheet<DoctorListModel>(
         context: context,
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.8,
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                AppBar(
-                  title: Text('Select Territory'),
-                  automaticallyImplyLeading: false,
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.pop(context);
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              List<DoctorListModel> filteredList =
+                  doctorDropdown.value.where((item) {
+                final query = searchControllerRef.text.toLowerCase();
+                return item.custName.toLowerCase().contains(query) ||
+                    item.custRefCode.toLowerCase().contains(query) ||
+                    item.custRefCode.toLowerCase().contains(query);
+              }).toList();
+
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.8,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    AppBar(
+                      title: Text('Select Doctor'),
+                      automaticallyImplyLeading: false,
+                      actions: [
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
+                    ),
+                    TextField(
+                      controller: searchControllerRef,
+                      decoration: InputDecoration(
+                        hintText: 'Search...',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (text) {
+                        setState(() {});
                       },
-                    )
-                  ],
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text('Name')),
-                          DataColumn(label: Text('Parent Code')),
-                          DataColumn(
-                              label: Text(
-                                  'Territory Code')), // Corrected label name
-                        ],
-                        rows: doctorDropdown.value.map((item) {
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(item.custName), onTap: () {
-                                Navigator.pop(context, item);
-                              }),
-                              DataCell(Text(item.custRefCode), onTap: () {
-                                Navigator.pop(context, item);
-                              }),
-                              DataCell(Text(item.custRefCode), onTap: () {
-                                Navigator.pop(context, item);
-                              }),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DataTable(
+                            columns: const [
+                              DataColumn(label: Text('Name')),
+                              DataColumn(label: Text('Parent Code')),
+                              DataColumn(
+                                label: Text('Territory Code'),
+                              ),
                             ],
-                          );
-                        }).toList(),
+                            rows: filteredList.map((item) {
+                              return DataRow(
+                                cells: [
+                                  DataCell(Text(item.custName), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                  DataCell(Text(item.custRefCode), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                  DataCell(Text(item.custRefCode), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           );
         },
       );
@@ -277,74 +301,87 @@ class CustomerSettingScreen extends HookWidget {
         context: context,
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.8,
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                AppBar(
-                  title: Text('Select Territory'),
-                  automaticallyImplyLeading: false,
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.pop(context);
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              List<CustomerCategory> filteredList =
+                  customerCategoryDropDown.value.where((item) {
+                final queryCat = searchControllerCat.text.toLowerCase();
+                return item.cpCode.toLowerCase().contains(queryCat) ||
+                    item.cpName.toLowerCase().contains(queryCat);
+              }).toList();
+
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.8,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    AppBar(
+                      title: Text('Select Category'),
+                      automaticallyImplyLeading: false,
+                      actions: [
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
+                    ),
+                    TextField(
+                      controller: searchControllerCat,
+                      decoration: InputDecoration(
+                        hintText: 'Search...',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (text) {
+                        setState(() {});
                       },
-                    )
-                  ],
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text('Name')),
-                          DataColumn(label: Text('Parent Code')),
-                          DataColumn(
-                              label: Text(
-                                  'Territory Code')), // Corrected label name
-                        ],
-                        rows: customerCategoryDropDown.value.map((item) {
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(item.cpCode), onTap: () {
-                                Navigator.pop(context, item);
-                              }),
-                              DataCell(Text(item.cpName), onTap: () {
-                                Navigator.pop(context, item);
-                              }),
-                              DataCell(Text(item.cpID.toString()), onTap: () {
-                                Navigator.pop(context, item);
-                              }),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DataTable(
+                            columns: const [
+                              DataColumn(label: Text('Name')),
+                              DataColumn(label: Text('Parent Code')),
+                              DataColumn(label: Text('Territory Code')),
                             ],
-                          );
-                        }).toList(),
+                            rows: filteredList.map((item) {
+                              return DataRow(
+                                cells: [
+                                  DataCell(Text(item.cpCode), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                  DataCell(Text(item.cpName), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                  DataCell(Text(item.cpID.toString()),
+                                      onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           );
         },
       );
-
-      // Ensure that the UI is updated after receiving the selected value
       if (selectedValue != null) {
         customerCategoryDropDownValue.value = selectedValue;
         fetchSingleCustomerTypeInfo(selectedValue.cpCode);
-
-        print('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
-        print(customerTypeDropdown.value.first.cpCode);
 
         categoryCodeController.text =
             customerTypeDropdown.value.first.cpCode.toString();
         categoryNameController.text =
             customerTypeDropdown.value.first.cpName.toString();
-        // territoryCodeController.text = selectedValue.teryCode;
-        // territoryNameController.text = selectedValue.teryName;
       }
     }
 
@@ -353,56 +390,75 @@ class CustomerSettingScreen extends HookWidget {
         context: context,
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.8,
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                AppBar(
-                  title: Text('Select Territory'),
-                  automaticallyImplyLeading: false,
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.pop(context);
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              List<SalesRule> filteredList =
+                  salesRuleDropDown.value.where((item) {
+                final query = searchControllerRule.text.toLowerCase();
+                return item.pbRulesNo.toLowerCase().contains(query) ||
+                    item.pbRulesTypeName.toLowerCase().contains(query);
+              }).toList();
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.8,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    AppBar(
+                      title: Text('Select Sales Rule'),
+                      automaticallyImplyLeading: false,
+                      actions: [
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
+                    ),
+                    TextField(
+                      controller: searchControllerRule,
+                      decoration: InputDecoration(
+                        hintText: 'Search...',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (text) {
+                        setState(() {});
                       },
-                    )
-                  ],
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text('Name')),
-                          DataColumn(label: Text('Parent Code')),
-                          DataColumn(
-                              label: Text(
-                                  'Territory Code')), // Corrected label name
-                        ],
-                        rows: salesRuleDropDown.value.map((item) {
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(item.pbRulesNo), onTap: () {
-                                Navigator.pop(context, item);
-                              }),
-                              DataCell(Text(item.pbRulesTypeName), onTap: () {
-                                Navigator.pop(context, item);
-                              }),
-                              DataCell(Text(item.pbID.toString()), onTap: () {
-                                Navigator.pop(context, item);
-                              }),
-                            ],
-                          );
-                        }).toList(),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DataTable(
+                              columns: const [
+                                DataColumn(label: Text('Rule No.')),
+                                DataColumn(label: Text('Rule Type')),
+                                DataColumn(label: Text('Rule ID')),
+                              ],
+                              rows: filteredList.map((item) {
+                                return DataRow(
+                                  cells: [
+                                    DataCell(Text(item.pbRulesNo), onTap: () {
+                                      Navigator.pop(context, item);
+                                    }),
+                                    DataCell(Text(item.pbRulesTypeName),
+                                        onTap: () {
+                                      Navigator.pop(context, item);
+                                    }),
+                                    DataCell(Text(item.pbID.toString()),
+                                        onTap: () {
+                                      Navigator.pop(context, item);
+                                    }),
+                                  ],
+                                );
+                              }).toList()),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           );
         },
       );
@@ -412,8 +468,7 @@ class CustomerSettingScreen extends HookWidget {
         salesRuleDropDownValue.value = selectedValue;
         rulesNameController.text = selectedValue.pbRulesTypeName;
         rulesNoController.text = selectedValue.pbRulesNo;
-        // territoryCodeController.text = selectedValue.teryCode;
-        // territoryNameController.text = selectedValue.teryName;
+        // Any additional updates you need to perform with the selected value
       }
     }
 
@@ -522,7 +577,7 @@ class CustomerSettingScreen extends HookWidget {
       fetchSalesRulesHelpListByApi();
     }, []);
 
-    return Scaffold(
+     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Customer Information Settings',
@@ -576,20 +631,23 @@ class CustomerSettingScreen extends HookWidget {
                       ),
                     ],
                   ),
-                  CustomTextFormField(
+                  CustomTextFormFieldAreaSetting(
                     controller: typeNameController,
                     hint: "Type Name",
                     title: "Type Name",
+                    isEnable: false,
                   ),
-                  CustomTextFormField(
+                  CustomTextFormFieldAreaSetting(
                     controller: territoryCodeController,
                     hint: 'Territory Code',
                     title: "Territory Code",
+                    isEnable: false,
                   ),
-                  CustomTextFormField(
+                  CustomTextFormFieldAreaSetting(
                     controller: territoryNameController,
                     hint: "Territory Name",
                     title: "Territory Name",
+                    isEnable: false,
                   ),
                   CustomTextFormField(
                     controller: customerNameController,
@@ -632,12 +690,12 @@ class CustomerSettingScreen extends HookWidget {
                   ),
                   CustomTextFormField(
                     controller: refNameController,
-                    hint: 'hint',
+                    hint: 'Ref. Name',
                     title: "Ref. Name",
                   ),
                   TextFeildWithSearchBtn(
                     controller: rulesNoController,
-                    hint: 'hint',
+                    hint: 'Rules No.',
                     title: "Rules No.",
                     onPressed: () => _showDropdownDialogSalesRules(context),
                   ),
@@ -661,7 +719,6 @@ class CustomerSettingScreen extends HookWidget {
                                 _groupValue.value = value!;
                                 isCredit.value = "false";
                                 isCash.value = "true";
-                                print(_groupValue.value);
                               },
                             ),
                           ],
@@ -680,7 +737,6 @@ class CustomerSettingScreen extends HookWidget {
                                 _groupValue.value = value!;
                                 isCredit.value = "true";
                                 isCash.value = "false";
-                                print(_groupValue.value);
                               },
                             ),
                           ],
@@ -784,5 +840,6 @@ class CustomerSettingScreen extends HookWidget {
         ),
       ),
     );
+
   }
 }
