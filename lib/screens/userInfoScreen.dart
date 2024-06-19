@@ -27,7 +27,6 @@ class Userinfoscreen extends HookWidget {
 
     void setControllerText(TextEditingController controller, String text) {
       controller.text = text;
-    
     }
 
     TextEditingController userIdController = useTextEditingController();
@@ -77,6 +76,7 @@ class Userinfoscreen extends HookWidget {
         final response = await http.post(url, headers: headers, body: payload);
         if (response.statusCode == 200) {
           print('Data successfully posted.');
+          Navigator.pop(context);
         } else {
           print('Failed to post data. Status code: ${response.statusCode}');
         }
@@ -198,8 +198,6 @@ class Userinfoscreen extends HookWidget {
       }
     }
 
-
-
     useEffect(() {
       _fetchData();
     }, []);
@@ -257,10 +255,8 @@ class Userinfoscreen extends HookWidget {
               child: userData.value != null
                   ? Column(
                       children: [
-
                         Row(
                           children: [
-
                             Stack(
                               alignment: Alignment.bottomRight,
                               children: [

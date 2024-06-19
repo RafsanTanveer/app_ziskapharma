@@ -41,6 +41,7 @@ dependencies:
   gap: ^3.0.1
   external_path: ^1.0.3
   image_picker: ^1.1.2
+  fluttertoast: ^8.2.6
   
 
 dev_dependencies:

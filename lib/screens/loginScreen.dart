@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:app_ziskapharma/model/UserModel.dart';
+import 'package:app_ziskapharma/model/sample.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -62,10 +64,37 @@ class _LoginscreenState extends State<Loginscreen> {
       if (responseData == 'true') {
         context.read<AuthProvider>().setUserId(userUID);
         context.read<AuthProvider>().setUserPass(userPws);
+
+        final loginUrl = Uri.parse(
+            '${apiAccess.apiBaseUrl}/LogIn/ProcessTableCompanyInfo?user_UID=${userUID}');
+
+        print(loginUrl);
+
+        final response = await http.get(loginUrl);
+        print('***********************************');
+        // print(response.body);
+
+        final jsonData = json.decode(response.body);
+
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        // Assuming the list you need is under a key 'data' or similar
+        var table = jsonResponse['Table'][0];
+        // print(table);
+
+        UserModel user = UserModel.fromJson(table);
+
+        // Update the provider
+        context.read<AuthProvider>().setUser(user);
+
+        print('***********************************');
+        print(provider.user?.comCode);
+        print(provider.user?.comName);
+
+        //provider.user_id
+
         Navigator.pushReplacementNamed(context, '/mainmgt');
       } else {}
     } catch (e) {
-      print('error  ((((((((((((((((((((()))))))))))))))))))))');
       print(e);
     }
   }
