@@ -18,8 +18,8 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-    print(json);
+
+    
     return UserModel(
       comID: json['Com_ID'].toString(),
       comCode: json['Com_Code'],

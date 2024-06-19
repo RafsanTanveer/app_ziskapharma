@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../dataaccess/apiAccess.dart' as apiAccess;
@@ -11,6 +12,8 @@ Future<List<CustomerListModel>> fetchCustomerLists(
   final url = Uri.parse(
       '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=${user_id}&vCustomerTypeCode=$vCustomerTypeCode');
 
+  print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
+  print(vCustomerTypeCode);
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
@@ -41,6 +44,8 @@ class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
   @override
   void initState() {
     final provider = Provider.of<AuthProvider>(context, listen: false);
+
+
 
     super.initState();
     _customerLists =
@@ -182,7 +187,12 @@ class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
         DataCell(
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/salesOrder');
+              Navigator.pushNamed(
+                context,
+                '/salesOrder',
+                arguments:new CustomerSettingScreenArgs( widget.vCustomerTypeCode, '')
+
+              );
             },
             child: Text(
               'Sales Order',

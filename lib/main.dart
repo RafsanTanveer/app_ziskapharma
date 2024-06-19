@@ -60,6 +60,7 @@ class MyApp extends StatelessWidget {
         "/cusgrpstts": (context) => Customergroupsettingscreen(),
         "/slsinvapprvl": (context) => Salesinvoicescreen(),
         "/slsinvview": (context) => Salesinvoiceviewscreen(),
+        "/salesOrder": (context) => SalesOrderScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/customerlist') {
@@ -77,14 +78,15 @@ class MyApp extends StatelessWidget {
                   vCustomerTypeCode: vCustomerTypeCode);
             },
           );
-        } else if (settings.name == '/salesOrder') {
-          // final String vCustomerTypeCode = settings.arguments as String;
-          return MaterialPageRoute(
-            builder: (context) {
-              return SalesOrderScreen();
-            },
-          );
         }
+        // else if (settings.name == '/salesOrder') {
+        //   // final String vCustomerTypeCode = settings.arguments as String;
+        //   return MaterialPageRoute(
+        //     builder: (context) {
+        //       return SalesOrderScreen();
+        //     },
+        //   );
+        // }
         // else if (settings.name == '/cstrstts') {
         //   return MaterialPageRoute(
         //     builder: (context) {

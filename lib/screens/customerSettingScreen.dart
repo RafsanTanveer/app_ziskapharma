@@ -36,6 +36,7 @@ class CustomerSettingScreen extends HookWidget {
 
     final customerTypeDropdownvalue = useState<CustomerTypeInfo?>(null);
     final customerTypeDropdown = useState<List<CustomerTypeInfo>>([]);
+    
     final doctorDropdown = useState<List<DoctorListModel>>([]);
     final doctorDropdownvalue = useState<DoctorListModel?>(null);
 
@@ -129,10 +130,9 @@ class CustomerSettingScreen extends HookWidget {
 
           customerTypeDropdown.value = listCustomer;
 
-          print('444444444444444444444444444444444444');
-          print(customerTypeDropdown.value.first.cpCode);
 
           categoryCodeController.text = customerTypeDropdown.value.first.cpCode;
+
         } else {
           throw Exception('Failed to load data');
         }
@@ -174,7 +174,7 @@ class CustomerSettingScreen extends HookWidget {
     }
 
     fetchDoctorsTypeInfo(String cpCode) async {
-    
+
       print(cpCode);
       try {
         // CustomerSettings/Proc_CustomerDoctorHelpListByApi?tery_UserId=1
@@ -376,7 +376,7 @@ class CustomerSettingScreen extends HookWidget {
       );
       if (selectedValue != null) {
         customerCategoryDropDownValue.value = selectedValue;
-        fetchSingleCustomerTypeInfo(selectedValue.cpCode);
+        await fetchSingleCustomerTypeInfo(selectedValue.cpCode);
 
         categoryCodeController.text =
             customerTypeDropdown.value.first.cpCode.toString();
