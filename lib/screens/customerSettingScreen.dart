@@ -55,7 +55,6 @@ class CustomerSettingScreen extends HookWidget {
 
     final _groupValue = useState<String>("Credit");
 
-
     final searchControllerCat = useTextEditingController();
     final searchControllerRef = useTextEditingController();
     final searchControllerRule = useTextEditingController();
@@ -130,9 +129,7 @@ class CustomerSettingScreen extends HookWidget {
 
           customerTypeDropdown.value = listCustomer;
 
-
           categoryCodeController.text = customerTypeDropdown.value.first.cpCode;
-
         } else {
           throw Exception('Failed to load data');
         }
@@ -174,7 +171,6 @@ class CustomerSettingScreen extends HookWidget {
     }
 
     fetchDoctorsTypeInfo(String cpCode) async {
-
       print(cpCode);
       try {
         // CustomerSettings/Proc_CustomerDoctorHelpListByApi?tery_UserId=1
@@ -488,29 +484,101 @@ class CustomerSettingScreen extends HookWidget {
     }
 
     Future<void> _submitPost() async {
-
-
       final url = Uri.parse(
           '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SaveCustomerSettingsByApi');
 
       final headers = {"Content-Type": "application/json"};
 
-      if (isCredit.value == "true" &&
-          (_creditLimitController.text == '' ||
-              _creditLimitController.text == 0)) {
+      print(args.cpName);
 
+      if (args.cpName.toLowerCase() != "doctor") {
+      print(args.cpName);
+
+        if (refCodeController.text != '') {
+          if (isCredit.value == "true" &&
+              (_creditLimitController.text == '' ||
+                  _creditLimitController.text == 0)) {
+            Fluttertoast.showToast(
+              msg: 'Credit limit should not be 0',
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 18.0,
+            );
+          } else {
+            final payload = json.encode({
+              "Table": [
+                {
+                  'cust_ID': doctorDropdownvalue.value?.custID,
+                  'cust_Number': doctorDropdownvalue.value?.custNumber,
+                  'cust_Name': customerNameController
+                      .text, // doctorDropdownvalue.value?.custName,
+                  'cust_Address': addressController.text,
+                  'cust_RefID': '',
+                  'cust_RefCode': refCodeController.text,
+                  'cust_RefName': refNameController.text,
+                  'cust_ContractPerson': contactPersonController.text,
+                  'cust_Mobile': mobileController.text,
+                  'cust_BillingTypeCash': isCash.value.toString(),
+                  'cust_BillingTypeCredit': isCredit.value.toString(),
+                  'cust_BillingCreditLimit': _creditLimitController.text == ''
+                      ? '0'
+                      : _creditLimitController.text.trim(),
+                  'cust_MultipleProjectYn': 'False',
+                  'cust_SingleProjectYn': 'True',
+                  'cust_TypeCode': doctorDropdownvalue.value?.custRefCode,
+                  'cust_TypeName': args.cpName,
+                  'cust_CategoryCode':
+                      customerTypeDropdown.value.first.cpCode.toString(),
+                  'cust_CategoryName':
+                      customerTypeDropdown.value.first.cpName.toString(),
+                  'tery_Code': territoryCodeController.text,
+                  'tery_Name': territoryNameController.text,
+                  'tery_DepotCode': territoryData.value?.teryDepotCode,
+                  'cust_ReferenceYesNo':
+                      customerTypeDropdown.value.first.cpReferenceYes,
+                  'pb_RulesNo': rulesNoController.text,
+                  'cust_CUID': provider.user_id,
+                  'cust_MUID': provider.user_id,
+                  'cust_ComID': user?.comID,
+                  'cust_ComCode': user?.comCode,
+                  'cust_ComName': user?.comName,
+                }
+              ]
+            });
+
+            print(payload);
+
+            try {
+              final response =
+                  await http.post(url, headers: headers, body: payload);
+              if (response.statusCode == 200) {
+                print('Data successfully posted.');
+                Navigator.pop(context);
+              } else {
+                print(
+                    'Failed to post data. Status code: ${response.statusCode}');
+              }
+            } catch (e) {
+              print('Error posting data: $e');
+            }
+          }
+        } else {
           Fluttertoast.showToast(
-          msg: 'Credit limit should not be 0',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 18.0,
-        );
-
-      } else {
-        final payload = json.encode({
+            msg: 'Please set reference',
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 18.0,
+          );
+        }
+      }
+      else{
+final payload = json.encode({
           "Table": [
             {
               'cust_ID': doctorDropdownvalue.value?.custID,
@@ -577,7 +645,7 @@ class CustomerSettingScreen extends HookWidget {
       fetchSalesRulesHelpListByApi();
     }, []);
 
-     return Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text(
           'Customer Information Settings',
@@ -675,7 +743,7 @@ class CustomerSettingScreen extends HookWidget {
                     title: "Category Code",
                     onPressed: () =>
                         _showDropdownDialogCustomerTypeInfo(context),
-                        isEnable: false,
+                    isEnable: false,
                   ),
                   CustomTextFormField(
                     controller: categoryNameController,
@@ -688,7 +756,7 @@ class CustomerSettingScreen extends HookWidget {
                     title: "Ref. Code",
                     onPressed: () =>
                         _showDropdownDialogDoctorsTypeInfo(context),
-                        isEnable: false,
+                    isEnable: false,
                   ),
                   CustomTextFormField(
                     controller: refNameController,
@@ -843,6 +911,5 @@ class CustomerSettingScreen extends HookWidget {
         ),
       ),
     );
-
   }
 }

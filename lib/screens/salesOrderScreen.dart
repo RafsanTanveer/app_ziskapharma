@@ -267,7 +267,7 @@ class SalesOrderScreen extends HookWidget {
                             columns: const [
                               DataColumn(label: Text('Name')),
                               DataColumn(label: Text('Parent Code')),
-                              DataColumn(label: Text('Territory Code')),
+                              DataColumn(label: Text('Customer Id')),
                             ],
                             rows: filteredList.map((item) {
                               return DataRow(
@@ -587,78 +587,94 @@ class SalesOrderScreen extends HookWidget {
     }
 
     Future<void> _saveSalesOrder() async {
-      // Define the URL and headers
-      final url = Uri.parse(
-          '${apiAccess.apiBaseUrl}/SalesOrder/Proc_SaveSalesOrderByApi');
-      final headers = {"Content-Type": "application/json"};
-
-      final mainOrderData = {
-        "StoreMain_ID": 0,
-        "StoreMain_OrderDate": orderDateController.text,
-        "StoreMain_DeliveryDate": deliveryDateController.text,
-        "StoreMain_OrderNo": "",
-        "StoreMain_CustomerCode": customerCodeController.text.trim(),
-        "StoreMain_InputPlace": "Mobile SALES ORDER",
-        "StoreMain_RefCode": refCodeController.text.trim(),
-        "tery_DepotCode": depoCodeController.text,
-        "StoreMain_BrCode": userPreferences?.userBrnCode ?? '',
-        "StoreMain_CUID": userPreferences?.userUID ?? '',
-        "StoreMain_MUID": userPreferences?.userUID ?? '',
-        "StoreMain_ComID": user?.comID ?? '',
-        "StoreMain_ComCode": user?.comCode ?? '',
-        "StoreMain_ComName": user?.comName ?? ''
-      };
-
-      final productDetails = products.value.asMap().entries.map((entry) {
-        return {
-          "Prd_slDetails": entry.key + 1,
-          "Prd_Code": entry.value['Code']!,
-          "Prd_Name": entry.value['Name']!,
-          "Prd_PackSize": entry.value['PackSize']!,
-          "Prd_Quantity": entry.value['Quantity']!
-        };
-      }).toList();
-
-      final payload = {
-        "Table": [mainOrderData],
-        "Details": productDetails
-      };
-
-      final payloadJson = json.encode(payload);
-
-      try {
-        final response = await http.post(
-          url,
-          headers: headers,
-          body: payloadJson,
+      print('7777777777777777777777777777777');
+      if (products.value.length == 0) {
+        Fluttertoast.showToast(
+          msg: 'Please select at least 1 product',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          // backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 18.0,
         );
-
-        if (response.statusCode == 200) {
-          final result = json.decode(response.body);
-          if (result.toString().toUpperCase() == "TRUE") {
-            print("Successfully saved the sales order.");
-
-            Navigator.pop(context);
-
-            Fluttertoast.showToast(
-              msg: 'Order successfully saved',
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              // backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 18.0,
-            );
-          } else {
-            print("Failed to save the sales order: $result");
-          }
-        } else {
-          print(
-              "Failed to save the sales order. HTTP Status: ${response.statusCode}");
-        }
-      } catch (e) {
-        print("Failed to save the sales order. Error: $e");
       }
+      else
+      {
+final url = Uri.parse(
+            '${apiAccess.apiBaseUrl}/SalesOrder/Proc_SaveSalesOrderByApi');
+        final headers = {"Content-Type": "application/json"};
+
+        final mainOrderData = {
+          "StoreMain_ID": 0,
+          "StoreMain_OrderDate": orderDateController.text,
+          "StoreMain_DeliveryDate": deliveryDateController.text,
+          "StoreMain_OrderNo": "",
+          "StoreMain_CustomerCode": customerCodeController.text.trim(),
+          "StoreMain_InputPlace": "Mobile SALES ORDER",
+          "StoreMain_RefCode": refCodeController.text.trim(),
+          "tery_DepotCode": depoCodeController.text,
+          "StoreMain_BrCode": userPreferences?.userBrnCode ?? '',
+          "StoreMain_CUID": userPreferences?.userUID ?? '',
+          "StoreMain_MUID": userPreferences?.userUID ?? '',
+          "StoreMain_ComID": user?.comID ?? '',
+          "StoreMain_ComCode": user?.comCode ?? '',
+          "StoreMain_ComName": user?.comName ?? ''
+        };
+
+        final productDetails = products.value.asMap().entries.map((entry) {
+          return {
+            "Prd_slDetails": entry.key + 1,
+            "Prd_Code": entry.value['Code']!,
+            "Prd_Name": entry.value['Name']!,
+            "Prd_PackSize": entry.value['PackSize']!,
+            "Prd_Quantity": entry.value['Quantity']!
+          };
+        }).toList();
+
+        final payload = {
+          "Table": [mainOrderData],
+          "Details": productDetails
+        };
+
+        final payloadJson = json.encode(payload);
+
+        try {
+          final response = await http.post(
+            url,
+            headers: headers,
+            body: payloadJson,
+          );
+
+          if (response.statusCode == 200) {
+            final result = json.decode(response.body);
+            if (result.toString().toUpperCase() == "TRUE") {
+              print("Successfully saved the sales order.");
+
+              Navigator.pop(context);
+
+              Fluttertoast.showToast(
+                msg: 'Order successfully saved',
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                // backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 18.0,
+              );
+            } else {
+              print("Failed to save the sales order: $result");
+            }
+          } else {
+            print(
+                "Failed to save the sales order. HTTP Status: ${response.statusCode}");
+          }
+        } catch (e) {
+          print("Failed to save the sales order. Error: $e");
+        }
+      }
+      // Define the URL and headers
+
     }
 
     useEffect(() {
@@ -851,8 +867,7 @@ class SalesOrderScreen extends HookWidget {
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
-                style:  ElevatedButton.styleFrom(
-                 
+                style: ElevatedButton.styleFrom(
                   elevation: 3,
                   maximumSize: Size(150, 150),
                   shape: RoundedRectangleBorder(
