@@ -21,7 +21,7 @@ class Areasetting extends HookWidget {
     final territoryData = useState<TerritoryModel?>(null);
     final dropdownvalue = useState<TerritoryDropDownlModel?>(null);
     final terryDropdown = useState<List<TerritoryDropDownlModel>>([]);
-
+    final filteredList = useState<List<TerritoryDropDownlModel>>([]);
     // Controllers for the text fields
     final territoryCodeController = useTextEditingController();
     final territoryNameController = useTextEditingController();
@@ -113,7 +113,7 @@ class Areasetting extends HookWidget {
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
-             backgroundColor: Colors.green,
+            backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 18.0,
           );
@@ -133,14 +133,15 @@ class Areasetting extends HookWidget {
     }, []);
 
     Future<void> _showDropdownDialog(BuildContext context) async {
+      filteredList.value = [];
+      searchController.text = '';
       final selectedValue = await showModalBottomSheet<TerritoryDropDownlModel>(
         context: context,
         isScrollControlled: true,
         builder: (BuildContext context) {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              List<TerritoryDropDownlModel> filteredList =
-                  terryDropdown.value.where((item) {
+              filteredList.value = terryDropdown.value.where((item) {
                 final query = searchController.text.toLowerCase();
                 return item.teryName.toLowerCase().contains(query) ||
                     item.teryParentCode.toLowerCase().contains(query) ||
@@ -184,7 +185,7 @@ class Areasetting extends HookWidget {
                               DataColumn(label: Text('Parent Code')),
                               DataColumn(label: Text('Territory Code')),
                             ],
-                            rows: filteredList.map((item) {
+                            rows: filteredList.value.map((item) {
                               return DataRow(
                                 cells: [
                                   DataCell(Text(item.teryName), onTap: () {

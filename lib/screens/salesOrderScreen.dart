@@ -107,6 +107,7 @@ class SalesOrderScreen extends HookWidget {
 
     Future<void> _showDropdownDialogDoctorsTypeInfo(
         BuildContext context) async {
+      searchControllerRef.text = '';
       final selectedValue = await showModalBottomSheet<DoctorListModel>(
         context: context,
         isScrollControlled: true,
@@ -219,6 +220,7 @@ class SalesOrderScreen extends HookWidget {
 
     Future<void> _showDropdownDialogCustomerTypeInfo(
         BuildContext context) async {
+      searchControllerCat.text = '';
       final selectedValue = await showModalBottomSheet<CustomerListModel>(
         context: context,
         isScrollControlled: true,
@@ -317,6 +319,7 @@ class SalesOrderScreen extends HookWidget {
 
 //////////////////////////////////Depo List/////////////////////////////////////////////////
     Future<void> _showDepoDropdownDialog(BuildContext context) async {
+      searchController.text = '';
       final selectedValue = await showModalBottomSheet<Branch>(
         context: context,
         isScrollControlled: true,
@@ -598,10 +601,8 @@ class SalesOrderScreen extends HookWidget {
           textColor: Colors.white,
           fontSize: 18.0,
         );
-      }
-      else
-      {
-final url = Uri.parse(
+      } else {
+        final url = Uri.parse(
             '${apiAccess.apiBaseUrl}/SalesOrder/Proc_SaveSalesOrderByApi');
         final headers = {"Content-Type": "application/json"};
 
@@ -674,7 +675,6 @@ final url = Uri.parse(
         }
       }
       // Define the URL and headers
-
     }
 
     useEffect(() {

@@ -202,6 +202,7 @@ class CustomerSettingScreen extends HookWidget {
 
     Future<void> _showDropdownDialogDoctorsTypeInfo(
         BuildContext context) async {
+      searchControllerRef.text = '';
       final selectedValue = await showModalBottomSheet<DoctorListModel>(
         context: context,
         isScrollControlled: true,
@@ -293,6 +294,7 @@ class CustomerSettingScreen extends HookWidget {
 
     Future<void> _showDropdownDialogCustomerTypeInfo(
         BuildContext context) async {
+      searchControllerCat.text = '';
       final selectedValue = await showModalBottomSheet<CustomerCategory>(
         context: context,
         isScrollControlled: true,
@@ -382,6 +384,7 @@ class CustomerSettingScreen extends HookWidget {
     }
 
     Future<void> _showDropdownDialogSalesRules(BuildContext context) async {
+      searchControllerRule.text = '';
       final selectedValue = await showModalBottomSheet<SalesRule>(
         context: context,
         isScrollControlled: true,
@@ -492,7 +495,7 @@ class CustomerSettingScreen extends HookWidget {
       print(args.cpName);
 
       if (args.cpName.toLowerCase() != "doctor") {
-      print(args.cpName);
+        print(args.cpName);
 
         if (refCodeController.text != '') {
           if (isCredit.value == "true" &&
@@ -576,9 +579,8 @@ class CustomerSettingScreen extends HookWidget {
             fontSize: 18.0,
           );
         }
-      }
-      else{
-final payload = json.encode({
+      } else {
+        final payload = json.encode({
           "Table": [
             {
               'cust_ID': doctorDropdownvalue.value?.custID,
