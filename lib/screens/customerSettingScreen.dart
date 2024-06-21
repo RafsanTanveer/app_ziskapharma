@@ -67,10 +67,10 @@ class CustomerSettingScreen extends HookWidget {
         TextEditingController(text: territoryData.value?.teryCode);
     TextEditingController territoryNameController =
         TextEditingController(text: territoryData.value?.teryName);
-    TextEditingController customerNameController = TextEditingController();
-    TextEditingController addressController = TextEditingController();
-    TextEditingController mobileController = TextEditingController();
-    TextEditingController contactPersonController = TextEditingController();
+    TextEditingController customerNameController = useTextEditingController();
+    TextEditingController addressController = useTextEditingController();
+    TextEditingController mobileController = useTextEditingController();
+    TextEditingController contactPersonController = useTextEditingController();
     TextEditingController categoryCodeController = useTextEditingController();
     TextEditingController categoryNameController = useTextEditingController();
     TextEditingController refCodeController = useTextEditingController();
