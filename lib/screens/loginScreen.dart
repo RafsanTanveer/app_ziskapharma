@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app_ziskapharma/model/UserModel.dart';
+import 'package:app_ziskapharma/model/UserPreferences.dart';
 import 'package:app_ziskapharma/model/sample.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
@@ -26,8 +27,6 @@ class _LoginscreenState extends State<Loginscreen> {
 
   void _loginPressed(BuildContext context) async {
     final provider = Provider.of<AuthProvider>(context, listen: false);
-
-    print("Login pressed*****************************************************");
 
     final String userUID = userTxtCntrl.text;
     final String userPws = passTxtCntrl.text;
@@ -55,12 +54,7 @@ class _LoginscreenState extends State<Loginscreen> {
         body: body,
       );
 
-      print('response  ----------------------------------------------------- ');
-      print(response.body);
-
       final responseData = await json.decode(json.encode(response.body));
-      print(responseData);
-
       if (responseData == 'true') {
         context.read<AuthProvider>().setUserId(userUID);
         context.read<AuthProvider>().setUserPass(userPws);
@@ -68,27 +62,22 @@ class _LoginscreenState extends State<Loginscreen> {
         final loginUrl = Uri.parse(
             '${apiAccess.apiBaseUrl}/LogIn/ProcessTableCompanyInfo?user_UID=${userUID}');
 
-        print(loginUrl);
-
         final response = await http.get(loginUrl);
-        print('***********************************');
-        // print(response.body);
-
-        final jsonData = json.decode(response.body);
 
         Map<String, dynamic> jsonResponse = json.decode(response.body);
+
         // Assuming the list you need is under a key 'data' or similar
         var table = jsonResponse['Table'][0];
-        // print(table);
+        var table1 = jsonResponse['Table1'][0];
 
         UserModel user = UserModel.fromJson(table);
-
+        UserPreferences userPreferences = UserPreferences.fromJson(table1);
+        print("00000000000000000000000000");
+        print(userPreferences.userBrnID);
+        print("00000000000000000000000000");
         // Update the provider
         context.read<AuthProvider>().setUser(user);
-
-        print('***********************************');
-        print(provider.user?.comCode);
-        print(provider.user?.comName);
+        context.read<AuthProvider>().setUserPreferences(userPreferences);
 
         //provider.user_id
 

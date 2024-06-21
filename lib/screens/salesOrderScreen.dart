@@ -4,6 +4,7 @@ import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
 import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
 import 'package:app_ziskapharma/model/DoctorListModel.dart';
 import 'package:app_ziskapharma/model/UserModel.dart';
+import 'package:app_ziskapharma/model/UserPreferences.dart';
 import 'package:app_ziskapharma/model/branchModel.dart';
 import 'package:app_ziskapharma/model/customerCategoryModel.dart';
 import 'package:app_ziskapharma/model/customerListModel.dart';
@@ -13,6 +14,7 @@ import 'package:app_ziskapharma/model/terrytorydropdownModel.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import '../dataaccess/apiAccess.dart' as apiAccess;
 import 'package:http/http.dart' as http;
@@ -24,6 +26,8 @@ class SalesOrderScreen extends HookWidget {
         ModalRoute.of(context)!.settings.arguments as CustomerSettingScreenArgs;
 
     UserModel? user = context.watch<AuthProvider>().user;
+    UserPreferences? userPreferences =
+        context.watch<AuthProvider>().userPreferences;
 
     final provider = Provider.of<AuthProvider>(context, listen: false);
     final territoryData = useState<TerritoryModel?>(null);
@@ -61,7 +65,6 @@ class SalesOrderScreen extends HookWidget {
     final refNameController = useTextEditingController();
 
     final slNo = useState<int>(0);
-
 
     final productFields = [
       useTextEditingController(),
@@ -536,17 +539,6 @@ class SalesOrderScreen extends HookWidget {
       if (selectedValue != null) {
         productValue.value = selectedValue;
 
-        //  Map<String, String> product = {
-        //   'Sl': '1',
-        //   'Code': productValue.value!.finPrdCode,
-        //   'Name': productValue.value!.finPrdName,
-        //   'Pack Size': productValue.value!.finPrdPackSize,
-        //   'Quantity': productValue.value!.orderQnty.toString(),
-        // };
-        // print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-        // // print(product);
-        //   products.value = [...products.value, product];
-
         final product = {
           'field1': '',
           'Code': productValue.value!.finPrdCode,
@@ -559,17 +551,10 @@ class SalesOrderScreen extends HookWidget {
     }
 
     Future<void> _fetchProduct() async {
-      final url =
-          Uri.parse('${apiAccess.apiBaseUrl}/SalesOrder/Proc_ProductListByApi');
-
-      print('************************************************');
-
-      print(url);
+      final url = Uri.parse(
+          '${apiAccess.apiBaseUrl}/SalesOrder/Proc_ProductListSingleMarketByApi?sd_MarketTypeCode=${userPreferences?.teryMarketTypeCode}');
       final response = await http.get(url);
-      print('************************************************');
       if (response.statusCode == 200) {
-        print('************************************************');
-        print(response.body);
         Map<String, dynamic> jsonResponse = json.decode(response.body);
         List<dynamic> products = jsonResponse['Table'];
         List<Product> product =
@@ -598,6 +583,81 @@ class SalesOrderScreen extends HookWidget {
         depoCodeController.text = territoryData.value!.teryDepotCode;
       } catch (e) {
         print('Error fetching data: $e');
+      }
+    }
+
+    Future<void> _saveSalesOrder() async {
+      // Define the URL and headers
+      final url = Uri.parse(
+          '${apiAccess.apiBaseUrl}/SalesOrder/Proc_SaveSalesOrderByApi');
+      final headers = {"Content-Type": "application/json"};
+
+      final mainOrderData = {
+        "StoreMain_ID": 0,
+        "StoreMain_OrderDate": orderDateController.text,
+        "StoreMain_DeliveryDate": deliveryDateController.text,
+        "StoreMain_OrderNo": "",
+        "StoreMain_CustomerCode": customerCodeController.text.trim(),
+        "StoreMain_InputPlace": "Mobile SALES ORDER",
+        "StoreMain_RefCode": refCodeController.text.trim(),
+        "tery_DepotCode": depoCodeController.text,
+        "StoreMain_BrCode": userPreferences?.userBrnCode ?? '',
+        "StoreMain_CUID": userPreferences?.userUID ?? '',
+        "StoreMain_MUID": userPreferences?.userUID ?? '',
+        "StoreMain_ComID": user?.comID ?? '',
+        "StoreMain_ComCode": user?.comCode ?? '',
+        "StoreMain_ComName": user?.comName ?? ''
+      };
+
+      final productDetails = products.value.asMap().entries.map((entry) {
+        return {
+          "Prd_slDetails": entry.key + 1,
+          "Prd_Code": entry.value['Code']!,
+          "Prd_Name": entry.value['Name']!,
+          "Prd_PackSize": entry.value['PackSize']!,
+          "Prd_Quantity": entry.value['Quantity']!
+        };
+      }).toList();
+
+      final payload = {
+        "Table": [mainOrderData],
+        "Details": productDetails
+      };
+
+      final payloadJson = json.encode(payload);
+
+      try {
+        final response = await http.post(
+          url,
+          headers: headers,
+          body: payloadJson,
+        );
+
+        if (response.statusCode == 200) {
+          final result = json.decode(response.body);
+          if (result.toString().toUpperCase() == "TRUE") {
+            print("Successfully saved the sales order.");
+
+            Navigator.pop(context);
+
+            Fluttertoast.showToast(
+              msg: 'Order successfully saved',
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              // backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 18.0,
+            );
+          } else {
+            print("Failed to save the sales order: $result");
+          }
+        } else {
+          print(
+              "Failed to save the sales order. HTTP Status: ${response.statusCode}");
+        }
+      } catch (e) {
+        print("Failed to save the sales order. Error: $e");
       }
     }
 
@@ -814,25 +874,21 @@ class SalesOrderScreen extends HookWidget {
                         .map(
                           (entry) => DataRow(
                             cells: [
-                              DataCell(Text((entry.key+1).toString())),
+                              DataCell(Text((entry.key + 1).toString())),
                               DataCell(Text(entry.value['Code']!)),
-                              DataCell(Text(entry
-                                  .value['Name']!)), //entry.value['Quantity']!
+                              DataCell(Text(entry.value['Name']!)),
                               DataCell(Text(entry.value['PackSize']!)),
                               DataCell(TextField(
                                 controller: TextEditingController(
                                     text: entry.value['Quantity']!),
                                 keyboardType: TextInputType.number,
-                                onChanged: (value){
-
-                                    entry.value['Quantity'] = value;
-
+                                onChanged: (value) {
+                                  entry.value['Quantity'] = value;
                                 },
                               )),
                               DataCell(
                                 Row(
                                   children: [
-
                                     IconButton(
                                       icon: Icon(Icons.delete),
                                       onPressed: () =>
@@ -847,6 +903,48 @@ class SalesOrderScreen extends HookWidget {
                         .toList(),
                   ),
                 ),
+              ),
+              SizedBox(height: 16.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      elevation: 3,
+                      maximumSize: Size(150, 150),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => _saveSalesOrder(),
+                    child: Text(
+                      'Save',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      elevation: 3,
+                      maximumSize: Size(150, 150),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

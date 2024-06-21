@@ -4,6 +4,7 @@ import 'package:app_ziskapharma/model/territoryInfoModel.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import '../dataaccess/apiAccess.dart' as apiAccess;
 import 'package:http/http.dart' as http;
@@ -103,9 +104,20 @@ class Areasetting extends HookWidget {
         final response = await http.post(url, headers: headers, body: payload);
         if (response.statusCode == 200) {
           // await _fetchData(); // Reload data after save
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Data successfully saved')),
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(content: Text('Data successfully saved')),
+          // );
+
+          Fluttertoast.showToast(
+            msg: 'Data successfully saved',
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            // backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 18.0,
           );
+
           Navigator.pop(context, '/salesmgt');
         } else {
           print('Failed to post data. Status code: ${response.statusCode}');
