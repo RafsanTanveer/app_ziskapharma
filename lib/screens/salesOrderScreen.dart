@@ -544,7 +544,7 @@ class SalesOrderScreen extends HookWidget {
           'Code': productValue.value!.finPrdCode,
           'Name': productValue.value!.finPrdName,
           'PackSize': productValue.value!.finPrdPackSize,
-          'Quantity': productValue.value!.orderQnty.toString(),
+          'Quantity': '1' //productValue.value!.orderQnty.toString(),
         };
         products.value = [...products.value, product];
       }
@@ -851,6 +851,15 @@ class SalesOrderScreen extends HookWidget {
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
+                style:  ElevatedButton.styleFrom(
+                 
+                  elevation: 3,
+                  maximumSize: Size(150, 150),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                ),
                 onPressed: () => _showProductDropdownDialog(context),
                 child: Text('Add Product'),
               ),
@@ -883,7 +892,21 @@ class SalesOrderScreen extends HookWidget {
                                     text: entry.value['Quantity']!),
                                 keyboardType: TextInputType.number,
                                 onChanged: (value) {
-                                  entry.value['Quantity'] = value;
+                                  if ((double.tryParse(
+                                          entry.value['Quantity']!)!) >
+                                      1.0) {
+                                    entry.value['Quantity'] = value;
+                                  } else {
+                                    Fluttertoast.showToast(
+                                      msg: 'Quantity must be greater than 0',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      // backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 18.0,
+                                    );
+                                  }
                                 },
                               )),
                               DataCell(
@@ -906,25 +929,28 @@ class SalesOrderScreen extends HookWidget {
               ),
               SizedBox(height: 16.0),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      elevation: 3,
-                      maximumSize: Size(150, 150),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  Container(
+                    padding: EdgeInsets.only(right: 10),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.white),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        elevation: 3,
+                        maximumSize: Size(150, 150),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      ),
                     ),
                   ),
                   ElevatedButton(
