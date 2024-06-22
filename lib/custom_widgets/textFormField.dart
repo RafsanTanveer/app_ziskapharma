@@ -50,8 +50,9 @@ class CustomTextFormFieldWithFormatter extends StatelessWidget {
                 keyboardType: keyboardType,
                 inputFormatters: inputFormatters,
                 onChanged: (text) {
-                  // Update the text in the controller when the text field changes
+                  TextSelection previousSelection = controller.selection;
                   controller.text = text;
+                  controller.selection = previousSelection;
                   print(text);
                 },
                 decoration: InputDecoration(
@@ -111,9 +112,9 @@ class CustomTextFormField extends StatelessWidget {
                 readOnly: title == 'User Id' ? true : false,
                 controller: controller,
                 onChanged: (text) {
-                  // Update the text in the controller when the text field changes
-                  controller?.text = text;
-                  print(text);
+                  TextSelection previousSelection = controller.selection;
+                  controller.text = text;
+                  controller.selection = previousSelection;
                 },
                 decoration: InputDecoration(
                     hintText: hint,
@@ -177,9 +178,9 @@ class CustomTextFormFieldAreaSetting extends StatelessWidget {
                       readOnly: !isEnable,
                       controller: controller,
                       onChanged: (text) {
-                        // Update the text in the controller when the text field changes
+                        TextSelection previousSelection = controller.selection;
                         controller.text = text;
-                        print(text);
+                        controller.selection = previousSelection;
                       },
                       decoration: InputDecoration(
                         hintText: hint,
@@ -274,9 +275,9 @@ class TextFeildWithSearchBtn extends StatelessWidget {
                 readOnly: !isEnable,
                 controller: controller,
                 onChanged: (text) {
-                  // Update the text in the controller when the text field changes
-                  controller?.text = text;
-                  print(text);
+                  TextSelection previousSelection = controller.selection;
+                  controller.text = text;
+                  controller.selection = previousSelection;
                 },
                 decoration: InputDecoration(
                     hintText: hint,
