@@ -190,7 +190,7 @@ class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
               Navigator.pushNamed(
                 context,
                 '/salesOrder',
-                arguments:new CustomerSettingScreenArgs( widget.vCustomerTypeCode, '')
+                arguments:new CustomerSettingScreenArgs( widget.vCustomerTypeCode, customer.customerName, customer.custNumber)
 
               );
             },

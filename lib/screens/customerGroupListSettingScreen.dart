@@ -173,7 +173,7 @@ class _CustomerGroupListSettingScreen
               Navigator.pushNamed(
                 context,
                 '/cstrstts',
-                arguments:new CustomerSettingScreenArgs(category.cpCode.toString(), category.cpName.toString()),
+                arguments:new CustomerSettingScreenArgs(category.cpCode.toString(), category.cpName.toString(),''),
               );
             },
             child: Text(

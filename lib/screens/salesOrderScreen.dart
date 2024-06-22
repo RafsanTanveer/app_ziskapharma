@@ -664,6 +664,9 @@ class SalesOrderScreen extends HookWidget {
       fetchCustomerLists(args!.cpCode, provider.user_id);
       _fetchDepo();
       _fetchProduct();
+      //args!.cpCode
+      customerCodeController.text = args!.customerCode;
+      customerNameController.text = args!.cpName;
     }, []);
 
     Future<void> _selectDate(

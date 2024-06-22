@@ -20,8 +20,10 @@ class _LoginscreenState extends State<Loginscreen> {
   final passTxtCntrl = TextEditingController();
 
   void setData(BuildContext context) async {
-    final String userUID = userTxtCntrl.text;
-    final String userPws = passTxtCntrl.text;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    final String userUID = await prefs.getString('userUID') ?? '';
+    final String userPws = await prefs.getString('userPws') ?? '';
 
     context.read<AuthProvider>().setUserId(userUID);
     context.read<AuthProvider>().setUserPass(userPws);
@@ -45,10 +47,7 @@ class _LoginscreenState extends State<Loginscreen> {
     // Update the provider
     context.read<AuthProvider>().setUser(user);
     context.read<AuthProvider>().setUserPreferences(userPreferences);
-
     //provider.user_id
-
-    Navigator.pushReplacementNamed(context, '/mainmgt');
   }
 
   void isLoggedIn() async {
@@ -60,7 +59,11 @@ class _LoginscreenState extends State<Loginscreen> {
     print(
         'ggggggggggggggggggg&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
     if (await prefs.getBool('isLoggedIn') ?? false) {
+      //////////////////////////////////////////////////////////////
+
       setData(context);
+
+      //////////////////////////////////////////////////////////////
       Navigator.pushReplacementNamed(context, '/mainmgt');
     }
   }
@@ -116,10 +119,14 @@ class _LoginscreenState extends State<Loginscreen> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
 
         await prefs.setBool('isLoggedIn', true);
+        await prefs.setString('userUID', userUID);
+        await prefs.setString('userPws', userPws);
 
 ///////////////////////////  Set shared preference ///////////////////////////////////////////////////////
 
         setData(context);
+
+        Navigator.pushReplacementNamed(context, '/mainmgt');
       } else {}
     } catch (e) {
       print(e);
