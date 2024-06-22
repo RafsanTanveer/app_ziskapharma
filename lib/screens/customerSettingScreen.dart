@@ -53,7 +53,7 @@ class CustomerSettingScreen extends HookWidget {
     final isCash = useState<String>('false');
     final isCredit = useState<String>('false');
 
-    final _groupValue = useState<String>("Credit");
+    final _groupValue = useState<String>("Cash");
 
     final searchControllerCat = useTextEditingController();
     final searchControllerRef = useTextEditingController();
@@ -66,6 +66,10 @@ class CustomerSettingScreen extends HookWidget {
         TextEditingController(text: territoryData.value?.teryCode);
     TextEditingController territoryNameController =
         TextEditingController(text: territoryData.value?.teryName);
+    TextEditingController territoryController = TextEditingController(
+        text:
+            '${territoryData.value?.teryName} (${territoryData.value?.teryCode})');
+
     TextEditingController customerNameController = useTextEditingController();
     TextEditingController addressController = useTextEditingController();
     TextEditingController mobileController = useTextEditingController();
@@ -81,20 +85,10 @@ class CustomerSettingScreen extends HookWidget {
       try {
         final url = Uri.parse(
             '${apiAccess.apiBaseUrl}/SalesMobile/Proc_UserAreaInfoByApi?tery_UserId=${provider.user_id}');
-        print(url);
         final response = await http.get(url);
         TerritoryModel terrytory = parseTerritoryFromJson(response.body);
-        print(response.body);
         territoryData.value = terrytory;
-        print(
-            '------------------------------------------------------------------------f');
-        print(terrytory.teryAreaName);
-        // await _fetchDropDownData();
-
-        // Set the initial values for the text controllers
-      } catch (e) {
-        print('Error fetching data: $e');
-      }
+      } catch (e) {}
     }
 
     fetchCustomerTypeInfo(String cpCode) async {
@@ -171,29 +165,22 @@ class CustomerSettingScreen extends HookWidget {
     }
 
     fetchDoctorsTypeInfo(String cpCode) async {
-      print(cpCode);
       try {
         // CustomerSettings/Proc_CustomerDoctorHelpListByApi?tery_UserId=1
         final url = Uri.parse(
             '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_CustomerDoctorHelpListByApi?tery_UserId=${provider.user_id}');
 
-        print(url);
         final response = await http.get(url);
 
         if (response.statusCode == 200) {
           final jsonResponse = json.decode(response.body);
 
-          print(response.body);
           final List<dynamic> table = jsonResponse['Table'];
 
-          print(table.first);
           List<DoctorListModel> listDoctor =
               table.map((item) => DoctorListModel.fromJson(item)).toList();
 
-          print(listDoctor);
-
           doctorDropdown.value = listDoctor;
-          print(doctorDropdown.value);
         } else {
           throw Exception('Failed to load data');
         }
@@ -251,18 +238,12 @@ class CustomerSettingScreen extends HookWidget {
                           child: DataTable(
                             columns: const [
                               DataColumn(label: Text('Name')),
-                              DataColumn(label: Text('Parent Code')),
-                              DataColumn(
-                                label: Text('Territory Code'),
-                              ),
+                              DataColumn(label: Text('Code')),
                             ],
                             rows: filteredList.map((item) {
                               return DataRow(
                                 cells: [
                                   DataCell(Text(item.custName), onTap: () {
-                                    Navigator.pop(context, item);
-                                  }),
-                                  DataCell(Text(item.custRefCode), onTap: () {
                                     Navigator.pop(context, item);
                                   }),
                                   DataCell(Text(item.custRefCode), onTap: () {
@@ -341,9 +322,9 @@ class CustomerSettingScreen extends HookWidget {
                           scrollDirection: Axis.horizontal,
                           child: DataTable(
                             columns: const [
+                              DataColumn(label: Text('Code')),
                               DataColumn(label: Text('Name')),
-                              DataColumn(label: Text('Parent Code')),
-                              DataColumn(label: Text('Territory Code')),
+                              //  DataColumn(label: Text('Id')),
                             ],
                             rows: filteredList.map((item) {
                               return DataRow(
@@ -354,10 +335,10 @@ class CustomerSettingScreen extends HookWidget {
                                   DataCell(Text(item.cpName), onTap: () {
                                     Navigator.pop(context, item);
                                   }),
-                                  DataCell(Text(item.cpID.toString()),
-                                      onTap: () {
-                                    Navigator.pop(context, item);
-                                  }),
+                                  // DataCell(Text(item.cpID.toString()),
+                                  //     onTap: () {
+                                  //   Navigator.pop(context, item);
+                                  // }),
                                 ],
                               );
                             }).toList(),
@@ -481,9 +462,7 @@ class CustomerSettingScreen extends HookWidget {
         Uint8List bytes = imageTemporary.readAsBytesSync();
         String base64Image = base64Encode(bytes);
         snapData.value = base64Image;
-      } on PlatformException catch (e) {
-        print('Failed to pick image: $e');
-      }
+      } on PlatformException catch (e) {}
     }
 
     Future<void> _submitPost() async {
@@ -492,11 +471,7 @@ class CustomerSettingScreen extends HookWidget {
 
       final headers = {"Content-Type": "application/json"};
 
-      print(args.cpName);
-
       if (args.cpName.toLowerCase() != "doctor") {
-        print(args.cpName);
-
         if (refCodeController.text != '') {
           if (isCredit.value == "true" &&
               (_creditLimitController.text == '' ||
@@ -514,8 +489,8 @@ class CustomerSettingScreen extends HookWidget {
             final payload = json.encode({
               "Table": [
                 {
-                  'cust_ID': doctorDropdownvalue.value?.custID,
-                  'cust_Number': doctorDropdownvalue.value?.custNumber,
+                  'cust_ID': 0,
+                  'cust_Number': "",
                   'cust_Name': customerNameController
                       .text, // doctorDropdownvalue.value?.custName,
                   'cust_Address': addressController.text,
@@ -531,7 +506,7 @@ class CustomerSettingScreen extends HookWidget {
                       : _creditLimitController.text.trim(),
                   'cust_MultipleProjectYn': 'False',
                   'cust_SingleProjectYn': 'True',
-                  'cust_TypeCode': doctorDropdownvalue.value?.custRefCode,
+                  'cust_TypeCode': args.cpCode,
                   'cust_TypeName': args.cpName,
                   'cust_CategoryCode':
                       customerTypeDropdown.value.first.cpCode.toString(),
@@ -552,21 +527,13 @@ class CustomerSettingScreen extends HookWidget {
               ]
             });
 
-            print(payload);
-
             try {
               final response =
                   await http.post(url, headers: headers, body: payload);
               if (response.statusCode == 200) {
-                print('Data successfully posted.');
                 Navigator.pop(context);
-              } else {
-                print(
-                    'Failed to post data. Status code: ${response.statusCode}');
-              }
-            } catch (e) {
-              print('Error posting data: $e');
-            }
+              } else {}
+            } catch (e) {}
           }
         } else {
           Fluttertoast.showToast(
@@ -583,8 +550,8 @@ class CustomerSettingScreen extends HookWidget {
         final payload = json.encode({
           "Table": [
             {
-              'cust_ID': doctorDropdownvalue.value?.custID,
-              'cust_Number': doctorDropdownvalue.value?.custNumber,
+              'cust_ID': 0,
+              'cust_Number': "",
               'cust_Name': customerNameController
                   .text, // doctorDropdownvalue.value?.custName,
               'cust_Address': addressController.text,
@@ -600,7 +567,7 @@ class CustomerSettingScreen extends HookWidget {
                   : _creditLimitController.text.trim(),
               'cust_MultipleProjectYn': 'False',
               'cust_SingleProjectYn': 'True',
-              'cust_TypeCode': doctorDropdownvalue.value?.custRefCode,
+              'cust_TypeCode': args.cpCode,
               'cust_TypeName': args.cpName,
               'cust_CategoryCode':
                   customerTypeDropdown.value.first.cpCode.toString(),
@@ -621,20 +588,13 @@ class CustomerSettingScreen extends HookWidget {
           ]
         });
 
-        print(payload);
-
         try {
           final response =
               await http.post(url, headers: headers, body: payload);
           if (response.statusCode == 200) {
-            print('Data successfully posted.');
             Navigator.pop(context);
-          } else {
-            print('Failed to post data. Status code: ${response.statusCode}');
-          }
-        } catch (e) {
-          print('Error posting data: $e');
-        }
+          } else {}
+        } catch (e) {}
       }
     }
 
@@ -708,16 +668,24 @@ class CustomerSettingScreen extends HookWidget {
                     isEnable: false,
                   ),
                   CustomTextFormFieldAreaSetting(
+                    controller: territoryController,
+                    hint: "Territory ",
+                    title: "Territory",
+                    isEnable: false,
+                  ),
+                  CustomTextFormFieldAreaSetting(
                     controller: territoryCodeController,
                     hint: 'Territory Code',
                     title: "Territory Code",
                     isEnable: false,
+                    visibility: false,
                   ),
                   CustomTextFormFieldAreaSetting(
                     controller: territoryNameController,
                     hint: "Territory Name",
                     title: "Territory Name",
                     isEnable: false,
+                    visibility: false,
                   ),
                   CustomTextFormField(
                     controller: customerNameController,
@@ -729,10 +697,12 @@ class CustomerSettingScreen extends HookWidget {
                     hint: 'Address',
                     title: "Address *",
                   ),
-                  CustomTextFormField(
+                  CustomTextFormFieldWithFormatter(
                     controller: mobileController,
                     hint: 'Mobile',
                     title: "Mobile *",
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
                   CustomTextFormField(
                     controller: contactPersonController,

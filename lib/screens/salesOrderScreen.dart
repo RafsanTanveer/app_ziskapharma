@@ -15,6 +15,7 @@ import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../dataaccess/apiAccess.dart' as apiAccess;
 import 'package:http/http.dart' as http;
@@ -76,29 +77,22 @@ class SalesOrderScreen extends HookWidget {
     final products = useState<List<Map<String, String>>>([]);
 
     fetchDoctorsTypeInfo(String cpCode) async {
-      print(cpCode);
       try {
         // CustomerSettings/Proc_CustomerDoctorHelpListByApi?tery_UserId=1
         final url = Uri.parse(
             '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_CustomerDoctorHelpListByApi?tery_UserId=${provider.user_id}');
 
-        print(url);
         final response = await http.get(url);
 
         if (response.statusCode == 200) {
           final jsonResponse = json.decode(response.body);
 
-          print(response.body);
           final List<dynamic> table = jsonResponse['Table'];
 
-          print(table.first);
           List<DoctorListModel> listDoctor =
               table.map((item) => DoctorListModel.fromJson(item)).toList();
 
-          print(listDoctor);
-
           doctorDropdown.value = listDoctor;
-          print(doctorDropdown.value);
         } else {
           throw Exception('Failed to load data');
         }
@@ -156,10 +150,10 @@ class SalesOrderScreen extends HookWidget {
                           child: DataTable(
                             columns: const [
                               DataColumn(label: Text('Name')),
-                              DataColumn(label: Text('Parent Code')),
-                              DataColumn(
-                                label: Text('Territory Code'),
-                              ),
+                              DataColumn(label: Text('Code')),
+                              // DataColumn(
+                              //   label: Text('Territory Code'),
+                              // ),
                             ],
                             rows: filteredList.map((item) {
                               return DataRow(
@@ -170,9 +164,9 @@ class SalesOrderScreen extends HookWidget {
                                   DataCell(Text(item.custRefCode), onTap: () {
                                     Navigator.pop(context, item);
                                   }),
-                                  DataCell(Text(item.custRefCode), onTap: () {
-                                    Navigator.pop(context, item);
-                                  }),
+                                  // DataCell(Text(item.custRefCode), onTap: () {
+                                  //   Navigator.pop(context, item);
+                                  // }),
                                 ],
                               );
                             }).toList(),
@@ -202,9 +196,6 @@ class SalesOrderScreen extends HookWidget {
       final url = Uri.parse(
           '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=${user_id}&vCustomerTypeCode=$vCustomerTypeCode');
 
-      print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
-      print(url);
-      print(vCustomerTypeCode);
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -268,8 +259,8 @@ class SalesOrderScreen extends HookWidget {
                           child: DataTable(
                             columns: const [
                               DataColumn(label: Text('Name')),
-                              DataColumn(label: Text('Parent Code')),
-                              DataColumn(label: Text('Customer Id')),
+                              DataColumn(label: Text('Code')),
+                              // DataColumn(label: Text('Customer Id')),
                             ],
                             rows: filteredList.map((item) {
                               return DataRow(
@@ -280,10 +271,10 @@ class SalesOrderScreen extends HookWidget {
                                   DataCell(Text(item.custNumber), onTap: () {
                                     Navigator.pop(context, item);
                                   }),
-                                  DataCell(Text(item.custID.toString()),
-                                      onTap: () {
-                                    Navigator.pop(context, item);
-                                  }),
+                                  // DataCell(Text(item.custID.toString()),
+                                  //     onTap: () {
+                                  //   Navigator.pop(context, item);
+                                  // }),
                                 ],
                               );
                             }).toList(),
@@ -303,7 +294,7 @@ class SalesOrderScreen extends HookWidget {
         // await fetchSingleCustomerTypeInfo(selectedValue.cpCode);
 
         customerCodeController.text =
-            customerListDropDownValue.value!.custID.toString();
+            customerListDropDownValue.value!.custNumber.toString();
 
         customerNameController.text =
             customerListDropDownValue.value!.customerName;
@@ -578,19 +569,19 @@ class SalesOrderScreen extends HookWidget {
         final response = await http.get(url);
         TerritoryModel terrytory = parseTerritoryFromJson(response.body);
         territoryData.value = terrytory;
-        // await _fetchDropDownData();
-
-        // Set the initial values for the text controllers
 
         depoNameController.text = territoryData.value!.teryDepotName;
         depoCodeController.text = territoryData.value!.teryDepotCode;
-      } catch (e) {
-        print('Error fetching data: $e');
-      }
+        deliveryDepotNameController.text = territoryData.value!.teryDepotName;
+        deliveryDepotCodeController.text = territoryData.value!.teryDepotCode;
+        orderDateController.text =
+            DateFormat('yyyy-MM-dd').format(DateTime.now());
+        deliveryDateController.text =
+            DateFormat('yyyy-MM-dd').format(DateTime.now());
+      } catch (e) {}
     }
 
     Future<void> _saveSalesOrder() async {
-      print('7777777777777777777777777777777');
       if (products.value.length == 0) {
         Fluttertoast.showToast(
           msg: 'Please select at least 1 product',
@@ -650,10 +641,7 @@ class SalesOrderScreen extends HookWidget {
           if (response.statusCode == 200) {
             final result = json.decode(response.body);
             if (result.toString().toUpperCase() == "TRUE") {
-              print("Successfully saved the sales order.");
-
               Navigator.pop(context);
-
               Fluttertoast.showToast(
                 msg: 'Order successfully saved',
                 toastLength: Toast.LENGTH_LONG,
@@ -663,16 +651,9 @@ class SalesOrderScreen extends HookWidget {
                 textColor: Colors.white,
                 fontSize: 18.0,
               );
-            } else {
-              print("Failed to save the sales order: $result");
-            }
-          } else {
-            print(
-                "Failed to save the sales order. HTTP Status: ${response.statusCode}");
-          }
-        } catch (e) {
-          print("Failed to save the sales order. Error: $e");
-        }
+            } else {}
+          } else {}
+        } catch (e) {}
       }
       // Define the URL and headers
     }
