@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utility/camera.dart';
 
@@ -13,6 +14,14 @@ class Mainmgtscreen extends StatelessWidget {
   void _loginPressed(BuildContext context) {
     print("Login pressed");
     Navigator.pushReplacementNamed(context, '/areasetting');
+  }
+
+  void signOut(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool('isLoggedIn', false);
+
+    Navigator.pushReplacementNamed(context, '/loging');
   }
 
   File? image;
@@ -62,8 +71,9 @@ class Mainmgtscreen extends StatelessWidget {
                   fontSize: MediaQuery.of(context).size.height * .02,
                   fontWeight: FontWeight.w900),
             ),
-            onPressed: () =>
-                {Navigator.pushReplacementNamed(context, '/loging')},
+            onPressed: () => {
+              signOut(context),
+            },
           ),
         ],
       ),

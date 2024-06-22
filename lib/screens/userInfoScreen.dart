@@ -81,7 +81,7 @@ class Userinfoscreen extends HookWidget {
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
-             backgroundColor: Colors.green,
+            backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 18.0,
           );
@@ -95,6 +95,7 @@ class Userinfoscreen extends HookWidget {
     }
 
     Future<void> _showDropdownDialog(BuildContext context) async {
+      searchController.text = '';
       final selectedValue = await showModalBottomSheet<Branch>(
         context: context,
         isScrollControlled: true,
@@ -416,14 +417,12 @@ class Userinfoscreen extends HookWidget {
                           title: "Department Name",
                         ),
                         TextFeildWithSearchBtn(
-                            controller: userBrnCodeController,
-                            hint: userData.value!.userBrnCode ?? "",
-                            title: "Branch Code",
-                            onPressed: () => _showDropdownDialog(context),
-                            isEnable: false,),
-
-
-
+                          controller: userBrnCodeController,
+                          hint: userData.value!.userBrnCode ?? "",
+                          title: "Branch Code",
+                          onPressed: () => _showDropdownDialog(context),
+                          isEnable: false,
+                        ),
                         CustomTextFormField(
                           controller: userBrnNameController,
                           hint: userData.value!.userBrnName ?? "",

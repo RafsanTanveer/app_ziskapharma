@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import '../dataaccess/apiAccess.dart' as apiAccess;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Loginscreen extends StatefulWidget {
   @override
@@ -17,6 +18,59 @@ class Loginscreen extends StatefulWidget {
 class _LoginscreenState extends State<Loginscreen> {
   final userTxtCntrl = TextEditingController();
   final passTxtCntrl = TextEditingController();
+
+  void setData(BuildContext context) async {
+    final String userUID = userTxtCntrl.text;
+    final String userPws = passTxtCntrl.text;
+
+    context.read<AuthProvider>().setUserId(userUID);
+    context.read<AuthProvider>().setUserPass(userPws);
+
+    final loginUrl = Uri.parse(
+        '${apiAccess.apiBaseUrl}/LogIn/ProcessTableCompanyInfo?user_UID=${userUID}');
+
+    final response = await http.get(loginUrl);
+
+    Map<String, dynamic> jsonResponse = json.decode(response.body);
+
+    // Assuming the list you need is under a key 'data' or similar
+    var table = jsonResponse['Table'][0];
+    var table1 = jsonResponse['Table1'][0];
+
+    UserModel user = UserModel.fromJson(table);
+    UserPreferences userPreferences = UserPreferences.fromJson(table1);
+    print("00000000000000000000000000");
+    print(userPreferences.userBrnID);
+    print("00000000000000000000000000");
+    // Update the provider
+    context.read<AuthProvider>().setUser(user);
+    context.read<AuthProvider>().setUserPreferences(userPreferences);
+
+    //provider.user_id
+
+    Navigator.pushReplacementNamed(context, '/mainmgt');
+  }
+
+  void isLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(
+        'ggggggggggggggggggg&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
+    print(prefs.getBool('isLoggedIn'));
+
+    print(
+        'ggggggggggggggggggg&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
+    if (await prefs.getBool('isLoggedIn') ?? false) {
+      setData(context);
+      Navigator.pushReplacementNamed(context, '/mainmgt');
+    }
+  }
+
+  void initState() {
+    super.initState();
+    print(
+        '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+    isLoggedIn();
+  }
 
   @override
   void dispose() {
@@ -31,6 +85,7 @@ class _LoginscreenState extends State<Loginscreen> {
     final String userUID = userTxtCntrl.text;
     final String userPws = passTxtCntrl.text;
 
+    @override
     final body = json.encode({
       "Table1": [
         {"user_UID": userUID, "user_Pws": userPws}
@@ -56,32 +111,15 @@ class _LoginscreenState extends State<Loginscreen> {
 
       final responseData = await json.decode(json.encode(response.body));
       if (responseData == 'true') {
-        context.read<AuthProvider>().setUserId(userUID);
-        context.read<AuthProvider>().setUserPass(userPws);
+///////////////////////////  Set shared preference ///////////////////////////////////////////////////////
 
-        final loginUrl = Uri.parse(
-            '${apiAccess.apiBaseUrl}/LogIn/ProcessTableCompanyInfo?user_UID=${userUID}');
+        SharedPreferences prefs = await SharedPreferences.getInstance();
 
-        final response = await http.get(loginUrl);
+        await prefs.setBool('isLoggedIn', true);
 
-        Map<String, dynamic> jsonResponse = json.decode(response.body);
+///////////////////////////  Set shared preference ///////////////////////////////////////////////////////
 
-        // Assuming the list you need is under a key 'data' or similar
-        var table = jsonResponse['Table'][0];
-        var table1 = jsonResponse['Table1'][0];
-
-        UserModel user = UserModel.fromJson(table);
-        UserPreferences userPreferences = UserPreferences.fromJson(table1);
-        print("00000000000000000000000000");
-        print(userPreferences.userBrnID);
-        print("00000000000000000000000000");
-        // Update the provider
-        context.read<AuthProvider>().setUser(user);
-        context.read<AuthProvider>().setUserPreferences(userPreferences);
-
-        //provider.user_id
-
-        Navigator.pushReplacementNamed(context, '/mainmgt');
+        setData(context);
       } else {}
     } catch (e) {
       print(e);
