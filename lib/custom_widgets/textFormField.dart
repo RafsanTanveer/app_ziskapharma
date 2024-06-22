@@ -31,27 +31,34 @@ class CustomTextFormFieldWithFormatter extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   title,
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: MediaQuery.of(context).size.height * .017),
                 ),
               ),
             ),
           ),
           Expanded(
             flex: 3,
-            child: TextFormField(
-              readOnly: title == 'User Id' ? true : false,
-              controller: controller,
-              keyboardType: keyboardType,
-              inputFormatters: inputFormatters,
-              onChanged: (text) {
-                // Update the text in the controller when the text field changes
-                controller.text = text;
-                print(text);
-              },
-              decoration: InputDecoration(
-                hintText: hint,
-                enabledBorder: const UnderlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
+            child: Container(
+              height: MediaQuery.of(context).size.height * .05,
+              child: TextFormField(
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height * .017),
+                readOnly: title == 'User Id' ? true : false,
+                controller: controller,
+                keyboardType: keyboardType,
+                inputFormatters: inputFormatters,
+                onChanged: (text) {
+                  // Update the text in the controller when the text field changes
+                  controller.text = text;
+                  print(text);
+                },
+                decoration: InputDecoration(
+                  hintText: hint,
+                  enabledBorder: const UnderlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                  ),
                 ),
               ),
             ),
@@ -87,25 +94,32 @@ class CustomTextFormField extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   title,
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: MediaQuery.of(context).size.height * .017),
                 ),
               ),
             ),
           ),
           Expanded(
             flex: 3,
-            child: TextFormField(
-              readOnly: title == 'User Id' ? true : false,
-              controller: controller,
-              onChanged: (text) {
-                // Update the text in the controller when the text field changes
-                controller?.text = text;
-                print(text);
-              },
-              decoration: InputDecoration(
-                  hintText: hint,
-                  enabledBorder: const UnderlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5)))),
+            child: Container(
+              height: MediaQuery.of(context).size.height * .05,
+              child: TextFormField(
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height * .02),
+                readOnly: title == 'User Id' ? true : false,
+                controller: controller,
+                onChanged: (text) {
+                  // Update the text in the controller when the text field changes
+                  controller?.text = text;
+                  print(text);
+                },
+                decoration: InputDecoration(
+                    hintText: hint,
+                    enabledBorder: const UnderlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+              ),
             ),
           ),
         ],
@@ -145,25 +159,33 @@ class CustomTextFormFieldAreaSetting extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         title,
-                        style: TextStyle(fontWeight: FontWeight.w700),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize:
+                                MediaQuery.of(context).size.height * .017),
                       ),
                     ),
                   ),
                 ),
                 Expanded(
                   flex: 3,
-                  child: TextFormField(
-                    readOnly: !isEnable,
-                    controller: controller,
-                    onChanged: (text) {
-                      // Update the text in the controller when the text field changes
-                      controller.text = text;
-                      print(text);
-                    },
-                    decoration: InputDecoration(
-                      hintText: hint,
-                      enabledBorder: const UnderlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * .05,
+                    child: TextFormField(
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.height * .017),
+                      readOnly: !isEnable,
+                      controller: controller,
+                      onChanged: (text) {
+                        // Update the text in the controller when the text field changes
+                        controller.text = text;
+                        print(text);
+                      },
+                      decoration: InputDecoration(
+                        hintText: hint,
+                        enabledBorder: const UnderlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                        ),
                       ),
                     ),
                   ),
@@ -235,25 +257,32 @@ class TextFeildWithSearchBtn extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   title,
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: MediaQuery.of(context).size.height * .017),
                 ),
               ),
             ),
           ),
           Expanded(
             flex: 5,
-            child: TextFormField(
-              readOnly: !isEnable,
-              controller: controller,
-              onChanged: (text) {
-                // Update the text in the controller when the text field changes
-                controller?.text = text;
-                print(text);
-              },
-              decoration: InputDecoration(
-                  hintText: hint,
-                  enabledBorder: const UnderlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5)))),
+            child: Container(
+              height: MediaQuery.of(context).size.height * .05,
+              child: TextFormField(
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height * .017),
+                readOnly: !isEnable,
+                controller: controller,
+                onChanged: (text) {
+                  // Update the text in the controller when the text field changes
+                  controller?.text = text;
+                  print(text);
+                },
+                decoration: InputDecoration(
+                    hintText: hint,
+                    enabledBorder: const UnderlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+              ),
             ),
           ),
           Expanded(
