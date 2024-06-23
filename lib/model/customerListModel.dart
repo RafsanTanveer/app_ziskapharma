@@ -4,6 +4,8 @@ class CustomerListModel {
   final String customerName;
   final String custMobile;
   final String custAddress;
+  final String custRef;
+  final String custRefCode;
 
   CustomerListModel({
     required this.custID,
@@ -11,6 +13,8 @@ class CustomerListModel {
     required this.customerName,
     required this.custMobile,
     required this.custAddress,
+    required this.custRef,
+    required this.custRefCode,
   });
 
   factory CustomerListModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +24,8 @@ class CustomerListModel {
       customerName: json['cust_Name'],
       custMobile: json['cust_Mobile'],
       custAddress: json['cust_Address'],
+      custRef: json['cust_RefName'],
+      custRefCode: json['cust_RefCode'],
     );
   }
 
@@ -30,6 +36,8 @@ class CustomerListModel {
       'cust_Name': customerName,
       'cust_Mobile': custMobile,
       'cust_Address': custAddress,
+      'cust_RefCode': custRefCode,
+      'cust_RefName': custRef,
     };
   }
 }

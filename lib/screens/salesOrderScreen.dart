@@ -40,6 +40,7 @@ class SalesOrderScreen extends HookWidget {
 
     final customerListDropDown = useState<List<CustomerListModel>>([]);
     final customerListDropDownValue = useState<CustomerListModel?>(null);
+    final refValue = useState<CustomerListModel?>(null);
 
     final branchValue = useState<Branch?>(null);
     final branchDropdown = useState<List<Branch>>([]);
@@ -161,7 +162,7 @@ class SalesOrderScreen extends HookWidget {
                                   DataCell(Text(item.custName), onTap: () {
                                     Navigator.pop(context, item);
                                   }),
-                                  DataCell(Text(item.custRefCode), onTap: () {
+                                  DataCell(Text(item.custNumber), onTap: () {
                                     Navigator.pop(context, item);
                                   }),
                                   // DataCell(Text(item.custRefCode), onTap: () {
@@ -185,8 +186,8 @@ class SalesOrderScreen extends HookWidget {
       // Ensure that the UI is updated after receiving the selected value
       if (selectedValue != null) {
         doctorDropdownvalue.value = selectedValue;
-        refNameController.text = selectedValue.custRefName;
-        refCodeController.text = selectedValue.custRefCode;
+        refNameController.text = selectedValue.custName;
+        refCodeController.text = selectedValue.custNumber;
         // territoryNameController.text = selectedValue.teryName;
       }
     }
@@ -204,6 +205,21 @@ class SalesOrderScreen extends HookWidget {
         customerListDropDown.value = customerLists
             .map((obj) => CustomerListModel.fromJson(obj))
             .toList();
+
+        refValue.value = customerListDropDown.value.firstWhere((val) =>
+            val.custNumber.toString() == args!.customerCode.toString());
+
+        //  CustomerListModel? ref = customerListDropDown.value.firstWhere(
+        //       (item) =>
+        //           item.customerName == args!.cpName &&
+        //           item.custRefCode == args!.customerCode,
+        //       orElse: () => CustomerListModel(custAddress:  '',custID: 0 ,custMobile:  '',custNumber:  '',custRef:  '',custRefCode:  '',customerName: ''), // Return a default CustomerListModel if no matching item is found
+        //     );
+
+
+
+        refNameController.text = refValue.value!.custRef;
+        refCodeController.text = refValue.value!.custRefCode;
       } else {
         throw Exception('Failed to load data');
       }
@@ -298,6 +314,9 @@ class SalesOrderScreen extends HookWidget {
 
         customerNameController.text =
             customerListDropDownValue.value!.customerName;
+
+        refNameController.text = customerListDropDownValue.value!.custRef;
+        refCodeController.text = customerListDropDownValue.value!.custRefCode;
 
         // categoryCodeController.text =
         //     customerTypeDropdown.value.first.cpCode.toString();
@@ -604,7 +623,7 @@ class SalesOrderScreen extends HookWidget {
           "StoreMain_OrderNo": "",
           "StoreMain_CustomerCode": customerCodeController.text.trim(),
           "StoreMain_InputPlace": "Mobile SALES ORDER",
-          "StoreMain_RefCode": refCodeController.text.trim(),
+          "StoreMain_RefCode": refValue.value!.custRefCode,
           "tery_DepotCode": depoCodeController.text,
           "StoreMain_BrCode": userPreferences?.userBrnCode ?? '',
           "StoreMain_CUID": userPreferences?.userUID ?? '',
@@ -667,6 +686,17 @@ class SalesOrderScreen extends HookWidget {
       //args!.cpCode
       customerCodeController.text = args!.customerCode;
       customerNameController.text = args!.cpName;
+
+      // CustomerListModel? ref = customerListDropDown.value.firstWhere(
+      //   (item) =>
+      //       item.customerName == args!.cpName &&
+      //       item.custCode == args!.customerCode,
+      // );
+
+      // print('gggggggggggggggggggggggggggggggggggggggggggggggg');
+      // print(ref.custRef);
+
+      // print('gggggggggggggggggggggggggggggggggggggggggggggggg');
     }, []);
 
     Future<void> _selectDate(
@@ -768,18 +798,27 @@ class SalesOrderScreen extends HookWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomTextFormFieldAreaSetting(
-                controller: depoNameController,
-                hint: "Depot Name",
-                title: "Depot Name",
-                isEnable: false,
+              CustomTextFormfieldTwoColumn(
+                controller1: depoNameController,
+                hint1: "Depot Name",
+                title1: "Depot Name",
+                controller2: depoCodeController,
+                hint2: "Depot Code",
+                title2: "Depot Code",
+                visibility: false,
               ),
-              CustomTextFormFieldAreaSetting(
-                controller: depoCodeController,
-                hint: "Depot Code",
-                title: "Depot Code",
-                isEnable: false,
-              ),
+              // CustomTextFormFieldAreaSetting(
+              //   controller: depoNameController,
+              //   hint: "Depot Name",
+              //   title: "Depot Name",
+              //   isEnable: false,
+              // ),
+              // CustomTextFormFieldAreaSetting(
+              //   controller: depoCodeController,
+              //   hint: "Depot Code",
+              //   title: "Depot Code",
+              //   isEnable: false,
+              // ),
               SizedBox(height: 16.0),
               GestureDetector(
                 onTap: () => _selectDate(context, orderDateController),
@@ -789,6 +828,7 @@ class SalesOrderScreen extends HookWidget {
                     hint: "Select Date",
                     title: "Order Date",
                     isEnable: true,
+                    visibility: false,
                   ),
                 ),
               ),
@@ -809,6 +849,7 @@ class SalesOrderScreen extends HookWidget {
                 hint: "Order No",
                 title: "Order No",
                 isEnable: false,
+                visibility: false,
               ),
               TextFeildWithSearchBtn(
                 controller: customerCodeController,
@@ -842,12 +883,16 @@ class SalesOrderScreen extends HookWidget {
                 title: "Ref Code",
                 onPressed: () => {_showDropdownDialogDoctorsTypeInfo(context)},
                 isEnable: false,
+                visibility: false,
+
               ),
               CustomTextFormFieldAreaSetting(
                 controller: refNameController,
                 hint: "Ref Name",
                 title: "Ref Name",
                 isEnable: false,
+                visibility: false,
+                //visibility: false,
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
@@ -893,7 +938,7 @@ class SalesOrderScreen extends HookWidget {
                                 onChanged: (value) {
                                   if ((double.tryParse(
                                           entry.value['Quantity']!)!) >
-                                      1.0) {
+                                      0) {
                                     entry.value['Quantity'] = value;
                                   } else {
                                     Fluttertoast.showToast(

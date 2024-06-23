@@ -3,8 +3,8 @@ class CustomerTypeInfo {
   final double cpID;
   final String cpCode;
   final String cpName;
-  final bool cpReferenceYes;
-  final bool cpReferenceNo;
+  final String cpReferenceYes;
+  final String cpReferenceNo;
   final String? cpNote;
   final String cpCUID;
   final String cpMUID;
@@ -33,20 +33,20 @@ class CustomerTypeInfo {
 
   factory CustomerTypeInfo.fromJson(Map<String, dynamic> json) {
     return CustomerTypeInfo(
-      cpOID: json['cp_OID'],
-      cpID: json['cp_ID'],
-      cpCode: json['cp_Code'],
-      cpName: json['cp_Name'],
-      cpReferenceYes: json['cp_ReferenceYes'] ?? false,
-      cpReferenceNo: json['cp_ReferenceNo'] ?? false,
-      cpNote: json['cp_Note'],
-      cpCUID: json['cp_CUID'],
-      cpMUID: json['cp_MUID'],
+      cpOID: json['cp_OID'] ?? 0,
+      cpID: json['cp_ID'] ?? 0,
+      cpCode: json['cp_Code'] ?? '',
+      cpName: json['cp_Name'] ?? '',
+      cpReferenceYes: json['cp_ReferenceYes'] ?? '',
+      cpReferenceNo: json['cp_ReferenceNo'] ?? '',
+      cpNote: json['cp_Note'] ?? '',
+      cpCUID: json['cp_CUID'] ?? '',
+      cpMUID: json['cp_MUID'] ?? '',
       cpCDate: DateTime.parse(json['cp_CDate']),
       cpMDate: DateTime.parse(json['cp_MDate']),
-      cpComID: json['cp_ComID'],
-      cpComCode: json['cp_ComCode'],
-      cpComName: json['cp_ComName'],
+      cpComID: json['cp_ComID'] ?? '',
+      cpComCode: json['cp_ComCode'] ?? '',
+      cpComName: json['cp_ComName'] ?? '',
     );
   }
 }
