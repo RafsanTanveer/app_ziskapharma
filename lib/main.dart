@@ -4,6 +4,7 @@ import 'package:app_ziskapharma/screens/customerGroupListSalesOrderScreen.dart';
 import 'package:app_ziskapharma/screens/customerGroupListScreen.dart';
 import 'package:app_ziskapharma/screens/customerGroupListSettingScreen.dart';
 import 'package:app_ziskapharma/screens/customerListScreen.dart';
+import 'package:app_ziskapharma/screens/doctorInformationSettings.dart';
 import 'package:app_ziskapharma/screens/salesOrderCustomerScreen.dart';
 import 'package:app_ziskapharma/screens/salesOrderScreen.dart';
 import 'package:app_ziskapharma/screens/splashScreen.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
         "/cutomergrouplistforsales": (context) =>
             CustomerGroupListSalesOrderScreen(),
         "/cstrstts": (context) => CustomerSettingScreen(),
+        "/doctorsettings": (context) => DoctorInformationSettings(),
         "/cusgrpstts": (context) => Customergroupsettingscreen(),
         "/slsinvapprvl": (context) => Salesinvoicescreen(),
         "/slsinvview": (context) => Salesinvoiceviewscreen(),

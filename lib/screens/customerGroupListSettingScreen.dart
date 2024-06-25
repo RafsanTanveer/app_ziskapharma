@@ -170,11 +170,25 @@ class _CustomerGroupListSettingScreen
         DataCell(
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(
-                context,
-                '/cstrstts',
-                arguments:new CustomerSettingScreenArgs(category.cpCode.toString(), category.cpName.toString(),''),
-              );
+              if (category.cpName.toLowerCase().contains('doctor')) {
+                Navigator.pushNamed(
+                  context,
+                  '/doctorsettings',
+                  arguments: new CustomerSettingScreenArgs(
+                      category.cpCode.toString(),
+                      category.cpName.toString(),
+                      ''),
+                );
+              } else {
+                Navigator.pushNamed(
+                  context,
+                  '/cstrstts',
+                  arguments: new CustomerSettingScreenArgs(
+                      category.cpCode.toString(),
+                      category.cpName.toString(),
+                      ''),
+                );
+              }
             },
             child: Text(
               'Customer Name',
