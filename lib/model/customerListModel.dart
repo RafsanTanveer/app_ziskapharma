@@ -6,6 +6,7 @@ class CustomerListModel {
   final String custAddress;
   final String custRef;
   final String custRefCode;
+  final String contactPerson;
 
   CustomerListModel({
     required this.custID,
@@ -15,6 +16,7 @@ class CustomerListModel {
     required this.custAddress,
     required this.custRef,
     required this.custRefCode,
+    required this.contactPerson,
   });
 
   factory CustomerListModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class CustomerListModel {
       custAddress: json['cust_Address'],
       custRef: json['cust_RefName'],
       custRefCode: json['cust_RefCode'],
+      contactPerson: json['cust_ContractPerson'],
     );
   }
 
@@ -38,6 +41,7 @@ class CustomerListModel {
       'cust_Address': custAddress,
       'cust_RefCode': custRefCode,
       'cust_RefName': custRef,
+      'cust_ContractPerson': contactPerson,
     };
   }
 }

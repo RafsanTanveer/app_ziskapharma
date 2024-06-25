@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
 import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
@@ -65,6 +66,9 @@ class SalesOrderScreen extends HookWidget {
     final deliveryDepotNameController = useTextEditingController();
     final refCodeController = useTextEditingController();
     final refNameController = useTextEditingController();
+
+    final addressController = useTextEditingController();
+    final mobileController = useTextEditingController();
 
     final slNo = useState<int>(0);
 
@@ -216,10 +220,13 @@ class SalesOrderScreen extends HookWidget {
         //       orElse: () => CustomerListModel(custAddress:  '',custID: 0 ,custMobile:  '',custNumber:  '',custRef:  '',custRefCode:  '',customerName: ''), // Return a default CustomerListModel if no matching item is found
         //     );
 
-
-
         refNameController.text = refValue.value!.custRef;
         refCodeController.text = refValue.value!.custRefCode;
+
+        addressController.text = refValue.value!.custAddress+' '+ refValue.value!.contactPerson;
+        mobileController.text = refValue.value!.custMobile;
+
+
       } else {
         throw Exception('Failed to load data');
       }
@@ -557,9 +564,26 @@ class SalesOrderScreen extends HookWidget {
           'Code': productValue.value!.finPrdCode,
           'Name': productValue.value!.finPrdName,
           'PackSize': productValue.value!.finPrdPackSize,
-          'Quantity': '1' //productValue.value!.orderQnty.toString(),
+          'Quantity': productValue.value!.orderQnty.toString(),
         };
-        products.value = [...products.value, product];
+
+        // Check if the product with the same code already exists
+        bool productExists = products.value.any(
+            (existingProduct) => existingProduct['Code'] == product['Code']);
+
+        if (!productExists) {
+          products.value = [...products.value, product];
+        } else {
+          // Show a message if the product already exists
+          Fluttertoast.showToast(
+            msg: 'Product with code ${product['Code']} already exists!',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            textColor: Colors.white,
+            fontSize: 18.0,
+          );
+        }
       }
     }
 
@@ -633,46 +657,88 @@ class SalesOrderScreen extends HookWidget {
           "StoreMain_ComName": user?.comName ?? ''
         };
 
-        final productDetails = products.value.asMap().entries.map((entry) {
+        bool flag = true;
+
+        final productDetailscheck = products.value.asMap().entries.map((entry) {
+          // Ensure the quantity is at least 1
+
+          String quantity = entry.value['Quantity']!;
+          if ((double.tryParse(quantity)! ) < 1) {
+            // quantity = '1';
+            Fluttertoast.showToast(
+              msg:
+                  'Quantity of ' + entry.value['Name']! + ' must be at least 1',
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              // backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 18.0,
+            );
+            flag = false;
+          }
+
           return {
             "Prd_slDetails": entry.key + 1,
             "Prd_Code": entry.value['Code']!,
             "Prd_Name": entry.value['Name']!,
             "Prd_PackSize": entry.value['PackSize']!,
-            "Prd_Quantity": entry.value['Quantity']!
+            "Prd_Quantity": quantity
           };
         }).toList();
 
-        final payload = {
-          "Table": [mainOrderData],
-          "Details": productDetails
-        };
+        if (flag) {
+          final productDetails = products.value.asMap().entries.map((entry) {
+            return {
+              "Prd_slDetails": entry.key + 1,
+              "Prd_Code": entry.value['Code']!,
+              "Prd_Name": entry.value['Name']!,
+              "Prd_PackSize": entry.value['PackSize']!,
+              "Prd_Quantity": entry.value['Quantity']!
+            };
+          }).toList();
 
-        final payloadJson = json.encode(payload);
+          final payload = {
+            "Table": [mainOrderData],
+            "Details": productDetails
+          };
 
-        try {
-          final response = await http.post(
-            url,
-            headers: headers,
-            body: payloadJson,
-          );
+          final payloadJson = json.encode(payload);
 
-          if (response.statusCode == 200) {
-            final result = json.decode(response.body);
-            if (result.toString().toUpperCase() == "TRUE") {
-              Navigator.pop(context);
-              Fluttertoast.showToast(
-                msg: 'Order successfully saved',
-                toastLength: Toast.LENGTH_LONG,
-                gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 1,
-                // backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 18.0,
-              );
+          try {
+            final response = await http.post(
+              url,
+              headers: headers,
+              body: payloadJson,
+            );
+
+            if (response.statusCode == 200) {
+              final result = json.decode(response.body);
+              if (result.toString().toUpperCase() == "TRUE") {
+                Navigator.pop(context);
+                Fluttertoast.showToast(
+                  msg: 'Order successfully saved',
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  // backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 18.0,
+                );
+              } else {}
             } else {}
-          } else {}
-        } catch (e) {}
+          } catch (e) {}
+        } else {
+          Fluttertoast.showToast(
+            msg: 'Please correct your order list',
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            // backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 18.0,
+          );
+        }
       }
       // Define the URL and headers
     }
@@ -788,11 +854,7 @@ class SalesOrderScreen extends HookWidget {
         ),
         backgroundColor: Colors.greenAccent[400],
       ),
-      body: Scrollbar(
-        thumbVisibility: true,
-        thickness: 15,
-        interactive: true,
-        radius: Radius.circular(20),
+      body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
           child: Column(
@@ -819,7 +881,7 @@ class SalesOrderScreen extends HookWidget {
               //   title: "Depot Code",
               //   isEnable: false,
               // ),
-              SizedBox(height: 16.0),
+              // SizedBox(height: 16.0),
               GestureDetector(
                 onTap: () => _selectDate(context, orderDateController),
                 child: AbsorbPointer(
@@ -832,7 +894,75 @@ class SalesOrderScreen extends HookWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 16.0),
+              // SizedBox(height: 16.0),
+
+              CustomTextFormFieldAreaSetting(
+                controller: orderNoController,
+                hint: "Order No",
+                title: "Order No",
+                isEnable: false,
+                visibility: false,
+              ),
+              CustomTextFormfieldTwoColumnWithSearchBtn(
+                controller1: customerCodeController,
+                controller2: customerNameController,
+                hint1: 'Customer Code',
+                hint2: "Customer Name",
+                title1: "Customer",
+                title2: '',
+                onPressed: () => {_showDropdownDialogCustomerTypeInfo(context)},
+              ),
+              TextFeildWithSearchBtn(
+                controller: customerCodeController,
+                hint: "Customer Code",
+                title: "Customer Code",
+                onPressed: () => {_showDropdownDialogCustomerTypeInfo(context)},
+                isEnable: false,
+                visibility: false,
+              ),
+              CustomTextFormFieldAreaSetting(
+                controller: customerNameController,
+                hint: "Customer Name",
+                title: "Customer Name",
+                isEnable: false,
+                visibility: false,
+              ),
+              CustomTextFormFieldAreaSetting(
+                controller: addressController,
+                hint: "Address",
+                title: "Address",
+                isEnable: true,
+              ),
+              CustomTextFormFieldWithFormatter(
+                controller: mobileController,
+                hint: "Mobile",
+                title: "Mobile",
+               keyboardType: TextInputType.number,
+              ),
+              CustomTextFormfieldTwoColumnWithSearchBtn(
+                controller1: deliveryDepotCodeController,
+                controller2: deliveryDepotNameController,
+                hint1: 'Delivery Depot Code',
+                hint2: "Delivery Depot Name",
+                title1: "Delivery Depot",
+                title2: '',
+                onPressed: () => {_showDropdownDialogDoctorsTypeInfo(context)},
+              ),
+              // TextFeildWithSearchBtn(
+              //   controller: deliveryDepotCodeController,
+              //   hint: "Delivery Depot Code",
+              //   title: "Delivery Depot Code",
+              //   onPressed: () => {_showDepoDropdownDialog(context)},
+              //   isEnable: false,
+              //    visibility: false,
+              // ),
+              // CustomTextFormFieldAreaSetting(
+              //   controller: deliveryDepotNameController,
+              //   hint: "Delivery Depot Name",
+              //   title: "Delivery Depot Name",
+              //   isEnable: false,
+              //   visibility: false,
+              // ),
               GestureDetector(
                 onTap: () => _selectDate(context, deliveryDateController),
                 child: AbsorbPointer(
@@ -844,39 +974,6 @@ class SalesOrderScreen extends HookWidget {
                   ),
                 ),
               ),
-              CustomTextFormFieldAreaSetting(
-                controller: orderNoController,
-                hint: "Order No",
-                title: "Order No",
-                isEnable: false,
-                visibility: false,
-              ),
-              TextFeildWithSearchBtn(
-                controller: customerCodeController,
-                hint: "Customer Code",
-                title: "Customer Code",
-                onPressed: () => {_showDropdownDialogCustomerTypeInfo(context)},
-                isEnable: false,
-              ),
-              CustomTextFormFieldAreaSetting(
-                controller: customerNameController,
-                hint: "Customer Name",
-                title: "Customer Name",
-                isEnable: false,
-              ),
-              TextFeildWithSearchBtn(
-                controller: deliveryDepotCodeController,
-                hint: "Delivery Depot Code",
-                title: "Delivery Depot Code",
-                onPressed: () => {_showDepoDropdownDialog(context)},
-                isEnable: false,
-              ),
-              CustomTextFormFieldAreaSetting(
-                controller: deliveryDepotNameController,
-                hint: "Delivery Depot Name",
-                title: "Delivery Depot Name",
-                isEnable: false,
-              ),
               TextFeildWithSearchBtn(
                 controller: refCodeController,
                 hint: "Ref Code",
@@ -884,7 +981,6 @@ class SalesOrderScreen extends HookWidget {
                 onPressed: () => {_showDropdownDialogDoctorsTypeInfo(context)},
                 isEnable: false,
                 visibility: false,
-
               ),
               CustomTextFormFieldAreaSetting(
                 controller: refNameController,
@@ -908,70 +1004,82 @@ class SalesOrderScreen extends HookWidget {
                 child: Text('Add Product'),
               ),
               SizedBox(height: 16.0),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+              Scrollbar(
+                thumbVisibility: true,
+                thickness: 15,
+                interactive: true,
+                radius: Radius.circular(20),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
-                  child: DataTable(
-                    columns: [
-                      DataColumn(label: Text('SL')),
-                      DataColumn(label: Text('Code')),
-                      DataColumn(label: Text('Name')),
-                      DataColumn(label: Text('Pack Size')),
-                      DataColumn(label: Text('Quantity')),
-                      DataColumn(label: Text('Actions')),
-                    ],
-                    rows: products.value
-                        .asMap()
-                        .entries
-                        .map(
-                          (entry) => DataRow(
-                            cells: [
-                              DataCell(Text((entry.key + 1).toString())),
-                              DataCell(Text(entry.value['Code']!)),
-                              DataCell(Text(entry.value['Name']!)),
-                              DataCell(Text(entry.value['PackSize']!)),
-                              DataCell(TextField(
-                                controller: TextEditingController(
-                                    text: entry.value['Quantity']!),
-                                keyboardType: TextInputType.number,
-                                onChanged: (value) {
-                                  if ((double.tryParse(
-                                          entry.value['Quantity']!)!) >
-                                      0) {
-                                    entry.value['Quantity'] = value;
-                                  } else {
-                                    Fluttertoast.showToast(
-                                      msg: 'Quantity must be greater than 0',
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 1,
-                                      // backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      fontSize: 18.0,
-                                    );
-                                  }
-                                },
-                              )),
-                              DataCell(
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.delete),
-                                      onPressed: () =>
-                                          _deleteProduct(entry.key),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * .32,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: DataTable(
+                          // Remove the fixed dataRowHeight
+                          columnSpacing: 30.0,
+                          columns: [
+                            DataColumn(label: Text('SL')),
+                            DataColumn(label: Text('Code')),
+                            DataColumn(label: Text('Name')),
+                            DataColumn(label: Text('Pack Size')),
+                            DataColumn(label: Text('Quantity')),
+                            DataColumn(label: Text('Actions')),
+                          ],
+                          rows: products.value
+                              .asMap()
+                              .entries
+                              .map(
+                                (entry) => DataRow(
+                                  cells: [
+                                    DataCell(Text((entry.key + 1).toString())),
+                                    DataCell(Text(entry.value['Code']!)),
+                                    DataCell(Container(
+                                      constraints: BoxConstraints(
+                                        minWidth: 200.0,
+                                        maxWidth: 200.0,
+                                      ),
+                                      child: Text(
+                                        entry.value['Name']!,
+                                        softWrap: true, // Enable text wrapping
+                                        // overflow: TextOverflow.visible, // Handle overflow
+                                      ),
+                                    )),
+                                    DataCell(Text(entry.value['PackSize']!)),
+                                    DataCell(TextField(
+                                      controller: useTextEditingController(
+                                          text: entry.value['Quantity']!),
+                                      keyboardType: TextInputType.number,
+                                      onChanged: (value) {
+                                        entry.value['Quantity'] = value;
+                                      },
+                                    )),
+                                    DataCell(
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(Icons.delete),
+                                            onPressed: () =>
+                                                _deleteProduct(entry.key),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                        .toList(),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
+
               SizedBox(height: 16.0),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
