@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:app_ziskapharma/model/UserPreferences.dart';
+import 'package:app_ziskapharma/model/doctorListModel2.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
 import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
@@ -33,12 +35,14 @@ class CustomerSettingScreen extends HookWidget {
     final provider = Provider.of<AuthProvider>(context, listen: false);
 
     UserModel? user = context.watch<AuthProvider>().user;
+    UserPreferences? userPreferences =
+        context.watch<AuthProvider>().userPreferences;
 
     final customerTypeDropdownvalue = useState<CustomerTypeInfo?>(null);
     final customerTypeDropdown = useState<List<CustomerTypeInfo>>([]);
 
-    final doctorDropdown = useState<List<DoctorListModel>>([]);
-    final doctorDropdownvalue = useState<DoctorListModel?>(null);
+    final doctorDropdown = useState<List<DoctorListModel2>>([]);
+    final doctorDropdownvalue = useState<DoctorListModel2?>(null);
 
     final territoryData = useState<TerritoryModel?>(null);
 
@@ -166,11 +170,11 @@ class CustomerSettingScreen extends HookWidget {
       }
     }
 
-    fetchDoctorsTypeInfo(String cpCode) async {
+    fetchDoctorsTypeInfo(String cpCode, String tery_depotCode) async {
       try {
         // CustomerSettings/Proc_CustomerDoctorHelpListByApi?tery_UserId=1
         final url = Uri.parse(
-            '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_CustomerDoctorHelpListByApi?tery_UserId=${provider.user_id}');
+            '${apiAccess.apiBaseUrl}/DoctorSettings/Proc_DoctorListByApi?SearchBy=&tery_DepotCode=${tery_depotCode}');
 
         final response = await http.get(url);
 
@@ -179,8 +183,8 @@ class CustomerSettingScreen extends HookWidget {
 
           final List<dynamic> table = jsonResponse['Table'];
 
-          List<DoctorListModel> listDoctor =
-              table.map((item) => DoctorListModel.fromJson(item)).toList();
+          List<DoctorListModel2> listDoctor =
+              table.map((item) => DoctorListModel2.fromJson(item)).toList();
 
           doctorDropdown.value = listDoctor;
         } else {
@@ -191,22 +195,20 @@ class CustomerSettingScreen extends HookWidget {
 
     Future<void> _showDropdownDialogDoctorsTypeInfo(
         BuildContext context) async {
-          await  fetchDoctorsTypeInfo(args.cpCode);
+      await fetchDoctorsTypeInfo(args.cpCode, userPreferences!.teryDepotCode);
       searchControllerRef.text = '';
-      final selectedValue = await showModalBottomSheet<DoctorListModel>(
+      final selectedValue = await showModalBottomSheet<DoctorListModel2>(
         context: context,
         isScrollControlled: true,
         builder: (BuildContext context) {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-
-
-              List<DoctorListModel> filteredList =
+              List<DoctorListModel2> filteredList =
                   doctorDropdown.value.where((item) {
                 final query = searchControllerRef.text.toLowerCase();
                 return item.custName.toLowerCase().contains(query) ||
-                    item.custRefCode.toLowerCase().contains(query) ||
-                    item.custRefCode.toLowerCase().contains(query);
+                    item.custNumber .toLowerCase().contains(query) ||
+                    item.custAddress .toLowerCase().contains(query);
               }).toList();
 
               return Container(
@@ -379,8 +381,6 @@ class CustomerSettingScreen extends HookWidget {
         builder: (BuildContext context) {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-
-
               List<SalesRule> filteredList =
                   salesRuleDropDown.value.where((item) {
                 final query = searchControllerRule.text.toLowerCase();

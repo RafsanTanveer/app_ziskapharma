@@ -1,52 +1,37 @@
 import 'dart:convert';
-import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
-import 'package:app_ziskapharma/model/UserPreferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import '../dataaccess/apiAccess.dart' as apiAccess;
 import '../model/customerListModel.dart';
+import '../model/DoctorListModel2.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
+import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
+import 'package:app_ziskapharma/model/UserPreferences.dart';
 
-Future<List<CustomerListModel>> fetchCustomerLists(String vCustomerTypeCode,
+Future<List<dynamic>> fetchCustomerLists(String vCustomerTypeCode,
     String user_id, String custName, String tery_depotCode) async {
-  if (custName.toLowerCase().contains('doctor')) {
-    final url = Uri.parse(
-        '${apiAccess.apiBaseUrl}/DoctorSettings/Proc_DoctorListByApi?SearchBy=&tery_DepotCode=${tery_depotCode}');
+  final url = custName.toLowerCase().contains('doctor')
+      ? Uri.parse(
+          '${apiAccess.apiBaseUrl}/DoctorSettings/Proc_DoctorListByApi?SearchBy=&tery_DepotCode=${tery_depotCode}')
+      : Uri.parse(
+          '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=${user_id}&vCustomerTypeCode=$vCustomerTypeCode');
 
-    final response = await http.get(url);
+  final response = await http.get(url);
 
-    if (response.statusCode == 200) {
-      Map<String, dynamic> jsonResponse = json.decode(response.body);
-      List<dynamic> customerLists = jsonResponse['Table'];
-      return customerLists
-          .map((obj) => CustomerListModel.fromJson(obj))
-          .toList();
-    } else {
-      throw Exception('Failed to load data');
-    }
+  if (response.statusCode == 200) {
+    Map<String, dynamic> jsonResponse = json.decode(response.body);
+    List<dynamic> customerLists = jsonResponse['Table'];
+    return custName.toLowerCase().contains('doctor')
+        ? customerLists.map((obj) => DoctorListModel2.fromJson(obj)).toList()
+        : customerLists.map((obj) => CustomerListModel.fromJson(obj)).toList();
   } else {
-    final url = Uri.parse(
-        '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=${user_id}&vCustomerTypeCode=$vCustomerTypeCode');
-
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> jsonResponse = json.decode(response.body);
-      List<dynamic> customerLists = jsonResponse['Table'];
-      return customerLists
-          .map((obj) => CustomerListModel.fromJson(obj))
-          .toList();
-    } else {
-      throw Exception('Failed to load data');
-    }
+    throw Exception('Failed to load data');
   }
 }
 
 class CustomerListScreen extends HookWidget {
-  // final String vCustomerTypeCode;
-
   const CustomerListScreen({super.key});
 
   @override
@@ -59,11 +44,9 @@ class CustomerListScreen extends HookWidget {
 
     final provider = Provider.of<AuthProvider>(context);
     final user_id = provider.user_id;
-    final customerListsFuture =
-        useState<Future<List<CustomerListModel>>?>(null);
-    final custList = useState<List<CustomerListModel>>([]);
-    final allCustomers = useState<List<CustomerListModel>>([]);
-    final filteredCustomers = useState<List<CustomerListModel>>([]);
+    final customerListsFuture = useState<Future<List<dynamic>>?>(null);
+    final allCustomers = useState<List<dynamic>>([]);
+    final filteredCustomers = useState<List<dynamic>>([]);
     final searchController = useTextEditingController();
 
     useEffect(() {
@@ -77,10 +60,18 @@ class CustomerListScreen extends HookWidget {
       searchController.addListener(() {
         String query = searchController.text.toLowerCase();
         filteredCustomers.value = allCustomers.value.where((customer) {
-          return customer.customerName.toLowerCase().contains(query) ||
-              customer.custNumber.toLowerCase().contains(query) ||
-              customer.custMobile.toLowerCase().contains(query) ||
-              customer.custAddress.toLowerCase().contains(query);
+          if (customer is CustomerListModel) {
+            return customer.customerName.toLowerCase().contains(query) ||
+                customer.custNumber.toLowerCase().contains(query) ||
+                customer.custMobile.toLowerCase().contains(query) ||
+                customer.custAddress.toLowerCase().contains(query);
+          } else if (customer is DoctorListModel2) {
+            return customer.custName.toLowerCase().contains(query) ||
+                customer.custNumber.toLowerCase().contains(query) ||
+                customer.custMobile.toLowerCase().contains(query) ||
+                customer.custAddress.toLowerCase().contains(query);
+          }
+          return false;
         }).toList();
       });
 
@@ -102,7 +93,7 @@ class CustomerListScreen extends HookWidget {
         children: [
           _buildSearchBar(context, searchController),
           Expanded(
-            child: FutureBuilder<List<CustomerListModel>>(
+            child: FutureBuilder<List<dynamic>>(
               future: customerListsFuture.value,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -163,33 +154,59 @@ class CustomerListScreen extends HookWidget {
     );
   }
 
-  Widget _buildDataTable(List<CustomerListModel> filteredCustomers) {
+  Widget _buildDataTable(List<dynamic> filteredCustomers) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: DataTable(
-        columns: _createColumns(),
+        columns: _createColumns(filteredCustomers),
         rows: _createRows(filteredCustomers),
       ),
     );
   }
 
-  List<DataColumn> _createColumns() {
-    return [
-      DataColumn(label: Text('Code')),
-      DataColumn(label: Expanded(child: Text('Name'))),
-      DataColumn(label: Expanded(child: Text('Mobile'))),
-      DataColumn(label: Expanded(child: Text('Address'))),
-    ];
-  }
+  List<DataColumn> _createColumns(List<dynamic> customers) {
+    if (customers is CustomerListModel) {
+       return [
+        DataColumn(label: Text('Code')),
+        DataColumn(label: Expanded(child: Text('Name'))),
+        DataColumn(label: Expanded(child: Text('Mobile'))),
+        DataColumn(label: Expanded(child: Text('Address'))),
+      ];
+     }
+      else{
+         return [
+        DataColumn(label: Text('Code')),
+        DataColumn(label: Expanded(child: Text('Name'))),
+        DataColumn(label: Expanded(child: Text('Mobile'))),
+        DataColumn(label: Expanded(child: Text('Address'))),
+        DataColumn(label: Expanded(child: Text('Terrytory'))),
+        DataColumn(label: Expanded(child: Text('Depot'))),
+      ];
+      }
+    }
 
-  List<DataRow> _createRows(List<CustomerListModel> customers) {
+
+
+  List<DataRow> _createRows(List<dynamic> customers) {
     return customers.map((customer) {
-      return DataRow(cells: [
-        DataCell(Text(customer.custNumber)),
-        DataCell(Text(customer.customerName)),
-        DataCell(Text(customer.custMobile)),
-        DataCell(Text(customer.custAddress)),
-      ]);
+      if (customer is CustomerListModel) {
+        return DataRow(cells: [
+          DataCell(Text(customer.custNumber)),
+          DataCell(Text(customer.customerName)),
+          DataCell(Text(customer.custMobile)),
+          DataCell(Text(customer.custAddress)),
+        ]);
+      } else if (customer is DoctorListModel2) {
+        return DataRow(cells: [
+          DataCell(Text(customer.custNumber)),
+          DataCell(Text(customer.custName)),
+          DataCell(Text(customer.custMobile)),
+          DataCell(Text(customer.custAddress)),
+          DataCell(Text(customer.teryCode)),
+          DataCell(Text(customer.teryDepotName)),
+        ]);
+      }
+      return DataRow(cells: []);
     }).toList();
   }
 }

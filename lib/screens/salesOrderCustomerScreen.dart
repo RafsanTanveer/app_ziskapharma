@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart' as http;
 import '../dataaccess/apiAccess.dart' as apiAccess;
 import '../model/customerListModel.dart';
@@ -12,8 +13,6 @@ Future<List<CustomerListModel>> fetchCustomerLists(
   final url = Uri.parse(
       '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=${user_id}&vCustomerTypeCode=$vCustomerTypeCode');
 
-  print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
-  print(vCustomerTypeCode);
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
@@ -25,59 +24,44 @@ Future<List<CustomerListModel>> fetchCustomerLists(
   }
 }
 
-class SalesOrderCustomerScreen extends StatefulWidget {
+class SalesOrderCustomerScreen extends HookWidget {
   final String vCustomerTypeCode;
 
   const SalesOrderCustomerScreen({super.key, required this.vCustomerTypeCode});
 
   @override
-  State<SalesOrderCustomerScreen> createState() =>
-      _SalesOrderCustomerScreenState();
-}
-
-class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
-  late Future<List<CustomerListModel>> _customerLists;
-  List<CustomerListModel> _allCustomers = [];
-  List<CustomerListModel> _filteredCustomers = [];
-  TextEditingController _searchController = TextEditingController();
-
-  @override
-  void initState() {
-    final provider = Provider.of<AuthProvider>(context, listen: false);
-
-
-
-    super.initState();
-    _customerLists =
-        fetchCustomerLists(widget.vCustomerTypeCode, provider.user_id);
-    _customerLists.then((value) {
-      setState(() {
-        _allCustomers = value;
-        _filteredCustomers = value;
-      });
-    });
-
-    _searchController.addListener(_filterCustomers);
-  }
-
-  void _filterCustomers() {
-    String query = _searchController.text.toLowerCase();
-    setState(() {
-      _filteredCustomers = _allCustomers.where((customer) {
-        return customer.custNumber.toLowerCase().contains(query) ||
-            customer.customerName.toLowerCase().contains(query);
-      }).toList();
-    });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AuthProvider>(context, listen: false);
+    final customerListsFuture = useMemoized(
+      () => fetchCustomerLists(vCustomerTypeCode, provider.user_id),
+      [vCustomerTypeCode, provider.user_id],
+    );
+    final snapshot = useFuture(customerListsFuture);
+    final searchController = useTextEditingController();
+    final allCustomers = useState<List<CustomerListModel>>([]);
+    final filteredCustomers = useState<List<CustomerListModel>>([]);
+
+    useEffect(() {
+      if (snapshot.connectionState == ConnectionState.done &&
+          snapshot.hasData) {
+        allCustomers.value = snapshot.data!;
+        filteredCustomers.value = snapshot.data!;
+      }
+    }, [snapshot]);
+
+    useEffect(() {
+      void filterCustomers() {
+        String query = searchController.text.toLowerCase();
+        filteredCustomers.value = allCustomers.value.where((customer) {
+          return customer.custNumber.toLowerCase().contains(query) ||
+              customer.customerName.toLowerCase().contains(query);
+        }).toList();
+      }
+
+      searchController.addListener(filterCustomers);
+      return () => searchController.removeListener(filterCustomers);
+    }, [searchController, allCustomers]);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -91,36 +75,30 @@ class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
       ),
       body: Column(
         children: [
-          _buildSearchBar(context),
+          _buildSearchBar(context, searchController),
           Expanded(
-            child: FutureBuilder<List<CustomerListModel>>(
-              future: _customerLists,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No data found'));
-                } else {
-                  return _buildDataTable();
-                }
-              },
-            ),
+            child: snapshot.connectionState == ConnectionState.waiting
+                ? Center(child: CircularProgressIndicator())
+                : snapshot.hasError
+                    ? Center(child: Text('Error: ${snapshot.error}'))
+                    : snapshot.hasData && snapshot.data!.isEmpty
+                        ? Center(child: Text('No data found'))
+                        : _buildDataTable(filteredCustomers.value, context),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
+  Widget _buildSearchBar(
+      BuildContext context, TextEditingController searchController) {
     return Row(
       children: [
         Container(
           width: MediaQuery.of(context).size.width * .7,
           margin: EdgeInsets.all(10),
           child: TextField(
-            controller: _searchController,
+            controller: searchController,
             decoration: InputDecoration(
               hintText: 'Search ... ',
               prefixIcon: Icon(Icons.search),
@@ -145,7 +123,7 @@ class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
             minimumSize: Size(MediaQuery.of(context).size.width * .2,
                 MediaQuery.of(context).size.height * .055),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12), // <-- Radius
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ),
@@ -153,12 +131,12 @@ class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
     );
   }
 
-  Widget _buildDataTable() {
+  Widget _buildDataTable(List<CustomerListModel> customers, BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: DataTable(
         columns: _createColumns(),
-        rows: _createRows(_filteredCustomers),
+        rows: _createRows(customers, context),
       ),
     );
   }
@@ -171,13 +149,13 @@ class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
     ];
   }
 
-  List<DataRow> _createRows(List<CustomerListModel> customers) {
+  List<DataRow> _createRows(List<CustomerListModel> customers, BuildContext context) {
     return customers.map((customer) {
       return DataRow(cells: [
         DataCell(Text(customer.custNumber)),
         DataCell(
           Container(
-            width: 100, // Adjust the width as needed
+            width: 100,
             child: Text(
               customer.customerName,
               overflow: TextOverflow.ellipsis,
@@ -190,8 +168,8 @@ class _SalesOrderCustomerScreenState extends State<SalesOrderCustomerScreen> {
               Navigator.pushNamed(
                 context,
                 '/salesOrder',
-                arguments:new CustomerSettingScreenArgs( widget.vCustomerTypeCode, customer.customerName, customer.custNumber)
-
+                arguments: CustomerSettingScreenArgs(vCustomerTypeCode,
+                    customer.customerName, customer.custNumber),
               );
             },
             child: Text(

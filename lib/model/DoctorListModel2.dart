@@ -1,4 +1,4 @@
-class DoctotListModel2 {
+class DoctorListModel2 {
   final String cDelete;
   final double custID;
   final String custNumber;
@@ -7,13 +7,13 @@ class DoctotListModel2 {
   final String custAddress;
   final String custAddress1;
   final String teryCode;
-  final String teryDepotId;
+  final double teryDepotId;
   final String teryDepotCode;
   final String teryDepotName;
   final String custActive;
   final String custCUID;
 
-  DoctotListModel2({
+  DoctorListModel2({
     required this.cDelete,
     required this.custID,
     required this.custNumber,
@@ -29,8 +29,8 @@ class DoctotListModel2 {
     required this.custCUID,
   });
 
-  factory DoctotListModel2.fromJson(Map<String, dynamic> json) {
-    return DoctotListModel2(
+  factory DoctorListModel2.fromJson(Map<String, dynamic> json) {
+    return DoctorListModel2(
       cDelete: json['cDelete'],
       custID: json['cust_ID'],
       custNumber: json['cust_Number'],
