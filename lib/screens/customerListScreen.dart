@@ -165,7 +165,7 @@ class CustomerListScreen extends HookWidget {
   }
 
   List<DataColumn> _createColumns(List<dynamic> customers) {
-    if (customers is CustomerListModel) {
+    if (customers is List<CustomerListModel>) {
        return [
         DataColumn(label: Text('Code')),
         DataColumn(label: Expanded(child: Text('Name'))),
