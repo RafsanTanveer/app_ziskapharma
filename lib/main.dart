@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
         "/salesmgt": (context) => Salesmgtscreen(),
         "/userinfo": (context) => Userinfoscreen(),
         "/cutomergrouplist": (context) => CustomerGroupListScreen(),
-        // "/cutomerlist": (context) => CustomerListScreen(),
+        "/customerlist": (context) => CustomerListScreen(),
         "/cutomergrouplistforsetting": (context) =>
             CustomerGroupListSettingScreen(),
         "/cutomergrouplistforsales": (context) =>
@@ -63,16 +63,18 @@ class MyApp extends StatelessWidget {
         "/slsinvapprvl": (context) => Salesinvoicescreen(),
         "/slsinvview": (context) => Salesinvoiceviewscreen(),
         "/salesOrder": (context) => SalesOrderScreen(),
+        // "/customerlist": (context) => CustomerListScreen(),
       },
       onGenerateRoute: (settings) {
-        if (settings.name == '/customerlist') {
-          final String vCustomerTypeCode = settings.arguments as String;
-          return MaterialPageRoute(
-            builder: (context) {
-              return CustomerListScreen(vCustomerTypeCode: vCustomerTypeCode);
-            },
-          );
-        } else if (settings.name == '/salesOrderCustomerlist') {
+        // if (settings.name == '/customerlist') {
+        //   final String vCustomerTypeCode = settings.arguments as String;
+        //   return MaterialPageRoute(
+        //     builder: (context) {
+        //       return CustomerListScreen(vCustomerTypeCode: vCustomerTypeCode);
+        //     },
+        //   );
+        // } else
+         if (settings.name == '/salesOrderCustomerlist') {
           final String vCustomerTypeCode = settings.arguments as String;
           return MaterialPageRoute(
             builder: (context) {

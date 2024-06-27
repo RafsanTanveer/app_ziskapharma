@@ -16,6 +16,7 @@ class UserPreferences {
   String teryRegionCode;
   String teryRegionName;
   String teryMarketTypeCode;
+  String teryDepotCode;  //tery_DepotCode
 
   UserPreferences({
     required this.userUID,
@@ -33,6 +34,7 @@ class UserPreferences {
     required this.teryRegionCode,
     required this.teryRegionName,
     required this.teryMarketTypeCode,
+    required this.teryDepotCode,
   });
 
   Map<String, dynamic> toJson() {
@@ -52,6 +54,7 @@ class UserPreferences {
       'tery_RegionCode': teryRegionCode,
       'tery_RegionName': teryRegionName,
       'tery_MarketTypeCode': teryMarketTypeCode,
+      'tery_DepotCode': teryDepotCode,
     };
   }
 
@@ -72,6 +75,7 @@ class UserPreferences {
       teryRegionCode: map['tery_RegionCode'] ?? '',
       teryRegionName: map['tery_RegionName'] ?? '',
       teryMarketTypeCode: map['tery_MarketTypeCode'] ?? '',
+      teryDepotCode: map['tery_DepotCode'] ?? '',
     );
   }
 }

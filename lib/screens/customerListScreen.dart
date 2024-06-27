@@ -1,79 +1,92 @@
 import 'dart:convert';
+import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
+import 'package:app_ziskapharma/model/UserPreferences.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import '../dataaccess/apiAccess.dart' as apiAccess;
 import '../model/customerListModel.dart';
-import 'package:provider/provider.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 
-Future<List<CustomerListModel>> fetchCustomerLists(
-    String vCustomerTypeCode, String user_id) async {
-  final url = Uri.parse(
-      '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=${user_id}&vCustomerTypeCode=$vCustomerTypeCode');
+Future<List<CustomerListModel>> fetchCustomerLists(String vCustomerTypeCode,
+    String user_id, String custName, String tery_depotCode) async {
+  if (custName.toLowerCase().contains('doctor')) {
+    final url = Uri.parse(
+        '${apiAccess.apiBaseUrl}/DoctorSettings/Proc_DoctorListByApi?SearchBy=&tery_DepotCode=${tery_depotCode}');
 
-  final response = await http.get(url);
+    final response = await http.get(url);
 
-  if (response.statusCode == 200) {
-    Map<String, dynamic> jsonResponse = json.decode(response.body);
-    List<dynamic> customerLists = jsonResponse['Table'];
-    return customerLists.map((obj) => CustomerListModel.fromJson(obj)).toList();
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      List<dynamic> customerLists = jsonResponse['Table'];
+      return customerLists
+          .map((obj) => CustomerListModel.fromJson(obj))
+          .toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
   } else {
-    throw Exception('Failed to load data');
+    final url = Uri.parse(
+        '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=${user_id}&vCustomerTypeCode=$vCustomerTypeCode');
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      List<dynamic> customerLists = jsonResponse['Table'];
+      return customerLists
+          .map((obj) => CustomerListModel.fromJson(obj))
+          .toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
   }
 }
 
-class CustomerListScreen extends StatefulWidget {
-  final String vCustomerTypeCode;
+class CustomerListScreen extends HookWidget {
+  // final String vCustomerTypeCode;
 
-  const CustomerListScreen({super.key, required this.vCustomerTypeCode});
-
-  @override
-  State<CustomerListScreen> createState() => _CustomerListScreenState();
-}
-
-class _CustomerListScreenState extends State<CustomerListScreen> {
-  late Future<List<CustomerListModel>> _customerLists;
-  List<CustomerListModel> _allCustomers = [];
-  List<CustomerListModel> _filteredCustomers = [];
-  TextEditingController _searchController = TextEditingController();
-
-  @override
-  void initState() {
-    final provider = Provider.of<AuthProvider>(context, listen: false);
-
-    super.initState();
-    _customerLists =
-        fetchCustomerLists(widget.vCustomerTypeCode, provider.user_id);
-    _customerLists.then((value) {
-      setState(() {
-        _allCustomers = value;
-        _filteredCustomers = value;
-      });
-    });
-
-    _searchController.addListener(_filterCustomerList);
-  }
-
-  void _filterCustomerList() {
-    String query = _searchController.text.toLowerCase();
-    setState(() {
-      _filteredCustomers = _allCustomers.where((customer) {
-        return customer.customerName.toLowerCase().contains(query) ||
-            customer.custNumber.toLowerCase().contains(query) ||
-            customer.custMobile.toLowerCase().contains(query) ||
-            customer.custAddress.toLowerCase().contains(query);
-      }).toList();
-    });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
+  const CustomerListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final CustomerSettingScreenArgs args =
+        ModalRoute.of(context)!.settings.arguments as CustomerSettingScreenArgs;
+
+    UserPreferences? userPreferences =
+        context.watch<AuthProvider>().userPreferences;
+
+    final provider = Provider.of<AuthProvider>(context);
+    final user_id = provider.user_id;
+    final customerListsFuture =
+        useState<Future<List<CustomerListModel>>?>(null);
+    final custList = useState<List<CustomerListModel>>([]);
+    final allCustomers = useState<List<CustomerListModel>>([]);
+    final filteredCustomers = useState<List<CustomerListModel>>([]);
+    final searchController = useTextEditingController();
+
+    useEffect(() {
+      customerListsFuture.value = fetchCustomerLists(
+          args.cpCode, user_id, args.cpName, userPreferences!.teryDepotCode);
+      customerListsFuture.value!.then((value) {
+        allCustomers.value = value;
+        filteredCustomers.value = value;
+      });
+
+      searchController.addListener(() {
+        String query = searchController.text.toLowerCase();
+        filteredCustomers.value = allCustomers.value.where((customer) {
+          return customer.customerName.toLowerCase().contains(query) ||
+              customer.custNumber.toLowerCase().contains(query) ||
+              customer.custMobile.toLowerCase().contains(query) ||
+              customer.custAddress.toLowerCase().contains(query);
+        }).toList();
+      });
+
+      return null;
+    }, []);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -87,10 +100,10 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
       ),
       body: Column(
         children: [
-          _buildSearchBar(context),
+          _buildSearchBar(context, searchController),
           Expanded(
             child: FutureBuilder<List<CustomerListModel>>(
-              future: _customerLists,
+              future: customerListsFuture.value,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -99,7 +112,7 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('No data found'));
                 } else {
-                  return _buildDataTable();
+                  return _buildDataTable(filteredCustomers.value);
                 }
               },
             ),
@@ -109,14 +122,15 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
+  Widget _buildSearchBar(
+      BuildContext context, TextEditingController searchController) {
     return Row(
       children: [
         Container(
           width: MediaQuery.of(context).size.width * .7,
           margin: EdgeInsets.all(10),
           child: TextField(
-            controller: _searchController,
+            controller: searchController,
             decoration: InputDecoration(
               hintText: 'Search ... ',
               prefixIcon: Icon(Icons.search),
@@ -149,12 +163,12 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
     );
   }
 
-  Widget _buildDataTable() {
+  Widget _buildDataTable(List<CustomerListModel> filteredCustomers) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: DataTable(
         columns: _createColumns(),
-        rows: _createRows(_filteredCustomers),
+        rows: _createRows(filteredCustomers),
       ),
     );
   }

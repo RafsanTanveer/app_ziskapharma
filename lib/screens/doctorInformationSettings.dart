@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:app_ziskapharma/model/UserPreferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
 import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
@@ -33,7 +34,8 @@ class DoctorInformationSettings extends HookWidget {
     final provider = Provider.of<AuthProvider>(context, listen: false);
 
     UserModel? user = context.watch<AuthProvider>().user;
-
+    UserPreferences? userPreferences =
+        context.watch<AuthProvider>().userPreferences;
     final customerTypeDropdownvalue = useState<CustomerTypeInfo?>(null);
     final customerTypeDropdown = useState<List<CustomerTypeInfo>>([]);
 
@@ -477,160 +479,55 @@ class DoctorInformationSettings extends HookWidget {
 
     Future<void> _submitPost() async {
       final url = Uri.parse(
-          '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SaveCustomerSettingsByApi');
+          '${apiAccess.apiBaseUrl}/DoctorSettings/Proc_SaveDoctorSettingsByApi');
 
       final headers = {"Content-Type": "application/json"};
       print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-      if (args.cpName.toLowerCase() != "doctor") {
-        if (refCodeController.text != '') {
-          if (isCredit.value == "true" &&
-              (_creditLimitController.text == '' ||
-                  _creditLimitController.text == 0)) {
-            Fluttertoast.showToast(
-              msg: 'Credit limit should not be 0',
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 18.0,
-            );
-          } else {
-            print('in not doctoroooooooooooooooooooooooooooooooooo');
-            final payload = json.encode({
-              "Table": [
-                {
-                  'cust_ID': 0,
-                  'cust_Number': "",
-                  'cust_Name': customerNameController.text,
-                  'cust_Address': addressController.text,
-                  'cust_Mobile': '',
-                  'cust_Education': refCodeController.text,
-                  'cust_JobPlace': refNameController.text,
-                  'cust_Designation': contactPersonController.text,
 
-                  'cust_Address1': isCash.value.toString(),
-                  'cust_CategoryCode': isCredit.value.toString(),
-                  'cust_CategoryName': _creditLimitController.text == ''
-                      ? '0'
-                      : _creditLimitController.text.trim(),
-                  'tery_Code': 'False',
-                  'tery_Name': 'True',
-                  'tery_DepotCode': args.cpCode,
-                  
-                  'cust_image': categoryCodeController
-                      .text, //customerTypeDropdown.value.first.cpCode.toString(),
-                  'cust_CUID': categoryNameController
-                      .text, //customerTypeDropdown.value.first.cpName.toString(),
-                  'cust_MUID': territoryCodeController.text,
-                  'cust_ComID': territoryNameController.text,
-                  'cust_ComCode': territoryData.value?.teryDepotCode,
-                  'cust_ComName':
-                      customerTypeDropdownvalue.value!.cpReferenceYes != ''
-                          ? 'Yes'
-                          : 'No',
-
-                }
-              ]
-            });
-            print("ooooooooooooooooooooooooooooooooooooooooooooooooooo");
-            print(payload);
-            print("ooooooooooooooooooooooooooooooooooooooooooooooooooo");
-            try {
-              final response =
-                  await http.post(url, headers: headers, body: payload);
-              if (response.statusCode == 200) {
-                Fluttertoast.showToast(
-                  msg: 'Customer Data Save Successfully',
-                  toastLength: Toast.LENGTH_LONG,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Colors.green,
-                  textColor: Colors.white,
-                  fontSize: 18.0,
-                );
-                Navigator.pop(context);
-              } else {}
-            } catch (e) {
-              print('ggggggggggggggggggggggggggggggggg');
-              print(e);
-            }
+      final payload = json.encode({
+        "Table": [
+          {
+            'cust_ID': 0,
+            'cust_Number': "",
+            'cust_Name': customerNameController.text,
+            'cust_Address': addressController.text,
+            'cust_Mobile': mobileController.text,
+            'cust_Education': educationController.text,
+            'cust_JobPlace': jobPlaceController.text,
+            'cust_Designation': designationController.text,
+            'cust_Address1': addressController.text,
+            'cust_CategoryCode': categoryCodeController.text,
+            'cust_CategoryName': categoryNameController.text,
+            'tery_Code': territoryCodeController.text,
+            'tery_Name': territoryNameController.text,
+            'tery_DepotCode': userPreferences!.teryDepotCode,
+            'cust_image': snapData.value,
+            'cust_ComID': user!.comID,
+            'cust_ComCode': user!.comCode,
+            'cust_ComName': user!.comName,
+            'cust_CUID': provider!.user_id,
+            'cust_MUID': provider.user_id,
           }
-        } else {
+        ]
+      });
+
+      try {
+        final response = await http.post(url, headers: headers, body: payload);
+        if (response.statusCode == 200) {
           Fluttertoast.showToast(
-            msg: 'Please set reference',
+            msg: 'Customer Data Save Successfully',
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 18.0,
           );
-        }
-      } else {
-        final payload = json.encode({
-          "Table": [
-            {
-              'cust_ID': 0,
-              'cust_Number': "",
-              'cust_Name': customerNameController
-                  .text, // doctorDropdownvalue.value?.custName,
-              'cust_Address': addressController.text,
-              'cust_RefID': '',
-              'cust_RefCode': refCodeController.text,
-              'cust_RefName': refNameController.text,
-              'cust_ContractPerson': contactPersonController.text,
-              'cust_Mobile': mobileController.text,
-              'cust_BillingTypeCash': isCash.value.toString(),
-              'cust_BillingTypeCredit': isCredit.value.toString(),
-              'cust_BillingCreditLimit': _creditLimitController.text == ''
-                  ? '0'
-                  : _creditLimitController.text.trim(),
-              'cust_MultipleProjectYn': 'False',
-              'cust_SingleProjectYn': 'True',
-              'cust_TypeCode': args.cpCode,
-              'cust_TypeName': args.cpName,
-              'cust_CategoryCode': categoryCodeController
-                  .text, // customerTypeDropdown.value.first.cpCode.toString(),
-              'cust_CategoryName': categoryNameController
-                  .text, // customerTypeDropdown.value.first.cpName.toString(),
-              'tery_Code': territoryCodeController.text,
-              'tery_Name': territoryNameController.text,
-              'tery_DepotCode': territoryData.value?.teryDepotCode,
-              'cust_ReferenceYesNo':
-                  customerTypeDropdownvalue.value!.cpReferenceYes != ''
-                      ? 'Yes'
-                      : 'No',
-              'pb_RulesNo': rulesNoController.text,
-              'cust_CUID': provider.user_id,
-              'cust_MUID': provider.user_id,
-              'cust_ComID': user?.comID,
-              'cust_ComCode': user?.comCode,
-              'cust_ComName': user?.comName,
-            }
-          ]
-        });
-
-        print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-        print(payload);
-        print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-
-        try {
-          final response =
-              await http.post(url, headers: headers, body: payload);
-          if (response.statusCode == 200) {
-            Fluttertoast.showToast(
-              msg: 'Customer Data Save Successfully',
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
-              fontSize: 18.0,
-            );
-            Navigator.pop(context);
-          } else {}
-        } catch (e) {}
+          Navigator.pop(context);
+        } else {}
+      } catch (e) {
+        print('ggggggggggggggggggggggggggggggggg');
+        print(e);
       }
     }
 
@@ -709,46 +606,46 @@ class DoctorInformationSettings extends HookWidget {
                       isEnable: false,
                       visibility: true,
                     ),
-                     CustomTextFormField(
+                    CustomTextFormField(
                       controller: customerNameController,
                       hint: "Doctor Name",
                       title: "Doctor Name",
                     ),
-                     CustomTextFormField(
+                    CustomTextFormField(
                       controller: educationController,
                       hint: "Education",
                       title: "Education",
                     ),
-                      CustomTextFormFieldWithFormatter(
+                    CustomTextFormFieldWithFormatter(
                       controller: mobileController,
                       hint: 'Mobile',
                       title: "Mobile *",
                       keyboardType: TextInputType.phone,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
-                     CustomTextFormFieldAreaSetting(
+                    CustomTextFormFieldAreaSetting(
                       controller: jobPlaceController,
                       hint: "Job Place",
                       title: "JOb Place",
-                      isEnable: false,
+                      isEnable: true,
                     ),
-                     CustomTextFormFieldAreaSetting(
+                    CustomTextFormFieldAreaSetting(
                       controller: designationController,
                       hint: "Designation",
                       title: "Designation",
-                      isEnable: false,
+                      isEnable: true,
                     ),
                     CustomTextFormFieldAreaSetting(
                       controller: chamber1Controller,
                       hint: "Chamber 1",
                       title: "Chamber 1",
-                      isEnable: false,
+                      isEnable: true,
                     ),
                     CustomTextFormFieldAreaSetting(
                       controller: chamber2Controller,
                       hint: "Chamber 2",
                       title: "Chamber 2",
-                      isEnable: false,
+                      isEnable: true,
                     ),
                     // CustomTextFormFieldAreaSetting(
                     //   controller: typeNameController,
@@ -763,8 +660,6 @@ class DoctorInformationSettings extends HookWidget {
                     //   isEnable: false,
                     // ),
 
-
-
                     TextFeildWithSearchBtn(
                       controller: categoryCodeController,
                       hint: 'Category Code',
@@ -778,7 +673,6 @@ class DoctorInformationSettings extends HookWidget {
                       hint: 'Category Name',
                       title: "Category Name",
                     ),
-
 
                     // Row(
 
