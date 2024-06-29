@@ -38,6 +38,7 @@ class CustomerListScreen extends HookWidget {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments
         as CustomerSettingScreenArgs?;
+
     if (args == null) {
       return Scaffold(
         appBar: AppBar(
@@ -53,10 +54,19 @@ class CustomerListScreen extends HookWidget {
     UserPreferences? userPreferences =
         context.watch<AuthProvider>().userPreferences;
 
+    final title = useState<String>('');
+
+    if (args.cpName.toLowerCase().contains('doctor')) {
+      title.value = "Doctor List";
+    }
+    else{
+      title.value = "Custofmer List";
+    }
+
     if (userPreferences == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Customer List'),
+          title: Text(title.value),
           backgroundColor: Colors.greenAccent[400],
         ),
         body: Center(
@@ -106,7 +116,7 @@ class CustomerListScreen extends HookWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Customer List',
+          title.value,
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,

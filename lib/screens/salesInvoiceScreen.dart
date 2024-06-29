@@ -1,3 +1,4 @@
+import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -190,6 +191,8 @@ class SalesInvoiceScreen extends HookWidget {
               Navigator.pushNamed(
                 context,
                 '/slsinvapprvl',
+                arguments: new CustomerSettingScreenArgs(
+                    invoice.invoiceNo, '', ''),
               );
             },
             child: Text(invoice.invoiceNo),

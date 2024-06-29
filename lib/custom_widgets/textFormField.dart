@@ -53,7 +53,7 @@ class CustomTextFormFieldWithFormatter extends StatelessWidget {
                   TextSelection previousSelection = controller.selection;
                   controller.text = text;
                   controller.selection = previousSelection;
-                  print(text);
+                 
                 },
                 decoration: InputDecoration(
                   hintText: hint,

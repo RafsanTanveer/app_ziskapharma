@@ -1,12 +1,21 @@
+import 'dart:convert';
+
 import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
+import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
+import 'package:app_ziskapharma/model/InvoiceModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import '../dataaccess/apiAccess.dart' as apiAccess;
+import 'package:http/http.dart' as http;
 
 class SalesInvoiceViewScreen extends HookWidget {
   const SalesInvoiceViewScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final CustomerSettingScreenArgs args =
+        ModalRoute.of(context)!.settings.arguments as CustomerSettingScreenArgs;
+
     final invoiceNoController = useTextEditingController();
     final customerNameController = useTextEditingController();
     final prdAmountController = useTextEditingController();
@@ -16,10 +25,53 @@ class SalesInvoiceViewScreen extends HookWidget {
     final specialDiscountController = useTextEditingController();
     final billAmountController = useTextEditingController();
 
+    final invoiceInfo = useState<InvoiceModel?>(null);
+
+    fetchInvoiceData(String vInvoiceNumber) async {
+      try {
+        final url = Uri.parse(
+            '${apiAccess.apiBaseUrl}/SalesMobile/Proc_SalesInvoiceViewByApi?vInvoiceNumber=${vInvoiceNumber}');
+        final response = await http.get(url);
+
+        if (response.statusCode == 200) {
+          print(response.body);
+
+          final jsonResponse = json.decode(response.body);
+          final List<dynamic> table = jsonResponse['Table'];
+          final Map<String, dynamic> data = table.first;
+          invoiceInfo.value = InvoiceModel.fromJson(data);
+
+          invoiceNoController.text = invoiceInfo!.value!.storeMainInvoiceNo;
+          customerNameController.text =
+              invoiceInfo!.value!.storeMainCustomerName;
+          prdAmountController.text =
+              invoiceInfo!.value!.storeMainTotalPrdAmount.toString();
+          discountController.text =
+              invoiceInfo!.value!.storeMainTotalDiscountAmount.toString();
+          amountController.text =
+              invoiceInfo!.value!.storeMainTotalPrdAmountAfterDiscount.toString();
+          vatController.text =
+              invoiceInfo!.value!.storeMainTotalVatAmount.toString();
+          specialDiscountController.text = invoiceInfo!
+              .value!.storeMainTotalSpecialDiscountAmount
+              .toString();
+          billAmountController.text =
+              invoiceInfo!.value!.storeMainTotalBillAmount.toString();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } catch (e) {}
+    }
+
+    useEffect(() {
+     
+      fetchInvoiceData(args.cpCode);
+    }, []);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'User Info Edit',
+          'Invoice Approval',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,
