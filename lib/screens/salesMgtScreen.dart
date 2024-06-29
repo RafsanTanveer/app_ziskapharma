@@ -192,8 +192,15 @@ class Salesmgtscreen extends StatelessWidget {
                 width: MediaQuery.of(context).size.width * .4,
                 margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
-                  onPressed: () => {},
-                  child: Text("SALES ORDER ONCO LIST",
+                  onPressed: () => {  Navigator.pushNamed(
+                  context,
+                  '/doctorsettings',
+                  arguments: new CustomerSettingScreenArgs(
+                      '03',
+                      'doctor',
+                      ''),
+                )},
+                  child: Text("DOCTOR SETTING",
                       style: TextStyle(
                           fontSize: MediaQuery.of(context).size.height * .022),
                       textAlign: TextAlign.center,

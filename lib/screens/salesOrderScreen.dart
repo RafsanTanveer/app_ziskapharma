@@ -226,7 +226,7 @@ class SalesOrderScreen extends HookWidget {
         refCodeController.text = refValue.value!.custRefCode;
 
         addressController.text =
-            refValue.value!.custAddress + ' ' + refValue.value!.contactPerson;
+            refValue.value!.contactPerson + ',' + refValue.value!.custAddress;
         mobileController.text = refValue.value!.custMobile;
       } else {
         throw Exception('Failed to load data');
@@ -655,7 +655,9 @@ class SalesOrderScreen extends HookWidget {
           "StoreMain_MUID": userPreferences?.userUID ?? '',
           "StoreMain_ComID": user?.comID ?? '',
           "StoreMain_ComCode": user?.comCode ?? '',
-          "StoreMain_ComName": user?.comName ?? ''
+          "StoreMain_ComName": user?.comName ?? '',
+          "StoreMain_CustomerAdd": addressController.text.trim(),
+          "StoreMain_MobileNo": mobileController.text.trim()
         };
 
         bool flag = true;
@@ -1024,10 +1026,10 @@ class SalesOrderScreen extends HookWidget {
                           columnSpacing: 30.0,
                           columns: [
                             DataColumn(label: Text('SL')),
+                            DataColumn(label: Text('Quantity')),
                             DataColumn(label: Text('Code')),
                             DataColumn(label: Text('Name')),
                             DataColumn(label: Text('Pack Size')),
-                            DataColumn(label: Text('Quantity')),
                             DataColumn(label: Text('Actions')),
                           ],
                           rows: products.value
@@ -1037,6 +1039,17 @@ class SalesOrderScreen extends HookWidget {
                                 (entry) => (DataRow(
                                   cells: [
                                     DataCell(Text((entry.key + 1).toString())),
+                                    DataCell(TextField(
+                                      decoration: InputDecoration(
+                                        hintText: '0',
+                                      ),
+                                      controller: useTextEditingController(
+                                          text: entry.value['Quantity']!),
+                                      keyboardType: TextInputType.number,
+                                      onChanged: (value) {
+                                        entry.value['Quantity'] = value;
+                                      },
+                                    )),
                                     DataCell(Text(entry.value['Code']!)),
                                     DataCell(Container(
                                       constraints: BoxConstraints(
@@ -1064,17 +1077,6 @@ class SalesOrderScreen extends HookWidget {
                                       ),
                                     )),
                                     DataCell(Text(entry.value['PackSize']!)),
-                                    DataCell(TextField(
-                                      decoration: InputDecoration(
-                                        hintText: '0',
-                                      ),
-                                      controller: useTextEditingController(
-                                          text: entry.value['Quantity']!),
-                                      keyboardType: TextInputType.number,
-                                      onChanged: (value) {
-                                        entry.value['Quantity'] = value;
-                                      },
-                                    )),
                                     DataCell(
                                       Row(
                                         children: [
