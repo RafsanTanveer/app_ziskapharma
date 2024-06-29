@@ -162,7 +162,10 @@ class _CustomerGroupListSalesOrderScreenState
   }
 
   List<DataRow> _createRows(List<CustomerCategory> categories) {
-    return categories.map((category) {
+    var filtered = categories
+        .where((category) => !category.cpName.toLowerCase().contains("doctor"))
+        .toList();
+    return filtered.map((category) {
       return DataRow(cells: [
         DataCell(Text(category.cpCode)),
         DataCell(Text(category.cpName)),

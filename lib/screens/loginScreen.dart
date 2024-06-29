@@ -5,6 +5,7 @@ import 'package:app_ziskapharma/model/UserPreferences.dart';
 import 'package:app_ziskapharma/model/sample.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import '../dataaccess/apiAccess.dart' as apiAccess;
@@ -18,6 +19,15 @@ class Loginscreen extends StatefulWidget {
 class _LoginscreenState extends State<Loginscreen> {
   final userTxtCntrl = TextEditingController();
   final passTxtCntrl = TextEditingController();
+
+
+  bool _isPasswordVisible = false;
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
+  }
 
   void setData(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -41,37 +51,36 @@ class _LoginscreenState extends State<Loginscreen> {
 
     UserModel user = UserModel.fromJson(table);
     UserPreferences userPreferences = UserPreferences.fromJson(table1);
-    print("00000000000000000000000000");
     print(userPreferences.userBrnID);
-    print("00000000000000000000000000");
     // Update the provider
     context.read<AuthProvider>().setUser(user);
     context.read<AuthProvider>().setUserPreferences(userPreferences);
+
+
     //provider.user_id
   }
 
   void isLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(
-        'ggggggggggggggggggg&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
+
+    var flag = prefs.getBool('isLoggedIn');
+    var flag2 = prefs.getBool('isLoggedIn');
     print(prefs.getBool('isLoggedIn'));
 
-    print(
-        'ggggggggggggggggggg&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
     if (await prefs.getBool('isLoggedIn') ?? false) {
       //////////////////////////////////////////////////////////////
 
       setData(context);
 
       //////////////////////////////////////////////////////////////
+
+       await Future.delayed(Duration(milliseconds: 1000), () {});
       Navigator.pushReplacementNamed(context, '/mainmgt');
     }
   }
 
   void initState() {
     super.initState();
-    print(
-        '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
     isLoggedIn();
   }
 
@@ -222,20 +231,53 @@ class _LoginscreenState extends State<Loginscreen> {
             fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
             filled: true,
             prefixIcon: Icon(Icons.lock),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              ),
+              onPressed: _togglePasswordVisibility,
+            ),
           ),
-          obscureText: true,
+          obscureText: _isPasswordVisible,
         ),
         SizedBox(height: 10),
-        ElevatedButton(
-          onPressed: () => _loginPressed(context),
-          child: Text(
-            "SIGN IN",
-            style: TextStyle(fontSize: 20),
-          ),
-          style: ElevatedButton.styleFrom(
-            shape: StadiumBorder(),
-            padding: EdgeInsets.symmetric(vertical: 16),
-          ),
+        Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: () => _loginPressed(context),
+                  child: Text(
+                    "SIGN IN",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    shape: StadiumBorder(),
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                  ),
+                ),
+              ),
+            ),
+             Expanded(
+               flex: 1,
+               child: Padding(
+                 padding: const EdgeInsets.all(8.0),
+                 child: ElevatedButton(
+                  onPressed: () => SystemNavigator.pop(),
+                  child: Text(
+                    "Exit",
+                    style: TextStyle(fontSize: 20, color: Colors.red),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    shape: StadiumBorder(),
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                  ),
+                             ),
+               ),
+             ),
+          ],
         )
       ],
     );

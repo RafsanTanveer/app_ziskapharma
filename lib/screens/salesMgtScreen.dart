@@ -1,4 +1,11 @@
+import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
+import 'package:app_ziskapharma/model/UserPreferences.dart';
+import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Salesmgtscreen extends StatelessWidget {
   void _loginPressed(BuildContext context) {
@@ -8,6 +15,11 @@ class Salesmgtscreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
+    UserPreferences? userPreferences =
+        context.watch<AuthProvider>().userPreferences;
+
     return Scaffold(
       // drawer: Drawer(),
       appBar: AppBar(
@@ -28,7 +40,7 @@ class Salesmgtscreen extends StatelessWidget {
               _header(context),
               // _inputField(context),
               _forgotPassword(context),
-              _signup(context),
+              _signup(context, userPreferences),
             ],
           ),
         ),
@@ -210,9 +222,37 @@ class Salesmgtscreen extends StatelessWidget {
                 margin: const EdgeInsets.all(5),
                 child: ElevatedButton(
                   onPressed: () =>
-                      {Navigator.pushNamed(context, '/slsinvapprvl')},
+                      {Navigator.pushNamed(context, '/slsinvview')},
                   child: Text(
                     "INVOICE APPROVAL",
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height * .022),
+                    textAlign: TextAlign.center,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 3,
+                    maximumSize: Size(150, 150),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  ),
+                ),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height * .12,
+                width: MediaQuery.of(context).size.width * .4,
+                margin: const EdgeInsets.all(5),
+                child: ElevatedButton(
+                  onPressed: () =>
+                      {Navigator.pushNamed(
+                context,
+                '/customerlist',
+                arguments: CustomerSettingScreenArgs(
+                    '03', 'doctor', ''),
+              )},
+                  child: Text(
+                    "DOCTORS LIST",
                     style: TextStyle(
                         fontSize: MediaQuery.of(context).size.height * .022),
                     textAlign: TextAlign.center,
@@ -251,17 +291,20 @@ class Salesmgtscreen extends StatelessWidget {
     );
   }
 
-  _signup(context) {
+  _signup(context, UserPreferences? user) {
+    final provider = Provider.of<AuthProvider>(context, listen: false);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Md. Ali Hossain",
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+             user!.userFullName ?? "",
+          style: TextStyle(fontSize: MediaQuery.of(context).size.width * .040, fontWeight: FontWeight.w500),
         ),
         Text(
-          "Territory : OBDHK13-DHAKA MEDICAL",
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          "Territory:" + user.teryCode! ?? "",
+          style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width * .030,
+              fontWeight: FontWeight.w500),
         ),
       ],
     );

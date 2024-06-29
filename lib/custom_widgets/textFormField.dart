@@ -74,12 +74,15 @@ class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final String title;
+  final bool obscureText;
 
-  const CustomTextFormField(
-      {super.key,
-      required this.controller,
-      required this.hint,
-      required this.title});
+  const CustomTextFormField({
+    super.key,
+    required this.controller,
+    required this.hint,
+    required this.title,
+    this.obscureText = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +113,7 @@ class CustomTextFormField extends StatelessWidget {
                 style: TextStyle(
                     fontSize: MediaQuery.of(context).size.height * .02),
                 readOnly: title == 'User Id' ? true : false,
+                obscureText: this.obscureText,
                 controller: controller,
                 onChanged: (text) {
                   TextSelection previousSelection = controller.selection;
@@ -243,65 +247,70 @@ class TextFeildWithSearchBtn extends StatelessWidget {
       required this.hint,
       required this.title,
       required this.onPressed,
-      required this.isEnable, this.visibility=true});
+      required this.isEnable,
+      this.visibility = true});
 
   @override
   Widget build(BuildContext context) {
-    return visibility ? Container(
-      margin: EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Container(
-              margin: EdgeInsets.only(right: 10),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  title,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: MediaQuery.of(context).size.height * .017),
+    return visibility
+        ? Container(
+            margin: EdgeInsets.only(bottom: 10),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    margin: EdgeInsets.only(right: 10),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize:
+                                MediaQuery.of(context).size.height * .017),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Container(
-              height: MediaQuery.of(context).size.height * .05,
-              child: TextFormField(
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height * .017),
-                readOnly: !isEnable,
-                controller: controller,
-                onChanged: (text) {
-                  TextSelection previousSelection = controller.selection;
-                  controller.text = text;
-                  controller.selection = previousSelection;
-                },
-                decoration: InputDecoration(
-                    hintText: hint,
-                    enabledBorder: const UnderlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
-              ),
-            ),
-          ),
-          Expanded(
-              flex: 1,
-              child: Container(
-                padding: EdgeInsets.only(right: 1, left: 5),
-                child: Material(
-                  elevation: 5,
-                  shape: const CircleBorder(),
-                  child: IconButton(
-                      onPressed: () => onPressed(),
-                      icon: const Icon(Icons.search)),
+                Expanded(
+                  flex: 5,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * .05,
+                    child: TextFormField(
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.height * .017),
+                      readOnly: !isEnable,
+                      controller: controller,
+                      onChanged: (text) {
+                        TextSelection previousSelection = controller.selection;
+                        controller.text = text;
+                        controller.selection = previousSelection;
+                      },
+                      decoration: InputDecoration(
+                          hintText: hint,
+                          enabledBorder: const UnderlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)))),
+                    ),
+                  ),
                 ),
-              ))
-        ],
-      ),
-    ): SizedBox.shrink();
+                Expanded(
+                    flex: 1,
+                    child: Container(
+                      padding: EdgeInsets.only(right: 1, left: 5),
+                      child: Material(
+                        elevation: 5,
+                        shape: const CircleBorder(),
+                        child: IconButton(
+                            onPressed: () => onPressed(),
+                            icon: const Icon(Icons.search)),
+                      ),
+                    ))
+              ],
+            ),
+          )
+        : SizedBox.shrink();
     ;
   }
 }
@@ -332,140 +341,13 @@ class CustomTextFormfieldTwoColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
-     return visibility ?
-      Container(
-      margin: EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              margin: EdgeInsets.only(right: 10),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  title1,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: MediaQuery.of(context).size.height * .017),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Container(
-              margin: EdgeInsets.only(right: 5),
-              height: MediaQuery.of(context).size.height * .05,
-              child: TextFormField(
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height * .017),
-                readOnly: title1 == 'User Id' ? true : false,
-                controller: controller1,
-                keyboardType: keyboardType,
-                inputFormatters: inputFormatters,
-                onChanged: (text) {
-                  TextSelection previousSelection = controller1.selection;
-                  controller1.text = text;
-                  controller1.selection = previousSelection;
-                  print(text);
-                },
-                decoration: InputDecoration(
-                  hintText: hint1,
-                  enabledBorder: const UnderlineInputBorder(
-                      // borderRadius: BorderRadius.all(Radius.circular(5)),
-                      ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              margin: EdgeInsets.only(right: 10),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  title2,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: MediaQuery.of(context).size.height * .017),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Container(
-              height: MediaQuery.of(context).size.height * .05,
-              child: TextFormField(
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height * .017),
-                readOnly: title2 == 'User Id' ? true : false,
-                controller: controller2,
-                keyboardType: keyboardType,
-                inputFormatters: inputFormatters,
-                onChanged: (text) {
-                  TextSelection previousSelection = controller2.selection;
-                  controller2.text = text;
-                  controller2.selection = previousSelection;
-                  print(text);
-                },
-                decoration: InputDecoration(
-                  hintText: hint2,
-                  enabledBorder: const UnderlineInputBorder(
-                      // borderRadius: BorderRadius.all(Radius.circular(5)),
-                      ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    )
-        : SizedBox.shrink();
-    ;
-  }
-}
-
-
-class CustomTextFormfieldTwoColumnWithSearchBtn extends StatelessWidget {
-  final TextEditingController controller1;
-  final TextEditingController controller2;
-  final String hint1;
-  final String hint2;
-  final String title1;
-  final String title2;
-  final TextInputType? keyboardType;
-  final bool visibility;
-  final List<TextInputFormatter>? inputFormatters;
-  final VoidCallback onPressed;
-
-  const CustomTextFormfieldTwoColumnWithSearchBtn({
-    super.key,
-    required this.controller1,
-    required this.hint1,
-    required this.title1,
-    required this.controller2,
-    required this.hint2,
-    required this.title2,
-    this.keyboardType,
-    this.visibility = true,
-    this.inputFormatters,
-     required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
     return visibility
         ? Container(
             margin: EdgeInsets.only(bottom: 10),
             child: Row(
               children: [
                 Expanded(
-                  flex: 2,
+                  flex: 1,
                   child: Container(
                     margin: EdgeInsets.only(right: 10),
                     child: Align(
@@ -481,7 +363,7 @@ class CustomTextFormfieldTwoColumnWithSearchBtn extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Container(
                     margin: EdgeInsets.only(right: 5),
                     height: MediaQuery.of(context).size.height * .05,
@@ -507,9 +389,24 @@ class CustomTextFormfieldTwoColumnWithSearchBtn extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 Expanded(
-                  flex: 3,
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(right: 10),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        title2,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize:
+                                MediaQuery.of(context).size.height * .017),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
                   child: Container(
                     height: MediaQuery.of(context).size.height * .05,
                     child: TextFormField(
@@ -534,7 +431,120 @@ class CustomTextFormfieldTwoColumnWithSearchBtn extends StatelessWidget {
                     ),
                   ),
                 ),
-                 Expanded(
+              ],
+            ),
+          )
+        : SizedBox.shrink();
+    ;
+  }
+}
+
+class CustomTextFormfieldTwoColumnWithSearchBtn extends StatelessWidget {
+  final TextEditingController controller1;
+  final TextEditingController controller2;
+  final String hint1;
+  final String hint2;
+  final String title1;
+  final String title2;
+  final TextInputType? keyboardType;
+  final bool visibility;
+  final List<TextInputFormatter>? inputFormatters;
+  final VoidCallback onPressed;
+  final IsEnable;
+  final ShowButton;
+
+  const CustomTextFormfieldTwoColumnWithSearchBtn(
+      {super.key,
+      required this.controller1,
+      required this.hint1,
+      required this.title1,
+      required this.controller2,
+      required this.hint2,
+      required this.title2,
+      this.keyboardType,
+      this.visibility = true,
+      this.inputFormatters,
+      required this.onPressed,
+      this.IsEnable = true,
+      this.ShowButton = true});
+
+  @override
+  Widget build(BuildContext context) {
+    if (visibility) {
+      return Container(
+        margin: EdgeInsets.only(bottom: 10),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Container(
+                margin: EdgeInsets.only(right: 10),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    title1,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: MediaQuery.of(context).size.height * .017),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Container(
+                margin: EdgeInsets.only(right: 5),
+                height: MediaQuery.of(context).size.height * .05,
+                child: TextFormField(
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.height * .017),
+                  readOnly: IsEnable,
+                  controller: controller1,
+                  keyboardType: keyboardType,
+                  inputFormatters: inputFormatters,
+                  onChanged: (text) {
+                    TextSelection previousSelection = controller1.selection;
+                    controller1.text = text;
+                    controller1.selection = previousSelection;
+                    print(text);
+                  },
+                  decoration: InputDecoration(
+                    hintText: hint1,
+                    enabledBorder: const UnderlineInputBorder(
+                        // borderRadius: BorderRadius.all(Radius.circular(5)),
+                        ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Container(
+                height: MediaQuery.of(context).size.height * .05,
+                child: TextFormField(
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.height * .017),
+                  readOnly: IsEnable,
+                  controller: controller2,
+                  keyboardType: keyboardType,
+                  inputFormatters: inputFormatters,
+                  onChanged: (text) {
+                    TextSelection previousSelection = controller2.selection;
+                    controller2.text = text;
+                    controller2.selection = previousSelection;
+                    print(text);
+                  },
+                  decoration: InputDecoration(
+                    hintText: hint2,
+                    enabledBorder: const UnderlineInputBorder(
+                        // borderRadius: BorderRadius.all(Radius.circular(5)),
+                        ),
+                  ),
+                ),
+              ),
+            ),
+            ShowButton
+                ? Expanded(
                     flex: 1,
                     child: Container(
                       padding: EdgeInsets.only(right: 1, left: 5),
@@ -546,10 +556,13 @@ class CustomTextFormfieldTwoColumnWithSearchBtn extends StatelessWidget {
                             icon: const Icon(Icons.search)),
                       ),
                     ))
-              ],
-            ),
-          )
-        : SizedBox.shrink();
+                : SizedBox.shrink()
+          ],
+        ),
+      );
+    } else {
+      return SizedBox.shrink();
+    }
     ;
   }
 }

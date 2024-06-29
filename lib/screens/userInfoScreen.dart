@@ -385,6 +385,7 @@ class Userinfoscreen extends HookWidget {
                           controller: passwordController,
                           hint: userData.value!.userPws ?? "",
                           title: "Password",
+                          obscureText: true,
                         ),
                         CustomTextFormField(
                           controller: fullNameController,

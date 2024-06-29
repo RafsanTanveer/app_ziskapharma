@@ -78,10 +78,8 @@ class CustomerSettingScreen extends HookWidget {
     TextEditingController addressController = useTextEditingController();
     TextEditingController mobileController = useTextEditingController();
     TextEditingController contactPersonController = useTextEditingController();
-    TextEditingController categoryCodeController =
-        useTextEditingController(text: args.cpCode);
-    TextEditingController categoryNameController =
-        useTextEditingController(text: args.cpName);
+    TextEditingController categoryCodeController = useTextEditingController();
+    TextEditingController categoryNameController = useTextEditingController();
     TextEditingController refCodeController = useTextEditingController();
     TextEditingController refNameController = useTextEditingController();
     TextEditingController rulesNoController = useTextEditingController();
@@ -207,8 +205,8 @@ class CustomerSettingScreen extends HookWidget {
                   doctorDropdown.value.where((item) {
                 final query = searchControllerRef.text.toLowerCase();
                 return item.custName.toLowerCase().contains(query) ||
-                    item.custNumber .toLowerCase().contains(query) ||
-                    item.custAddress .toLowerCase().contains(query);
+                    item.custNumber.toLowerCase().contains(query) ||
+                    item.custAddress.toLowerCase().contains(query);
               }).toList();
 
               return Container(
@@ -479,7 +477,6 @@ class CustomerSettingScreen extends HookWidget {
           '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SaveCustomerSettingsByApi');
 
       final headers = {"Content-Type": "application/json"};
-      print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
       if (args.cpName.toLowerCase() != "doctor") {
         if (refCodeController.text != '') {
           if (isCredit.value == "true" &&
@@ -495,7 +492,6 @@ class CustomerSettingScreen extends HookWidget {
               fontSize: 18.0,
             );
           } else {
-            print('in not doctoroooooooooooooooooooooooooooooooooo');
             final payload = json.encode({
               "Table": [
                 {
@@ -537,9 +533,6 @@ class CustomerSettingScreen extends HookWidget {
                 }
               ]
             });
-            print("ooooooooooooooooooooooooooooooooooooooooooooooooooo");
-            print(payload);
-            print("ooooooooooooooooooooooooooooooooooooooooooooooooooo");
             try {
               final response =
                   await http.post(url, headers: headers, body: payload);
@@ -555,10 +548,7 @@ class CustomerSettingScreen extends HookWidget {
                 );
                 Navigator.pop(context);
               } else {}
-            } catch (e) {
-              print('ggggggggggggggggggggggggggggggggg');
-              print(e);
-            }
+            } catch (e) {}
           }
         } else {
           Fluttertoast.showToast(
@@ -614,10 +604,6 @@ class CustomerSettingScreen extends HookWidget {
             }
           ]
         });
-
-        print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-        print(payload);
-        print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
 
         try {
           final response =
@@ -755,10 +741,11 @@ class CustomerSettingScreen extends HookWidget {
                           _showDropdownDialogCustomerTypeInfo(context),
                       isEnable: false,
                     ),
-                    CustomTextFormField(
+                    CustomTextFormFieldAreaSetting(
                       controller: categoryNameController,
                       hint: 'Category Name',
                       title: "Category Name",
+                      isEnable: false,
                     ),
                     TextFeildWithSearchBtn(
                       controller: refCodeController,

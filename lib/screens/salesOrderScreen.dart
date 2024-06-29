@@ -70,6 +70,8 @@ class SalesOrderScreen extends HookWidget {
     final addressController = useTextEditingController();
     final mobileController = useTextEditingController();
 
+    final quantityTextController = useTextEditingController();
+
     final slNo = useState<int>(0);
 
     final productFields = [
@@ -223,10 +225,9 @@ class SalesOrderScreen extends HookWidget {
         refNameController.text = refValue.value!.custRef;
         refCodeController.text = refValue.value!.custRefCode;
 
-        addressController.text = refValue.value!.custAddress+' '+ refValue.value!.contactPerson;
+        addressController.text =
+            refValue.value!.custAddress + ' ' + refValue.value!.contactPerson;
         mobileController.text = refValue.value!.custMobile;
-
-
       } else {
         throw Exception('Failed to load data');
       }
@@ -564,7 +565,7 @@ class SalesOrderScreen extends HookWidget {
           'Code': productValue.value!.finPrdCode,
           'Name': productValue.value!.finPrdName,
           'PackSize': productValue.value!.finPrdPackSize,
-          'Quantity': productValue.value!.orderQnty.toString(),
+          'Quantity': '' //productValue.value!.orderQnty.toString(),
         };
 
         // Check if the product with the same code already exists
@@ -663,7 +664,7 @@ class SalesOrderScreen extends HookWidget {
           // Ensure the quantity is at least 1
 
           String quantity = entry.value['Quantity']!;
-          if ((double.tryParse(quantity)! ) < 1) {
+          if ((double.tryParse(quantity)!) < 1) {
             // quantity = '1';
             Fluttertoast.showToast(
               msg:
@@ -911,6 +912,7 @@ class SalesOrderScreen extends HookWidget {
                 title1: "Customer",
                 title2: '',
                 onPressed: () => {_showDropdownDialogCustomerTypeInfo(context)},
+                ShowButton: false,
               ),
               TextFeildWithSearchBtn(
                 controller: customerCodeController,
@@ -937,7 +939,7 @@ class SalesOrderScreen extends HookWidget {
                 controller: mobileController,
                 hint: "Mobile",
                 title: "Mobile",
-               keyboardType: TextInputType.number,
+                keyboardType: TextInputType.number,
               ),
               CustomTextFormfieldTwoColumnWithSearchBtn(
                 controller1: deliveryDepotCodeController,
@@ -946,7 +948,7 @@ class SalesOrderScreen extends HookWidget {
                 hint2: "Delivery Depot Name",
                 title1: "Delivery Depot",
                 title2: '',
-                onPressed: () => {_showDropdownDialogDoctorsTypeInfo(context)},
+                onPressed: () => {_showDepoDropdownDialog(context)},
               ),
               // TextFeildWithSearchBtn(
               //   controller: deliveryDepotCodeController,
@@ -1032,23 +1034,40 @@ class SalesOrderScreen extends HookWidget {
                               .asMap()
                               .entries
                               .map(
-                                (entry) => DataRow(
+                                (entry) => (DataRow(
                                   cells: [
                                     DataCell(Text((entry.key + 1).toString())),
                                     DataCell(Text(entry.value['Code']!)),
                                     DataCell(Container(
                                       constraints: BoxConstraints(
-                                        minWidth: 200.0,
-                                        maxWidth: 200.0,
+                                        maxHeight:
+                                            MediaQuery.of(context).size.width *
+                                                .35,
+                                        minHeight:
+                                            MediaQuery.of(context).size.width *
+                                                .35,
+                                        minWidth:
+                                            MediaQuery.of(context).size.width *
+                                                .30,
+                                        maxWidth:
+                                            MediaQuery.of(context).size.width *
+                                                .35,
                                       ),
                                       child: Text(
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .030),
                                         entry.value['Name']!,
-                                        softWrap: true, // Enable text wrapping
-                                        // overflow: TextOverflow.visible, // Handle overflow
+                                        // softWrap: true,
                                       ),
                                     )),
                                     DataCell(Text(entry.value['PackSize']!)),
                                     DataCell(TextField(
+                                      decoration: InputDecoration(
+                                        hintText: '0',
+                                      ),
                                       controller: useTextEditingController(
                                           text: entry.value['Quantity']!),
                                       keyboardType: TextInputType.number,
@@ -1068,7 +1087,7 @@ class SalesOrderScreen extends HookWidget {
                                       ),
                                     ),
                                   ],
-                                ),
+                                )),
                               )
                               .toList(),
                         ),

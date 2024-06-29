@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:app_ziskapharma/model/UserPreferences.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,9 +19,7 @@ class Mainmgtscreen extends StatelessWidget {
 
   void signOut(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     await prefs.setBool('isLoggedIn', false);
-
     Navigator.pushReplacementNamed(context, '/loging');
   }
 
@@ -40,7 +39,6 @@ class Mainmgtscreen extends StatelessWidget {
       String base64Image = base64Encode(bytes);
 
       print(base64Image);
-
       print(imageTemporary);
     } on PlatformException catch (e) {
       print('Failed to pick image: $e');
@@ -50,6 +48,10 @@ class Mainmgtscreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
+
+
+    UserPreferences? userPreferences =
+        context.watch<AuthProvider>().userPreferences;
 
     return Scaffold(
       drawer: Drawer(),
@@ -78,14 +80,19 @@ class Mainmgtscreen extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: Container(
-          margin: EdgeInsets.all(14),
-          child: Column(
-            children: [
-              _header(context),
-              _forgotPassword(context),
-              _signup(context),
-            ],
+        child: SingleChildScrollView(
+          // Use SingleChildScrollView
+          child: Container(
+            margin: EdgeInsets.all(14),
+            child: Column(
+              children: [
+                _header(context),
+                SizedBox(height: 20), // Add spacing between sections
+                _forgotPassword(context),
+                SizedBox(height: 20), // Add spacing between sections
+                _signup(context, userPreferences),
+              ],
+            ),
           ),
         ),
       ),
@@ -117,7 +124,7 @@ class Mainmgtscreen extends StatelessWidget {
                     elevation: 3,
                     maximumSize: Size(150, 150),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   ),
@@ -128,7 +135,7 @@ class Mainmgtscreen extends StatelessWidget {
                 width: width * .35,
                 margin: const EdgeInsets.all(10),
                 child: ElevatedButton(
-                  onPressed: () => {_pickImage()},
+                   onPressed: () => {},
                   child: Text(
                     "PRODUCTION",
                     style: TextStyle(fontSize: height * .022),
@@ -138,7 +145,7 @@ class Mainmgtscreen extends StatelessWidget {
                     elevation: 3,
                     maximumSize: Size(150, 150),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   ),
@@ -167,7 +174,7 @@ class Mainmgtscreen extends StatelessWidget {
                     elevation: 3,
                     maximumSize: Size(150, 150),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   ),
@@ -187,7 +194,7 @@ class Mainmgtscreen extends StatelessWidget {
                     elevation: 3,
                     maximumSize: Size(150, 150),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   ),
@@ -217,19 +224,21 @@ class Mainmgtscreen extends StatelessWidget {
     );
   }
 
-  _signup(context) {
+  _signup(context, UserPreferences? user) {
     final provider = Provider.of<AuthProvider>(context, listen: false);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          provider.user_id,
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+          user!.userFullName ?? "",
+          style: TextStyle(fontSize: MediaQuery.of(context).size.width * .040, fontWeight: FontWeight.w500),
         ),
         Text(
-          "Territory : OBDHK13-DHAKA MEDICAL",
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+
+          "Territory:" +
+                  user!.teryCode ?? "",
+          style: TextStyle(fontSize: MediaQuery.of(context).size.width*.030, fontWeight: FontWeight.w500),
         ),
       ],
     );

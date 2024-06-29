@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../dataaccess/apiAccess.dart' as apiAccess;
@@ -11,12 +12,16 @@ Future<List<CustomerCategory>> fetchCustomerCategory() async {
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
-    Map<String, dynamic> jsonResponse = json.decode(response.body);
-
-    List<dynamic> customerCategories = jsonResponse['Table'];
-    return customerCategories
-        .map((obj) => CustomerCategory.fromJson(obj))
-        .toList();
+    try {
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      List<dynamic> customerCategories = jsonResponse['Table'];
+      return customerCategories
+          .map((obj) => CustomerCategory.fromJson(obj))
+          .toList();
+    } catch (e) {
+      print('Error parsing JSON: $e');
+      throw Exception('Failed to parse data');
+    }
   } else {
     throw Exception('Failed to load data');
   }
@@ -45,6 +50,8 @@ class _CustomerGroupListScreenState extends State<CustomerGroupListScreen> {
         _allCategories = value;
         _filteredCategories = value;
       });
+    }).catchError((e) {
+      print('Error fetching customer categories: $e');
     });
 
     _searchController.addListener(_filterCustomerCategories);
@@ -93,7 +100,7 @@ class _CustomerGroupListScreenState extends State<CustomerGroupListScreen> {
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('No data found'));
                 } else {
-                  return _buildDataTable();
+                  return _buildDataTable(snapshot.data!);
                 }
               },
             ),
@@ -143,12 +150,12 @@ class _CustomerGroupListScreenState extends State<CustomerGroupListScreen> {
     );
   }
 
-  Widget _buildDataTable() {
+  Widget _buildDataTable(List<CustomerCategory> categories) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: DataTable(
         columns: _createColumns(),
-        rows: _createRows(_filteredCategories),
+        rows: _createRows(categories),
       ),
     );
   }
@@ -162,7 +169,10 @@ class _CustomerGroupListScreenState extends State<CustomerGroupListScreen> {
   }
 
   List<DataRow> _createRows(List<CustomerCategory> categories) {
-    return categories.map((category) {
+    var filtered = categories
+        .where((category) => !category.cpName.toLowerCase().contains("doctor"))
+        .toList();
+    return filtered.map((category) {
       return DataRow(cells: [
         DataCell(Text(category.cpCode)),
         DataCell(Text(category.cpName)),
@@ -172,8 +182,8 @@ class _CustomerGroupListScreenState extends State<CustomerGroupListScreen> {
               Navigator.pushNamed(
                 context,
                 '/customerlist',
-                arguments:  new CustomerSettingScreenArgs(
-                    category.cpCode.toString(), category.cpName.toString(), ''),// category.cpCode.toString(),
+                arguments: CustomerSettingScreenArgs(
+                    category.cpCode, category.cpName, ''),
               );
             },
             child: Text(

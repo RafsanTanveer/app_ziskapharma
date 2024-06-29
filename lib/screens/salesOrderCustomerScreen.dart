@@ -131,12 +131,16 @@ class SalesOrderCustomerScreen extends HookWidget {
     );
   }
 
-  Widget _buildDataTable(List<CustomerListModel> customers, BuildContext context) {
+  Widget _buildDataTable(
+      List<CustomerListModel> customers, BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: DataTable(
-        columns: _createColumns(),
-        rows: _createRows(customers, context),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: DataTable(
+          columns: _createColumns(),
+          rows: _createRows(customers, context),
+        ),
       ),
     );
   }
@@ -149,7 +153,8 @@ class SalesOrderCustomerScreen extends HookWidget {
     ];
   }
 
-  List<DataRow> _createRows(List<CustomerListModel> customers, BuildContext context) {
+  List<DataRow> _createRows(
+      List<CustomerListModel> customers, BuildContext context) {
     return customers.map((customer) {
       return DataRow(cells: [
         DataCell(Text(customer.custNumber)),

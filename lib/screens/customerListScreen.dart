@@ -11,12 +11,12 @@ import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
 import 'package:app_ziskapharma/model/UserPreferences.dart';
 
 Future<List<dynamic>> fetchCustomerLists(String vCustomerTypeCode,
-    String user_id, String custName, String tery_depotCode) async {
+    String userId, String custName, String teryDepotCode) async {
   final url = custName.toLowerCase().contains('doctor')
       ? Uri.parse(
-          '${apiAccess.apiBaseUrl}/DoctorSettings/Proc_DoctorListByApi?SearchBy=&tery_DepotCode=${tery_depotCode}')
+          '${apiAccess.apiBaseUrl}/DoctorSettings/Proc_DoctorListByApi?SearchBy=&tery_DepotCode=${teryDepotCode}')
       : Uri.parse(
-          '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=${user_id}&vCustomerTypeCode=$vCustomerTypeCode');
+          '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=${userId}&vCustomerTypeCode=$vCustomerTypeCode');
 
   final response = await http.get(url);
 
@@ -36,14 +36,37 @@ class CustomerListScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CustomerSettingScreenArgs args =
-        ModalRoute.of(context)!.settings.arguments as CustomerSettingScreenArgs;
+    final args = ModalRoute.of(context)!.settings.arguments
+        as CustomerSettingScreenArgs?;
+    if (args == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Customer List'),
+          backgroundColor: Colors.greenAccent[400],
+        ),
+        body: Center(
+          child: Text('Error: No arguments passed to this screen'),
+        ),
+      );
+    }
 
     UserPreferences? userPreferences =
         context.watch<AuthProvider>().userPreferences;
 
+    if (userPreferences == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Customer List'),
+          backgroundColor: Colors.greenAccent[400],
+        ),
+        body: Center(
+          child: Text('Error: User preferences not found'),
+        ),
+      );
+    }
+
     final provider = Provider.of<AuthProvider>(context);
-    final user_id = provider.user_id;
+    final userId = provider.user_id ?? '';
     final customerListsFuture = useState<Future<List<dynamic>>?>(null);
     final allCustomers = useState<List<dynamic>>([]);
     final filteredCustomers = useState<List<dynamic>>([]);
@@ -51,10 +74,12 @@ class CustomerListScreen extends HookWidget {
 
     useEffect(() {
       customerListsFuture.value = fetchCustomerLists(
-          args.cpCode, user_id, args.cpName, userPreferences!.teryDepotCode);
+          args.cpCode, userId, args.cpName, userPreferences.teryDepotCode);
       customerListsFuture.value!.then((value) {
         allCustomers.value = value;
         filteredCustomers.value = value;
+      }).catchError((e) {
+        print('Error fetching customer lists: $e');
       });
 
       searchController.addListener(() {
@@ -130,7 +155,7 @@ class CustomerListScreen extends HookWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.pop(context, '/cutomergrouplist');
+            Navigator.pop(context, '/customergrouplist');
           },
           child: Text(
             'Close',
@@ -157,35 +182,35 @@ class CustomerListScreen extends HookWidget {
   Widget _buildDataTable(List<dynamic> filteredCustomers) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: DataTable(
-        columns: _createColumns(filteredCustomers),
-        rows: _createRows(filteredCustomers),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: DataTable(
+          columns: _createColumns(filteredCustomers),
+          rows: _createRows(filteredCustomers),
+        ),
       ),
     );
   }
 
   List<DataColumn> _createColumns(List<dynamic> customers) {
-    if (customers is List<CustomerListModel>) {
-       return [
+    if (customers.isNotEmpty && customers.first is DoctorListModel2) {
+      return [
         DataColumn(label: Text('Code')),
         DataColumn(label: Expanded(child: Text('Name'))),
         DataColumn(label: Expanded(child: Text('Mobile'))),
         DataColumn(label: Expanded(child: Text('Address'))),
-      ];
-     }
-      else{
-         return [
-        DataColumn(label: Text('Code')),
-        DataColumn(label: Expanded(child: Text('Name'))),
-        DataColumn(label: Expanded(child: Text('Mobile'))),
-        DataColumn(label: Expanded(child: Text('Address'))),
-        DataColumn(label: Expanded(child: Text('Terrytory'))),
+        DataColumn(label: Expanded(child: Text('Territory'))),
         DataColumn(label: Expanded(child: Text('Depot'))),
       ];
-      }
+    } else {
+      return [
+        DataColumn(label: Text('Code')),
+        DataColumn(label: Expanded(child: Text('Name'))),
+        DataColumn(label: Expanded(child: Text('Mobile'))),
+        DataColumn(label: Expanded(child: Text('Address'))),
+      ];
     }
-
-
+  }
 
   List<DataRow> _createRows(List<dynamic> customers) {
     return customers.map((customer) {

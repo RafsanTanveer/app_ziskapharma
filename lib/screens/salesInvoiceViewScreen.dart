@@ -1,19 +1,20 @@
 import 'package:app_ziskapharma/custom_widgets/textFormField.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class Salesinvoiceviewscreen extends StatelessWidget {
-  const Salesinvoiceviewscreen({super.key});
+class SalesInvoiceViewScreen extends HookWidget {
+  const SalesInvoiceViewScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController invoiceNoController = TextEditingController();
-    TextEditingController customerNameController = TextEditingController();
-    TextEditingController prdAmountController = TextEditingController();
-    TextEditingController discountController = TextEditingController();
-    TextEditingController amountController = TextEditingController();
-    TextEditingController vatController = TextEditingController();
-    TextEditingController specialDiscountController = TextEditingController();
-    TextEditingController billAmountController = TextEditingController();
+    final invoiceNoController = useTextEditingController();
+    final customerNameController = useTextEditingController();
+    final prdAmountController = useTextEditingController();
+    final discountController = useTextEditingController();
+    final amountController = useTextEditingController();
+    final vatController = useTextEditingController();
+    final specialDiscountController = useTextEditingController();
+    final billAmountController = useTextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -38,64 +39,78 @@ class Salesinvoiceviewscreen extends StatelessWidget {
               child: Column(
                 children: [
                   CustomTextFormField(
-                      controller: invoiceNoController,
-                      hint: 'Invoice No.',
-                      title: "Invoice No."),
+                    controller: invoiceNoController,
+                    hint: 'Invoice No.',
+                    title: "Invoice No.",
+                  ),
                   CustomTextFormField(
-                      controller: customerNameController,
-                      hint: 'Customer Name',
-                      title: "Customer Name"),
+                    controller: customerNameController,
+                    hint: 'Customer Name',
+                    title: "Customer Name",
+                  ),
                   CustomTextFormField(
-                      controller: prdAmountController,
-                      hint: 'Prd. Amount',
-                      title: "Prd. Amount"),
+                    controller: prdAmountController,
+                    hint: 'Prd. Amount',
+                    title: "Prd. Amount",
+                  ),
                   CustomTextFormField(
-                      controller: discountController,
-                      hint: 'Discount',
-                      title: "Discount"),
+                    controller: discountController,
+                    hint: 'Discount',
+                    title: "Discount",
+                  ),
                   CustomTextFormField(
-                      controller: amountController,
-                      hint: 'Amount',
-                      title: "Amount"),
+                    controller: amountController,
+                    hint: 'Amount',
+                    title: "Amount",
+                  ),
                   CustomTextFormField(
-                      controller: vatController, hint: 'hint', title: "VAT"),
+                    controller: vatController,
+                    hint: 'VAT',
+                    title: "VAT",
+                  ),
                   CustomTextFormField(
-                      controller: specialDiscountController,
-                      hint: 'Special Discount',
-                      title: "Special Discount"),
+                    controller: specialDiscountController,
+                    hint: 'Special Discount',
+                    title: "Special Discount",
+                  ),
                   CustomTextFormField(
-                      controller: billAmountController,
-                      hint: 'Bill Amount',
-                      title: "Bill Amount"),
+                    controller: billAmountController,
+                    hint: 'Bill Amount',
+                    title: "Bill Amount",
+                  ),
                   Row(
                     children: [
                       Container(
                         margin: EdgeInsets.only(top: 15),
                         child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              elevation: 3,
-                              maximumSize: Size(150, 150),
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(12), // <-- Radius
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 10),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            elevation: 3,
+                            maximumSize: Size(150, 150),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            onPressed: () =>
-                                {Navigator.pop(context, '/salesmgt')},
-                            child: Text(
-                              'Back',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: MediaQuery.of(context).size.height *
-                                      .020),
-                            )),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 10,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context, '/salesmgt');
+                          },
+                          child: Text(
+                            'Back',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              fontSize:
+                                  MediaQuery.of(context).size.height * .020,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
@@ -104,6 +119,4 @@ class Salesinvoiceviewscreen extends StatelessWidget {
       ),
     );
   }
-
-
 }
