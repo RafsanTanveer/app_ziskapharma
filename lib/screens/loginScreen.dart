@@ -74,7 +74,7 @@ class _LoginscreenState extends State<Loginscreen> {
 
       //////////////////////////////////////////////////////////////
 
-       await Future.delayed(Duration(milliseconds: 1000), () {});
+      await Future.delayed(Duration(milliseconds: 1500), () {});
       Navigator.pushReplacementNamed(context, '/mainmgt');
     }
   }

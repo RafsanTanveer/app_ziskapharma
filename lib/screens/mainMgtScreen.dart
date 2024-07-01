@@ -230,13 +230,13 @@ class Mainmgtscreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          user!.userFullName ?? "",
+          (user?.userFullName ?? ""),
           style: TextStyle(
               fontSize: MediaQuery.of(context).size.width * .040,
               fontWeight: FontWeight.w500),
         ),
         Text(
-          "Territory:" + user!.teryCode ?? "",
+          "Territory: " + (user?.teryCode ?? ""),
           style: TextStyle(
               fontSize: MediaQuery.of(context).size.width * .030,
               fontWeight: FontWeight.w500),

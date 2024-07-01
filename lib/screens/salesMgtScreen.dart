@@ -2,10 +2,7 @@ import 'package:app_ziskapharma/model/CustomerSettingScreenArgs.dart';
 import 'package:app_ziskapharma/model/UserPreferences.dart';
 import 'package:app_ziskapharma/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Salesmgtscreen extends StatelessWidget {
   void _loginPressed(BuildContext context) {
@@ -15,13 +12,10 @@ class Salesmgtscreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     UserPreferences? userPreferences =
         context.watch<AuthProvider>().userPreferences;
 
     return Scaffold(
-      // drawer: Drawer(),
       appBar: AppBar(
         title: Text(
           'Galaxy Pharma App',
@@ -33,22 +27,48 @@ class Salesmgtscreen extends StatelessWidget {
         backgroundColor: Colors.greenAccent[400],
       ),
       body: SafeArea(
-        child: Container(
-          margin: EdgeInsets.all(14),
-          child: Column(
-            children: [
-              _header(context),
-              // _inputField(context),
-              _forgotPassword(context),
-              _signup(context, userPreferences),
-            ],
-          ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth > 600) {
+              return _buildWideScreenLayout(context, userPreferences);
+            } else {
+              return _buildNarrowScreenLayout(context, userPreferences);
+            }
+          },
         ),
       ),
     );
   }
 
-  _header(context) {
+  Widget _buildWideScreenLayout(
+      BuildContext context, UserPreferences? userPreferences) {
+    return Container(
+      margin: EdgeInsets.all(14),
+      child: Column(
+        children: [
+          _header(context, isWideScreen: true),
+          _forgotPassword(context),
+          _signup(context, userPreferences),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNarrowScreenLayout(
+      BuildContext context, UserPreferences? userPreferences) {
+    return Container(
+      margin: EdgeInsets.all(14),
+      child: Column(
+        children: [
+          _header(context),
+          _forgotPassword(context),
+          _signup(context, userPreferences),
+        ],
+      ),
+    );
+  }
+
+  Widget _header(BuildContext context, {bool isWideScreen = false}) {
     return Column(
       children: [
         Padding(
@@ -56,51 +76,10 @@ class Salesmgtscreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height * .12,
-                width: MediaQuery.of(context).size.width * .4,
-                margin: const EdgeInsets.all(5),
-                child: ElevatedButton(
-                  onPressed: () => {Navigator.pushNamed(context, '/userinfo')},
-                  child: Text(
-                    "USER INFO CHANGE",
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height * .022),
-                    textAlign: TextAlign.center,
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    maximumSize: Size(150, 150),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  ),
-                ),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height * .12,
-                width: MediaQuery.of(context).size.width * .4,
-                margin: const EdgeInsets.all(5),
-                child: ElevatedButton(
-                  onPressed: () =>
-                      {Navigator.pushNamed(context, '/areasetting')},
-                  child: Text(
-                    "DEFAULT TERRITORY",
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height * .022),
-                    textAlign: TextAlign.center,
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    maximumSize: Size(150, 150),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  ),
-                ),
-              ),
+              _buildButton(
+                  context, '/userinfo', 'USER INFO CHANGE', isWideScreen),
+              _buildButton(
+                  context, '/areasetting', 'DEFAULT TERRITORY', isWideScreen),
             ],
           ),
         ),
@@ -109,52 +88,10 @@ class Salesmgtscreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height * .12,
-                width: MediaQuery.of(context).size.width * .4,
-                margin: const EdgeInsets.all(5),
-                child: ElevatedButton(
-                  onPressed: () =>
-                      {Navigator.pushNamed(context, '/cutomergrouplist')},
-                  child: Text(
-                    "CUSTOMER LIST",
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height * .022),
-                    textAlign: TextAlign.center,
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    maximumSize: Size(150, 150),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                  ),
-                ),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height * .12,
-                width: MediaQuery.of(context).size.width * .4,
-                margin: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                  onPressed: () => {
-                    Navigator.pushNamed(context, '/cutomergrouplistforsales')
-                  },
-                  child: Text("SALES ORDER ONCO",
-                      style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.height * .022),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.visible),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    maximumSize: Size(150, 150),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                  ),
-                ),
-              )
+              _buildButton(
+                  context, '/cutomergrouplist', 'CUSTOMER LIST', isWideScreen),
+              _buildButton(context, '/cutomergrouplistforsales',
+                  'SALES ORDER ONCO', isWideScreen),
             ],
           ),
         ),
@@ -163,58 +100,11 @@ class Salesmgtscreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height * .12,
-                width: MediaQuery.of(context).size.width * .4,
-                margin: const EdgeInsets.all(5),
-                child: ElevatedButton(
-                  onPressed: () => {
-                    Navigator.pushNamed(context, '/cutomergrouplistforsetting')
-                  },
-                  child: Text(
-                    "CUSTOMER SETTINGS",
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height * .022),
-                    textAlign: TextAlign.center,
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    maximumSize: Size(150, 150),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                  ),
-                ),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height * .12,
-                width: MediaQuery.of(context).size.width * .4,
-                margin: const EdgeInsets.all(5),
-                child: ElevatedButton(
-                  onPressed: () => {  Navigator.pushNamed(
-                  context,
-                  '/doctorsettings',
-                  arguments: new CustomerSettingScreenArgs(
-                      '03',
-                      'doctor',
-                      ''),
-                )},
-                  child: Text("DOCTOR SETTING",
-                      style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.height * .022),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.visible),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    maximumSize: Size(150, 150),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                  ),
-                ),
-              )
+              _buildButton(context, '/cutomergrouplistforsetting',
+                  'CUSTOMER SETTINGS', isWideScreen),
+              _buildButton(
+                  context, '/doctorsettings', 'DOCTOR SETTING', isWideScreen,
+                  arguments: CustomerSettingScreenArgs('03', 'doctor', '')),
             ],
           ),
         ),
@@ -223,57 +113,11 @@ class Salesmgtscreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height * .12,
-                width: MediaQuery.of(context).size.width * .4,
-                margin: const EdgeInsets.all(5),
-                child: ElevatedButton(
-                  onPressed: () =>
-                      {Navigator.pushNamed(context, '/slsinvview')},
-                  child: Text(
-                    "INVOICE APPROVAL",
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height * .022),
-                    textAlign: TextAlign.center,
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    maximumSize: Size(150, 150),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                  ),
-                ),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height * .12,
-                width: MediaQuery.of(context).size.width * .4,
-                margin: const EdgeInsets.all(5),
-                child: ElevatedButton(
-                  onPressed: () =>
-                      {Navigator.pushNamed(
-                context,
-                '/customerlist',
-                arguments: CustomerSettingScreenArgs(
-                    '03', 'doctor', ''),
-              )},
-                  child: Text(
-                    "DOCTORS LIST",
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height * .022),
-                    textAlign: TextAlign.center,
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    maximumSize: Size(150, 150),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                  ),
-                ),
-              ),
+              _buildButton(
+                  context, '/slsinvview', 'INVOICE APPROVAL', isWideScreen),
+              _buildButton(
+                  context, '/customerlist', 'DOCTORS LIST', isWideScreen,
+                  arguments: CustomerSettingScreenArgs('03', 'doctor', '')),
             ],
           ),
         ),
@@ -281,7 +125,39 @@ class Salesmgtscreen extends StatelessWidget {
     );
   }
 
-  _forgotPassword(context) {
+  Widget _buildButton(
+      BuildContext context, String route, String text, bool isWideScreen,
+      {Object? arguments}) {
+    double fontSize =
+        isWideScreen ? 18 : MediaQuery.of(context).size.height * .022;
+    double padding = isWideScreen ? 20 : 10;
+    double maxWidth = isWideScreen ? 200 : 150;
+
+    return Container(
+      height: MediaQuery.of(context).size.height * .12,
+      width: MediaQuery.of(context).size.width * .4,
+      margin: const EdgeInsets.all(5),
+      child: ElevatedButton(
+        onPressed: () =>
+            Navigator.pushNamed(context, route, arguments: arguments),
+        child: Text(
+          text,
+          style: TextStyle(fontSize: fontSize),
+          textAlign: TextAlign.center,
+        ),
+        style: ElevatedButton.styleFrom(
+          elevation: 3,
+          maximumSize: Size(maxWidth, maxWidth),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding),
+        ),
+      ),
+    );
+  }
+
+  Widget _forgotPassword(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -298,20 +174,21 @@ class Salesmgtscreen extends StatelessWidget {
     );
   }
 
-  _signup(context, UserPreferences? user) {
+  Widget _signup(BuildContext context, UserPreferences? user) {
     final provider = Provider.of<AuthProvider>(context, listen: false);
+    double fontSize = MediaQuery.of(context).size.width * .040;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-             user!.userFullName ?? "",
-          style: TextStyle(fontSize: MediaQuery.of(context).size.width * .040, fontWeight: FontWeight.w500),
+          (user?.userFullName ?? ""),
+          style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w500),
         ),
         Text(
-          "Territory:" + user.teryCode! ?? "",
-          style: TextStyle(
-              fontSize: MediaQuery.of(context).size.width * .030,
-              fontWeight: FontWeight.w500),
+          "Territory: " + (user?.teryCode ?? ""),
+          style:
+              TextStyle(fontSize: fontSize * .75, fontWeight: FontWeight.w500),
         ),
       ],
     );
