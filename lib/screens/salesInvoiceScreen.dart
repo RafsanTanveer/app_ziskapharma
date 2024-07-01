@@ -176,7 +176,7 @@ class SalesInvoiceScreen extends HookWidget {
     return [
       DataColumn(label: Text('Invoice No.')),
       DataColumn(label: Text('Date')),
-      DataColumn(label: Text('Customer Name')),
+      DataColumn(label: Text('Customer')),
       DataColumn(label: Text('Bill Amount')),
     ];
   }
@@ -191,15 +191,19 @@ class SalesInvoiceScreen extends HookWidget {
               Navigator.pushNamed(
                 context,
                 '/slsinvapprvl',
-                arguments: new CustomerSettingScreenArgs(
-                    invoice.invoiceNo, '', ''),
+                arguments:
+                    new CustomerSettingScreenArgs(invoice.invoiceNo, '', ''),
               );
             },
             child: Text(invoice.invoiceNo),
           ),
         ),
         DataCell(Text(invoice.invoiceDate)),
-        DataCell(Text(invoice.customerName)),
+        DataCell(Text(invoice!.customerName +
+            ',' +
+            invoice!.CustomerAdd +
+            ',' +
+            invoice!.MobileNo)),
         DataCell(Text(invoice.totalBillAmount.toString())),
       ]);
     }).toList();

@@ -49,7 +49,6 @@ class Mainmgtscreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
 
-
     UserPreferences? userPreferences =
         context.watch<AuthProvider>().userPreferences;
 
@@ -135,7 +134,7 @@ class Mainmgtscreen extends StatelessWidget {
                 width: width * .35,
                 margin: const EdgeInsets.all(10),
                 child: ElevatedButton(
-                   onPressed: () => {},
+                  onPressed: () => {},
                   child: Text(
                     "PRODUCTION",
                     style: TextStyle(fontSize: height * .022),
@@ -232,13 +231,15 @@ class Mainmgtscreen extends StatelessWidget {
       children: [
         Text(
           user!.userFullName ?? "",
-          style: TextStyle(fontSize: MediaQuery.of(context).size.width * .040, fontWeight: FontWeight.w500),
+          style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width * .040,
+              fontWeight: FontWeight.w500),
         ),
         Text(
-
-          "Territory:" +
-                  user!.teryCode ?? "",
-          style: TextStyle(fontSize: MediaQuery.of(context).size.width*.030, fontWeight: FontWeight.w500),
+          "Territory:" + user!.teryCode ?? "",
+          style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width * .030,
+              fontWeight: FontWeight.w500),
         ),
       ],
     );

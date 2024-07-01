@@ -11,7 +11,6 @@ import 'package:http/http.dart' as http;
 class SalesInvoiceViewScreen extends HookWidget {
   const SalesInvoiceViewScreen({Key? key}) : super(key: key);
 
-  @override
   Widget build(BuildContext context) {
     final CustomerSettingScreenArgs args =
         ModalRoute.of(context)!.settings.arguments as CustomerSettingScreenArgs;
@@ -26,6 +25,7 @@ class SalesInvoiceViewScreen extends HookWidget {
     final billAmountController = useTextEditingController();
 
     final invoiceInfo = useState<InvoiceModel?>(null);
+    final table1Data = useState<List<dynamic>>([]);
 
     fetchInvoiceData(String vInvoiceNumber) async {
       try {
@@ -38,7 +38,9 @@ class SalesInvoiceViewScreen extends HookWidget {
 
           final jsonResponse = json.decode(response.body);
           final List<dynamic> table = jsonResponse['Table'];
+          final List<dynamic> table1 = jsonResponse['Table1'];
           final Map<String, dynamic> data = table.first;
+
           invoiceInfo.value = InvoiceModel.fromJson(data);
 
           invoiceNoController.text = invoiceInfo!.value!.storeMainInvoiceNo;
@@ -48,8 +50,9 @@ class SalesInvoiceViewScreen extends HookWidget {
               invoiceInfo!.value!.storeMainTotalPrdAmount.toString();
           discountController.text =
               invoiceInfo!.value!.storeMainTotalDiscountAmount.toString();
-          amountController.text =
-              invoiceInfo!.value!.storeMainTotalPrdAmountAfterDiscount.toString();
+          amountController.text = invoiceInfo!
+              .value!.storeMainTotalPrdAmountAfterDiscount
+              .toString();
           vatController.text =
               invoiceInfo!.value!.storeMainTotalVatAmount.toString();
           specialDiscountController.text = invoiceInfo!
@@ -57,6 +60,8 @@ class SalesInvoiceViewScreen extends HookWidget {
               .toString();
           billAmountController.text =
               invoiceInfo!.value!.storeMainTotalBillAmount.toString();
+
+          table1Data.value = table1;
         } else {
           throw Exception('Failed to load data');
         }
@@ -64,7 +69,6 @@ class SalesInvoiceViewScreen extends HookWidget {
     }
 
     useEffect(() {
-     
       fetchInvoiceData(args.cpCode);
     }, []);
 
@@ -130,6 +134,8 @@ class SalesInvoiceViewScreen extends HookWidget {
                     hint: 'Bill Amount',
                     title: "Bill Amount",
                   ),
+                  SizedBox(height: 20),
+                  buildTable(table1Data.value),
                   Row(
                     children: [
                       Container(
@@ -167,6 +173,75 @@ class SalesInvoiceViewScreen extends HookWidget {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildTable(List<dynamic> table1Data) {
+    return Scrollbar(
+      thumbVisibility: true,
+      thickness: 15,
+      interactive: true,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Table(
+          border: TableBorder.all(color: Colors.black),
+          columnWidths: const {
+            0: FlexColumnWidth(2),
+            1: FlexColumnWidth(3),
+            2: FlexColumnWidth(2),
+            3: FlexColumnWidth(2),
+          },
+          children: [
+            TableRow(
+              decoration: BoxDecoration(color: Colors.green[300]),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Code',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Name',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Pack Size',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Rate',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+            ...table1Data.map((data) {
+              return TableRow(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(data['Prd_Code']),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(data['Prd_Name']),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(data['Prd_PackSize']),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(data['Prd_TpRate'].toString()),
+                  ),
+                ],
+              );
+            }).toList(),
+          ],
         ),
       ),
     );
