@@ -20,7 +20,6 @@ class _LoginscreenState extends State<Loginscreen> {
   final userTxtCntrl = TextEditingController();
   final passTxtCntrl = TextEditingController();
 
-
   bool _isPasswordVisible = false;
 
   void _togglePasswordVisibility() {
@@ -56,7 +55,6 @@ class _LoginscreenState extends State<Loginscreen> {
     context.read<AuthProvider>().setUser(user);
     context.read<AuthProvider>().setUserPreferences(userPreferences);
 
-
     //provider.user_id
   }
 
@@ -70,17 +68,28 @@ class _LoginscreenState extends State<Loginscreen> {
     if (await prefs.getBool('isLoggedIn') ?? false) {
       //////////////////////////////////////////////////////////////
 
+      final String userUID = await prefs.getString('userUID') ?? '';
+      final String userPws = await prefs.getString('userPws') ?? '';
+
+      setState(() {
+        _isPasswordVisible = true;
+      });
+
+      userTxtCntrl.text = userUID;
+      passTxtCntrl.text = userPws;
+
       setData(context);
 
       //////////////////////////////////////////////////////////////
 
       await Future.delayed(Duration(milliseconds: 1500), () {});
-      Navigator.pushReplacementNamed(context, '/mainmgt');
+      // Navigator.pushReplacementNamed(context, '/mainmgt');
     }
   }
 
   void initState() {
     super.initState();
+
     isLoggedIn();
   }
 
@@ -260,11 +269,11 @@ class _LoginscreenState extends State<Loginscreen> {
                 ),
               ),
             ),
-             Expanded(
-               flex: 1,
-               child: Padding(
-                 padding: const EdgeInsets.all(8.0),
-                 child: ElevatedButton(
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
                   onPressed: () => SystemNavigator.pop(),
                   child: Text(
                     "Exit",
@@ -274,9 +283,9 @@ class _LoginscreenState extends State<Loginscreen> {
                     shape: StadiumBorder(),
                     padding: EdgeInsets.symmetric(vertical: 16),
                   ),
-                             ),
-               ),
-             ),
+                ),
+              ),
+            ),
           ],
         )
       ],

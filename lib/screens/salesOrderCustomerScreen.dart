@@ -147,9 +147,12 @@ class SalesOrderCustomerScreen extends HookWidget {
 
   List<DataColumn> _createColumns() {
     return [
+       DataColumn(label: Text('Sales Order')),
       DataColumn(label: Text('Code')),
       DataColumn(label: Expanded(child: Text('Name'))),
-      DataColumn(label: Text('Sales Order')),
+       DataColumn(label: Expanded(child: Text('Address'))),
+       DataColumn(label: Expanded(child: Text('Mobile'))),
+
     ];
   }
 
@@ -157,16 +160,6 @@ class SalesOrderCustomerScreen extends HookWidget {
       List<CustomerListModel> customers, BuildContext context) {
     return customers.map((customer) {
       return DataRow(cells: [
-        DataCell(Text(customer.custNumber)),
-        DataCell(
-          Container(
-            width: 100,
-            child: Text(
-              customer.customerName,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
         DataCell(
           GestureDetector(
             onTap: () {
@@ -186,6 +179,19 @@ class SalesOrderCustomerScreen extends HookWidget {
             ),
           ),
         ),
+        DataCell(Text(customer.custNumber)),
+        DataCell(Text(customer.custAddress)),
+        DataCell(Text(customer.custMobile)),
+        DataCell(
+          Container(
+            width: 100,
+            child: Text(
+              customer.customerName,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+
       ]);
     }).toList();
   }

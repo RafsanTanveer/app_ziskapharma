@@ -81,10 +81,10 @@ class DoctorInformationSettings extends HookWidget {
     TextEditingController addressController = useTextEditingController();
     TextEditingController mobileController = useTextEditingController();
     TextEditingController contactPersonController = useTextEditingController();
-    TextEditingController categoryCodeController =
-        useTextEditingController(text: args.cpCode);
-    TextEditingController categoryNameController =
-        useTextEditingController(text: args.cpName);
+    TextEditingController categoryCodeController = useTextEditingController();
+    // (text: args.cpCode);
+    TextEditingController categoryNameController = useTextEditingController();
+    //(text: args.cpName);
     TextEditingController refCodeController = useTextEditingController();
     TextEditingController refNameController = useTextEditingController();
     TextEditingController rulesNoController = useTextEditingController();

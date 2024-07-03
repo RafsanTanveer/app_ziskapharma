@@ -107,7 +107,7 @@ class MyApp extends StatelessWidget {
         assert(false, 'Need to implement ${settings.name}');
         return null;
       },
-      home: SplashScreen(),
+      home: Loginscreen(),
     );
   }
 }
