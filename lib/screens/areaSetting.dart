@@ -181,13 +181,17 @@ class Areasetting extends HookWidget {
                           scrollDirection: Axis.horizontal,
                           child: DataTable(
                             columns: const [
+                              DataColumn(label: Text('Territory Code')),
                               DataColumn(label: Text('Name')),
                               DataColumn(label: Text('Parent Code')),
-                              DataColumn(label: Text('Territory Code')),
+
                             ],
                             rows: filteredList.value.map((item) {
                               return DataRow(
                                 cells: [
+                                   DataCell(Text(item.teryCode), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
                                   DataCell(Text(item.teryName), onTap: () {
                                     Navigator.pop(context, item);
                                   }),
@@ -195,9 +199,7 @@ class Areasetting extends HookWidget {
                                       onTap: () {
                                     Navigator.pop(context, item);
                                   }),
-                                  DataCell(Text(item.teryCode), onTap: () {
-                                    Navigator.pop(context, item);
-                                  }),
+
                                 ],
                               );
                             }).toList(),

@@ -20,7 +20,7 @@ class _LoginscreenState extends State<Loginscreen> {
   final userTxtCntrl = TextEditingController();
   final passTxtCntrl = TextEditingController();
 
-  bool _isPasswordVisible = false;
+  bool _isPasswordVisible = true;
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -42,20 +42,24 @@ class _LoginscreenState extends State<Loginscreen> {
 
     final response = await http.get(loginUrl);
 
-    Map<String, dynamic> jsonResponse = json.decode(response.body);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
 
-    // Assuming the list you need is under a key 'data' or similar
-    var table = jsonResponse['Table'][0];
-    var table1 = jsonResponse['Table1'][0];
+      // Assuming the list you need is under a key 'data' or similar
+      var table = jsonResponse['Table'][0];
+      var table1 = jsonResponse['Table1'][0];
 
-    UserModel user = UserModel.fromJson(table);
-    UserPreferences userPreferences = UserPreferences.fromJson(table1);
-    print(userPreferences.userBrnID);
-    // Update the provider
-    context.read<AuthProvider>().setUser(user);
-    context.read<AuthProvider>().setUserPreferences(userPreferences);
+      UserModel user = UserModel.fromJson(table);
+      UserPreferences userPreferences = UserPreferences.fromJson(table1);
+      print(userPreferences.userBrnID);
+      // Update the provider
+      context.read<AuthProvider>().setUser(user);
+      context.read<AuthProvider>().setUserPreferences(userPreferences);
 
-    //provider.user_id
+      // Navigator.pushReplacementNamed(context, '/mainmgt');
+    } else {
+      print('data not found');
+    }
   }
 
   void isLoggedIn() async {

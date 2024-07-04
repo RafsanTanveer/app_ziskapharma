@@ -978,6 +978,15 @@ class SalesOrderScreen extends HookWidget {
                   ),
                 ),
               ),
+               CustomTextFormfieldTwoColumnWithSearchBtn(
+                controller1: refCodeController,
+                controller2: refNameController,
+                hint1: 'Ref Code',
+                hint2: "Ref Code",
+                title1: "Ref Name",
+                title2: '',
+                onPressed: () => {_showDropdownDialogDoctorsTypeInfo(context)},
+              ),
               TextFeildWithSearchBtn(
                 controller: refCodeController,
                 hint: "Ref Code",
@@ -994,7 +1003,7 @@ class SalesOrderScreen extends HookWidget {
                 visibility: false,
                 //visibility: false,
               ),
-              SizedBox(height: 16.0),
+              // SizedBox(height: 16.0),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   elevation: 3,
@@ -1007,7 +1016,7 @@ class SalesOrderScreen extends HookWidget {
                 onPressed: () => _showProductDropdownDialog(context),
                 child: Text('Add Product'),
               ),
-              SizedBox(height: 16.0),
+              // SizedBox(height: 16.0),
               Scrollbar(
                 thumbVisibility: true,
                 thickness: 15,
