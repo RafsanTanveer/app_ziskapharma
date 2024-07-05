@@ -58,8 +58,7 @@ class CustomerListScreen extends HookWidget {
 
     if (args.cpName.toLowerCase().contains('doctor')) {
       title.value = "Doctor List";
-    }
-    else{
+    } else {
       title.value = "Custofmer List";
     }
 

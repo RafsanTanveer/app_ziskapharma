@@ -91,8 +91,20 @@ class _LoginscreenState extends State<Loginscreen> {
     }
   }
 
+  void setUserPass() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    final String userUID = await prefs.getString('userUID') ?? '';
+    final String userPws = await prefs.getString('userPws') ?? '';
+
+    userTxtCntrl.text = userUID;
+    passTxtCntrl.text = userPws;
+  }
+
   void initState() {
     super.initState();
+
+    setUserPass();
 
     isLoggedIn();
   }

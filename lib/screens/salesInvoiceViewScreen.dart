@@ -94,45 +94,53 @@ class SalesInvoiceViewScreen extends HookWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  CustomTextFormField(
+                  CustomTextFormFieldAreaSetting(
                     controller: invoiceNoController,
                     hint: 'Invoice No.',
                     title: "Invoice No.",
+                    isEnable: false,
                   ),
-                  CustomTextFormField(
+                  CustomTextFormFieldAreaSetting(
                     controller: customerNameController,
                     hint: 'Customer Name',
                     title: "Customer Name",
+                    isEnable: false,
                   ),
-                  CustomTextFormField(
+                  CustomTextFormFieldAreaSetting(
                     controller: prdAmountController,
                     hint: 'Prd. Amount',
                     title: "Prd. Amount",
+                    isEnable: false,
                   ),
-                  CustomTextFormField(
+                  CustomTextFormFieldAreaSetting(
                     controller: discountController,
                     hint: 'Discount',
                     title: "Discount",
+                    isEnable: false,
                   ),
-                  CustomTextFormField(
+                  CustomTextFormFieldAreaSetting(
                     controller: amountController,
                     hint: 'Amount',
                     title: "Amount",
+                    isEnable: false,
                   ),
-                  CustomTextFormField(
+                  CustomTextFormFieldAreaSetting(
                     controller: vatController,
                     hint: 'VAT',
                     title: "VAT",
+                    isEnable: false,
                   ),
-                  CustomTextFormField(
+                  CustomTextFormFieldAreaSetting(
                     controller: specialDiscountController,
                     hint: 'Special Discount',
                     title: "Special Discount",
+                    isEnable: false,
                   ),
-                  CustomTextFormField(
+                  CustomTextFormFieldAreaSetting(
                     controller: billAmountController,
                     hint: 'Bill Amount',
                     title: "Bill Amount",
+                    isEnable: false,
                   ),
                   SizedBox(height: 20),
                   buildTable(table1Data.value),

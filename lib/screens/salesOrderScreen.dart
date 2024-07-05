@@ -978,7 +978,7 @@ class SalesOrderScreen extends HookWidget {
                   ),
                 ),
               ),
-               CustomTextFormfieldTwoColumnWithSearchBtn(
+              CustomTextFormfieldTwoColumnWithSearchBtn(
                 controller1: refCodeController,
                 controller2: refNameController,
                 hint1: 'Ref Code',
@@ -986,6 +986,7 @@ class SalesOrderScreen extends HookWidget {
                 title1: "Ref Name",
                 title2: '',
                 onPressed: () => {_showDropdownDialogDoctorsTypeInfo(context)},
+                visibility: false,
               ),
               TextFeildWithSearchBtn(
                 controller: refCodeController,

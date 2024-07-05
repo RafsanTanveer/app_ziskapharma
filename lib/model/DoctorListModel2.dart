@@ -31,22 +31,19 @@ class DoctorListModel2 {
 
   factory DoctorListModel2.fromJson(Map<String, dynamic> json) {
     return DoctorListModel2(
-      cDelete: json['cDelete'],
-      custID: json['cust_ID'],
-      custNumber: json['cust_Number'],
-      custName: json['cust_Name'],
-      custMobile: json['cust_Mobile'],
-      custAddress: json['cust_Address'],
-      custAddress1: json['cust_Address1'],
-
-
-
-      teryCode: json['tery_Code'],
-      teryDepotId: json['tery_DepotID'],
-      teryDepotCode: json['tery_DepotCode'],
-      teryDepotName: json['tery_DepotName'],
-      custActive: json['cust_Active'],
-      custCUID: json['cust_CUID'],
+      cDelete: json['cDelete'] ?? "",
+      custID: (json['cust_ID'] ?? 0).toDouble(),
+      custNumber: json['cust_Number'] ?? "",
+      custName: json['cust_Name'] ?? "",
+      custMobile: json['cust_Mobile'] ?? "",
+      custAddress: json['cust_Address'] ?? "",
+      custAddress1: json['cust_Address1'] ?? "",
+      teryCode: json['tery_Code'] ?? "",
+      teryDepotId: (json['tery_DepotID'] ?? 0).toDouble(),
+      teryDepotCode: json['tery_DepotCode'] ?? "",
+      teryDepotName: json['tery_DepotName'] ?? "",
+      custActive: json['cust_Active'] ?? "",
+      custCUID: json['cust_CUID'] ?? "",
     );
   }
 
