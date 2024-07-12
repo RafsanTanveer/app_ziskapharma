@@ -55,7 +55,6 @@ class _CameraAppState extends State<CameraApp> {
 
   @override
   Widget build(BuildContext context) {
-    print('dddddddddddddddddddddddddddddddddd');
     if (!controller.value.isInitialized) {
       return Container();
     }

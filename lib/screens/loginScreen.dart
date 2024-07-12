@@ -56,7 +56,7 @@ class _LoginscreenState extends State<Loginscreen> {
       context.read<AuthProvider>().setUser(user);
       context.read<AuthProvider>().setUserPreferences(userPreferences);
 
-      // Navigator.pushReplacementNamed(context, '/mainmgt');
+      Navigator.pushReplacementNamed(context, '/mainmgt');
     } else {
       print('data not found');
     }
@@ -160,7 +160,7 @@ class _LoginscreenState extends State<Loginscreen> {
 
         setData(context);
 
-        Navigator.pushReplacementNamed(context, '/mainmgt');
+        // Navigator.pushReplacementNamed(context, '/mainmgt');
       } else {}
     } catch (e) {
       print(e);

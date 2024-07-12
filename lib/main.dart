@@ -5,6 +5,7 @@ import 'package:app_ziskapharma/screens/customerGroupListScreen.dart';
 import 'package:app_ziskapharma/screens/customerGroupListSettingScreen.dart';
 import 'package:app_ziskapharma/screens/customerListScreen.dart';
 import 'package:app_ziskapharma/screens/doctorInformationSettings.dart';
+import 'package:app_ziskapharma/screens/doctorListScreen.dart';
 import 'package:app_ziskapharma/screens/salesOrderCustomerScreen.dart';
 import 'package:app_ziskapharma/screens/salesOrderScreen.dart';
 import 'package:app_ziskapharma/screens/splashScreen.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
         "/userinfo": (context) => Userinfoscreen(),
         "/cutomergrouplist": (context) => CustomerGroupListScreen(),
         "/customerlist": (context) => CustomerListScreen(),
+        "/doctorlist": (context) => Doctorlistscreen(),
         "/cutomergrouplistforsetting": (context) =>
             CustomerGroupListSettingScreen(),
         "/cutomergrouplistforsales": (context) =>
@@ -74,7 +76,7 @@ class MyApp extends StatelessWidget {
         //     },
         //   );
         // } else
-         if (settings.name == '/salesOrderCustomerlist') {
+        if (settings.name == '/salesOrderCustomerlist') {
           final String vCustomerTypeCode = settings.arguments as String;
           return MaterialPageRoute(
             builder: (context) {

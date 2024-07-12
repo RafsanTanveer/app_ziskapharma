@@ -244,6 +244,10 @@ class CustomerSettingScreen extends HookWidget {
                             columns: const [
                               DataColumn(label: Text('Name')),
                               DataColumn(label: Text('Code')),
+                              DataColumn(label: Text('Mobile')),
+                              DataColumn(label: Text('Address')),
+                              DataColumn(label: Text('Territory')),
+                              DataColumn(label: Text('Depot')),
                             ],
                             rows: filteredList.map((item) {
                               return DataRow(
@@ -252,6 +256,18 @@ class CustomerSettingScreen extends HookWidget {
                                     Navigator.pop(context, item);
                                   }),
                                   DataCell(Text(item.custNumber), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                  DataCell(Text(item.custMobile), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                  DataCell(Text(item.custAddress), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                  DataCell(Text(item.teryCode), onTap: () {
+                                    Navigator.pop(context, item);
+                                  }),
+                                  DataCell(Text(item.teryDepotName), onTap: () {
                                     Navigator.pop(context, item);
                                   }),
                                 ],
@@ -522,9 +538,10 @@ class CustomerSettingScreen extends HookWidget {
                   'tery_DepotCode': territoryData.value?.teryDepotCode,
                   'cust_ReferenceYesNo':
                       customerTypeDropdownvalue.value!.cpReferenceYes != ''
-                          ? 'Yes'
-                          : 'No',
+                          ? 'True'
+                          : 'False',
                   'pb_RulesNo': rulesNoController.text,
+                  'cust_image': snapData.value,
                   'cust_CUID': provider.user_id,
                   'cust_MUID': provider.user_id,
                   'cust_ComID': user?.comID,

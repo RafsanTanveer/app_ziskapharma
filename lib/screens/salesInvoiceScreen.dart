@@ -42,9 +42,7 @@ class SalesInvoiceScreen extends HookWidget {
                       .toLowerCase()
                       .contains(query))
               .toList();
-        }).catchError((error) {
-          print('Error filtering invoices: $error');
-        });
+        }).catchError((error) {});
       }
 
       searchController.addListener(_filterInvoices);
@@ -152,7 +150,6 @@ class SalesInvoiceScreen extends HookWidget {
     try {
       return await fetchSalesInvoiceList(depotCode);
     } catch (e) {
-      print('Error initializing sales invoices: $e');
       throw Exception('Failed to load sales invoices');
     }
   }
@@ -198,7 +195,7 @@ class SalesInvoiceScreen extends HookWidget {
             child: Text(invoice.invoiceNo),
           ),
         ),
-        DataCell(Text(invoice.invoiceDate)),
+        DataCell(Text(invoice.invoiceDate.toString().substring(0, 10))),
         DataCell(Text(invoice!.customerName +
             ',' +
             invoice!.CustomerAdd +

@@ -77,13 +77,8 @@ class Userinfoscreen extends HookWidget {
       try {
         final response = await http.post(url, headers: headers, body: payload);
         if (response.statusCode == 200) {
-          print('Data successfully posted.');
-        } else {
-          print('Failed to post data. Status code: ${response.statusCode}');
-        }
-      } catch (e) {
-        print('Error posting data: $e');
-      }
+        } else {}
+      } catch (e) {}
     }
 
     Future<void> _fetchBranch() async {
@@ -124,9 +119,7 @@ class Userinfoscreen extends HookWidget {
             userDepartmentCodeController, user.userDepartmentCode);
         setControllerText(userBrnCodeController, user.userBrnCode);
         setControllerText(userBrnNameController, user.userBrnName);
-      } catch (e) {
-        print('Error fetching data: $e');
-      }
+      } catch (e) {}
     }
 
     useEffect(() {
@@ -143,9 +136,7 @@ class Userinfoscreen extends HookWidget {
         Uint8List bytes = imageTemporary.readAsBytesSync();
         String base64Image = base64Encode(bytes);
         snapData.value = base64Image;
-      } on PlatformException catch (e) {
-        print('Failed to pick image: $e');
-      }
+      } on PlatformException catch (e) {}
     }
 
     Future<void> _pickSignature() async {
@@ -158,9 +149,7 @@ class Userinfoscreen extends HookWidget {
         Uint8List bytes = signatureTemporary.readAsBytesSync();
         String base64Signature = base64Encode(bytes);
         signatureData.value = base64Signature;
-      } on PlatformException catch (e) {
-        print('Failed to pick signature: $e');
-      }
+      } on PlatformException catch (e) {}
     }
 
     Future<void> _showDropdownDialog(BuildContext context) async {

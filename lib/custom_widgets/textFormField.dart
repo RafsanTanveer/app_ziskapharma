@@ -53,7 +53,6 @@ class CustomTextFormFieldWithFormatter extends StatelessWidget {
                   TextSelection previousSelection = controller.selection;
                   controller.text = text;
                   controller.selection = previousSelection;
-                 
                 },
                 decoration: InputDecoration(
                   hintText: hint,
@@ -378,7 +377,6 @@ class CustomTextFormfieldTwoColumn extends StatelessWidget {
                         TextSelection previousSelection = controller1.selection;
                         controller1.text = text;
                         controller1.selection = previousSelection;
-                        print(text);
                       },
                       decoration: InputDecoration(
                         hintText: hint1,
@@ -420,7 +418,6 @@ class CustomTextFormfieldTwoColumn extends StatelessWidget {
                         TextSelection previousSelection = controller2.selection;
                         controller2.text = text;
                         controller2.selection = previousSelection;
-                        print(text);
                       },
                       decoration: InputDecoration(
                         hintText: hint2,
@@ -506,7 +503,6 @@ class CustomTextFormfieldTwoColumnWithSearchBtn extends StatelessWidget {
                     TextSelection previousSelection = controller1.selection;
                     controller1.text = text;
                     controller1.selection = previousSelection;
-                    print(text);
                   },
                   decoration: InputDecoration(
                     hintText: hint1,
@@ -532,7 +528,6 @@ class CustomTextFormfieldTwoColumnWithSearchBtn extends StatelessWidget {
                     TextSelection previousSelection = controller2.selection;
                     controller2.text = text;
                     controller2.selection = previousSelection;
-                    print(text);
                   },
                   decoration: InputDecoration(
                     hintText: hint2,

@@ -519,7 +519,7 @@ class SalesOrderScreen extends HookWidget {
                                   DataColumn(label: Text('Name')),
                                   DataColumn(label: Text('Code')),
                                   DataColumn(label: Text('Pack Size')),
-                                  DataColumn(label: Text('Quantity')),
+                                  DataColumn(label: Text('Rate')),
                                 ],
                                 rows: filteredList.map((item) {
                                   return DataRow(
@@ -536,7 +536,9 @@ class SalesOrderScreen extends HookWidget {
                                           onTap: () {
                                         Navigator.pop(context, item);
                                       }),
-                                      DataCell(Text(item.orderQnty.toString()),
+                                      DataCell(
+                                          Text(
+                                              item.finPrdTradePrice.toString()),
                                           onTap: () {
                                         Navigator.pop(context, item);
                                       }),
@@ -755,17 +757,6 @@ class SalesOrderScreen extends HookWidget {
       //args!.cpCode
       customerCodeController.text = args!.customerCode;
       customerNameController.text = args!.cpName;
-
-      // CustomerListModel? ref = customerListDropDown.value.firstWhere(
-      //   (item) =>
-      //       item.customerName == args!.cpName &&
-      //       item.custCode == args!.customerCode,
-      // );
-
-      // print('gggggggggggggggggggggggggggggggggggggggggggggggg');
-      // print(ref.custRef);
-
-      // print('gggggggggggggggggggggggggggggggggggggggggggggggg');
     }, []);
 
     Future<void> _selectDate(

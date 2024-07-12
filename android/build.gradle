@@ -1,6 +1,6 @@
 allprojects {
     buildscript {
-    ext.kotlin_version = '1.5.20' // <= expected version is 1.5.1
+    ext.kotlin_version = '1.6.0' // <= expected version is 1.5.1
 }
     repositories {
         google()

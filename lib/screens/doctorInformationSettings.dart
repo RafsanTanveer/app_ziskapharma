@@ -482,7 +482,6 @@ class DoctorInformationSettings extends HookWidget {
           '${apiAccess.apiBaseUrl}/DoctorSettings/Proc_SaveDoctorSettingsByApi');
 
       final headers = {"Content-Type": "application/json"};
-      print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
 
       final payload = json.encode({
         "Table": [
@@ -525,10 +524,7 @@ class DoctorInformationSettings extends HookWidget {
           );
           Navigator.pop(context);
         } else {}
-      } catch (e) {
-        print('ggggggggggggggggggggggggggggggggg');
-        print(e);
-      }
+      } catch (e) {}
     }
 
     useEffect(() {

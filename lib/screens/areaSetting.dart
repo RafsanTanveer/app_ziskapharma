@@ -51,9 +51,7 @@ class Areasetting extends HookWidget {
         dropdownvalue.value = terrytoryDropdown.firstWhere(
             (item) => item.teryCode == territoryData.value!.teryCode,
             orElse: () => terrytoryDropdown[0]);
-      } catch (e) {
-        print('Error fetching dropdown data: $e');
-      }
+      } catch (e) {}
     }
 
     Future<void> _fetchData() async {
@@ -75,9 +73,7 @@ class Areasetting extends HookWidget {
         depotCodeController.text = terrytory.teryDepotCode;
         depotNameController.text = terrytory.teryDepotName;
         userIdController.text = terrytory.userUID;
-      } catch (e) {
-        print('Error fetching data: $e');
-      }
+      } catch (e) {}
     }
 
     Future<void> _submitPost() async {
@@ -119,12 +115,8 @@ class Areasetting extends HookWidget {
           );
 
           Navigator.pop(context, '/salesmgt');
-        } else {
-          print('Failed to post data. Status code: ${response.statusCode}');
-        }
-      } catch (e) {
-        print('Error posting data: $e');
-      }
+        } else {}
+      } catch (e) {}
     }
 
     useEffect(() {
@@ -184,12 +176,11 @@ class Areasetting extends HookWidget {
                               DataColumn(label: Text('Territory Code')),
                               DataColumn(label: Text('Name')),
                               DataColumn(label: Text('Parent Code')),
-
                             ],
                             rows: filteredList.value.map((item) {
                               return DataRow(
                                 cells: [
-                                   DataCell(Text(item.teryCode), onTap: () {
+                                  DataCell(Text(item.teryCode), onTap: () {
                                     Navigator.pop(context, item);
                                   }),
                                   DataCell(Text(item.teryName), onTap: () {
@@ -199,7 +190,6 @@ class Areasetting extends HookWidget {
                                       onTap: () {
                                     Navigator.pop(context, item);
                                   }),
-
                                 ],
                               );
                             }).toList(),

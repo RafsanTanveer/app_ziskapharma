@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import '../dataaccess/apiAccess.dart' as apiAccess;
 
 class Customergroupsettingscreen extends HookWidget {
-    List<Map> _books = [];
+  List<Map> _books = [];
 
   @override
   Widget build(BuildContext context) {
@@ -19,37 +19,26 @@ class Customergroupsettingscreen extends HookWidget {
           '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_sal_SalesCustomerTypeListByApi');
       final response = await http.get(url);
 
-
-
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
         // Assuming the list you need is under a key 'data' or similar
         List<dynamic> customerCategories = jsonResponse['Table'];
 
-
         List<Map> tempObj = [];
         for (var item in customerCategories) {
-
           var obj = {
             'code': item['cp_Code'],
             'name': item['cp_Name'],
             'new': 'Customer'
           };
           tempObj.add(obj);
-          // print(obj);
-
         }
 
         customerList.value = tempObj;
 
-
-
-
         dynamic customerCategoryList = customerCategories
             .map((obj) => CustomerCategory.fromJson(obj))
             .toList();
-
-       
 
         return customerCategoryList;
       } else {

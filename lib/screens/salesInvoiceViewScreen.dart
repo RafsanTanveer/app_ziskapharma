@@ -34,8 +34,6 @@ class SalesInvoiceViewScreen extends HookWidget {
         final response = await http.get(url);
 
         if (response.statusCode == 200) {
-          print(response.body);
-
           final jsonResponse = json.decode(response.body);
           final List<dynamic> table = jsonResponse['Table'];
           final List<dynamic> table1 = jsonResponse['Table1'];

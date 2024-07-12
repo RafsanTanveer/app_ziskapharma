@@ -13,21 +13,23 @@ import 'package:app_ziskapharma/model/UserPreferences.dart';
 Future<List<dynamic>> fetchCustomerLists(String vCustomerTypeCode,
     String userId, String custName, String teryDepotCode) async {
   final url = Uri.parse(
-      '${apiAccess.apiBaseUrl}/CustomerSettings/Proc_SingleTypeCustomerListByApi?tery_UserId=${userId}&vCustomerTypeCode=$vCustomerTypeCode');
+      '${apiAccess.apiBaseUrl}/DoctorSettings/Proc_DoctorListByApi?SearchBy=&tery_DepotCode=${teryDepotCode}');
 
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
     Map<String, dynamic> jsonResponse = json.decode(response.body);
     List<dynamic> customerLists = jsonResponse['Table'];
-    return customerLists.map((obj) => CustomerListModel.fromJson(obj)).toList();
+    return custName.toLowerCase().contains('doctor')
+        ? customerLists.map((obj) => DoctorListModel2.fromJson(obj)).toList()
+        : customerLists.map((obj) => CustomerListModel.fromJson(obj)).toList();
   } else {
     throw Exception('Failed to load data');
   }
 }
 
-class CustomerListScreen extends HookWidget {
-  const CustomerListScreen({super.key});
+class Doctorlistscreen extends HookWidget {
+  const Doctorlistscreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class CustomerListScreen extends HookWidget {
     if (args == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Customer List'),
+          title: Text('Doctor List'),
           backgroundColor: Colors.greenAccent[400],
         ),
         body: Center(
@@ -50,7 +52,7 @@ class CustomerListScreen extends HookWidget {
         context.watch<AuthProvider>().userPreferences;
 
     final title = useState<String>('');
-    title.value = "Custofmer List";
+    title.value = "Doctor List";
 
     if (userPreferences == null) {
       return Scaffold(

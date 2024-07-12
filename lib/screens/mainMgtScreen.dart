@@ -13,7 +13,6 @@ import '../utility/camera.dart';
 
 class Mainmgtscreen extends StatelessWidget {
   void _loginPressed(BuildContext context) {
-    print("Login pressed");
     Navigator.pushReplacementNamed(context, '/areasetting');
   }
 
@@ -28,7 +27,6 @@ class Mainmgtscreen extends StatelessWidget {
   Future _pickImage() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.camera);
-      print(image?.name);
       if (image == null) return;
 
       final imageTemporary = File(image.path);
@@ -37,12 +35,7 @@ class Mainmgtscreen extends StatelessWidget {
       Uint8List bytes = file.readAsBytesSync();
 
       String base64Image = base64Encode(bytes);
-
-      print(base64Image);
-      print(imageTemporary);
-    } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
-    }
+    } on PlatformException catch (e) {}
   }
 
   @override

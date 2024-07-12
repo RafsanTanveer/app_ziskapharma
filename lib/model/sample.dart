@@ -18,15 +18,11 @@ class User {
 
   final String userDepartment;
 
-
   final String muid;
-
 
   final String userDesignation;
   final String userMobileNo;
   final String userEmail;
-
-
 
   final String userImagePicture;
   final String userImageSignature;
@@ -44,17 +40,10 @@ class User {
     required this.userBrnName,
     required this.userDepartmentCode,
     required this.userDepartment,
-
-
     required this.muid,
-
-
     required this.userDesignation,
     required this.userMobileNo,
     required this.userEmail,
-
-
-
     required this.userImagePicture,
     required this.userImageSignature,
   });
@@ -78,17 +67,13 @@ class User {
         userMobileNo: json['user_MobileNo'] ?? '',
         userEmail: json['user_Email'] ?? '',
         userImagePicture: json['user_imagePicture'] ?? '',
-        userImageSignature: json['user_imageSignature'] ?? ''
-
-        );
+        userImageSignature: json['user_imageSignature'] ?? '');
   }
 }
 
 User parseUserFromJson(String jsonString) {
-  print('in sample file');
   final Map<String, dynamic> parsedJson = jsonDecode(jsonString);
 
   final Map<String, dynamic> userJson = parsedJson['Table'][0];
-  // print(userJson);
   return User.fromJson(userJson);
 }

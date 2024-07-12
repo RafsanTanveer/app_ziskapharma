@@ -19,7 +19,6 @@ Future<List<CustomerCategory>> fetchCustomerCategory() async {
           .map((obj) => CustomerCategory.fromJson(obj))
           .toList();
     } catch (e) {
-      print('Error parsing JSON: $e');
       throw Exception('Failed to parse data');
     }
   } else {
@@ -50,9 +49,7 @@ class _CustomerGroupListScreenState extends State<CustomerGroupListScreen> {
         _allCategories = value;
         _filteredCategories = value;
       });
-    }).catchError((e) {
-      print('Error fetching customer categories: $e');
-    });
+    }).catchError((e) {});
 
     _searchController.addListener(_filterCustomerCategories);
   }
